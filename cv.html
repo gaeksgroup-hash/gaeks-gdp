@@ -95,7 +95,7 @@
             GAEKS ATS Studio
           </span>
           <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">
-            520+ Professions
+            Corporate Standard
           </span>
         </div>
       </div>
@@ -568,6 +568,7 @@
       ]
     };
 
+    // REDAKSI RESMI STANDAR HRD GLOBAL & ATS UNIVERSAL
     const i18n = {
       id: {
         navHome: "Beranda",
@@ -614,14 +615,15 @@
         lblLang: "Kemampuan Bahasa (Pisahkan koma)",
         lblPub: "Publikasi Ilmiah / Portofolio Ekstra",
 
-        sheetSummary: "RINGKASAN EKSEKUTIF",
-        sheetExperience: "PENGALAMAN KERJA & REKAM JEJAK",
-        sheetEducation: "PENDIDIKAN FORMAL",
-        sheetSkills: "KEAHLIAN & KOMPETENSI TEKNOLOGI",
-        sheetCertifications: "SERTIFIKASI & LISENSI RESMI",
+        // REDAKSI RESMI DOKUMEN (BAKU & MATANG)
+        sheetSummary: "PROFIL PROFESIONAL",
+        sheetExperience: "PENGALAMAN PROFESIONAL",
+        sheetEducation: "PENDIDIKAN",
+        sheetSkills: "KEAHLIAN & KOMPETENSI",
+        sheetCertifications: "SERTIFIKASI & LISENSI",
         sheetLanguages: "KEMAMPUAN BAHASA",
         sheetPublications: "PUBLIKASI & RISET",
-        majorAccomplishmentLabel: "Pencapaian Strategis Kunci:",
+        majorAccomplishmentLabel: "Pencapaian Kunci:",
         badgeLabel: "Bahasa Indonesia",
         present: "Sekarang",
         emptyExperience: "Belum ada pengalaman kerja yang ditambahkan.",
@@ -673,14 +675,15 @@
         lblLang: "Languages (Comma separated)",
         lblPub: "Scientific Publications & Research",
 
-        sheetSummary: "EXECUTIVE SUMMARY",
+        // GLOBAL ATS STANDARD HEADINGS
+        sheetSummary: "PROFESSIONAL SUMMARY",
         sheetExperience: "PROFESSIONAL EXPERIENCE",
         sheetEducation: "EDUCATION",
-        sheetSkills: "CORE COMPETENCIES & TECHNICAL SKILLS",
-        sheetCertifications: "LICENSES & CERTIFICATIONS",
+        sheetSkills: "CORE COMPETENCIES",
+        sheetCertifications: "CERTIFICATIONS & LICENSES",
         sheetLanguages: "LANGUAGES",
         sheetPublications: "PUBLICATIONS & RESEARCH",
-        majorAccomplishmentLabel: "Key Strategic Impact:",
+        majorAccomplishmentLabel: "Key Impact:",
         badgeLabel: "English (Translated)",
         present: "Present",
         emptyExperience: "No work experience added yet.",
@@ -766,9 +769,8 @@
     let historyIndex = -1;
     let currentTargetRoles = [];
     const MAX_TARGET_ROLES = 4;
-    const STORAGE_KEY = 'gaeks_cv_master_list_v13';
+    const STORAGE_KEY = 'gaeks_cv_master_list_v14';
 
-    // GET ALL PROFESSIONS IN FLAT ARRAY
     function getAllProfessions() {
       const all = [];
       Object.values(professionBank).forEach(arr => {
@@ -779,7 +781,6 @@
       return all;
     }
 
-    // LIVE SEARCH & SECTOR FILTER ENGINE
     function renderRoleSuggestions() {
       const cat = document.getElementById('role-category-filter').value;
       const searchVal = document.getElementById('role-bank-search').value.toLowerCase().trim();
@@ -886,7 +887,6 @@
       document.getElementById('roles-counter-badge').innerText = `${currentTargetRoles.length} / ${MAX_TARGET_ROLES} Disarankan`;
     }
 
-    // PEMISAH TARGET POSISI BERBEDA DI SETIAP TEMA
     function getRoleSeparatorForTheme() {
       if (activeLayout === 'prestige') {
         return `<span class="text-slate-400 font-normal mx-2 select-none">•</span>`;
@@ -899,7 +899,6 @@
       }
     }
 
-    // 1. DATA BLANK 100% KOSONG
     function createBlankCvObject(title = "CV Baru Tanpa Judul") {
       return {
         id: 'cv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
@@ -929,7 +928,6 @@
       };
     }
 
-    // 2. DATA SAMPEL DENY TRIAWAN
     function getDenyTriawanSampleData() {
       return {
         id: 'cv_sample_deny_triawan',
@@ -1451,7 +1449,7 @@
           <textarea rows="3" placeholder="${currentLang === 'en' ? 'Start bullets with strong action verbs...' : 'Gunakan baris baru untuk tiap poin pencapaian...'}" oninput="handleInputChange()" class="exp-desc w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none">${item.desc}</textarea>
         </div>
         <div>
-          <label class="block text-[10px] text-amber-400 font-semibold mb-0.5">${currentLang === 'en' ? 'Major Accomplishment / Key Impact (Rendered as Bold Statement)' : 'Pencapaian Utama (Diformat Sebagai Pernyataan Tebal Eksekutif)'}</label>
+          <label class="block text-[10px] text-amber-400 font-semibold mb-0.5">${currentLang === 'en' ? 'Key Impact Statement' : 'Pencapaian Utama (Diformat Sebagai Pernyataan Tebal Eksekutif)'}</label>
           <textarea rows="2" placeholder="${currentLang === 'en' ? 'Significant result or project impact...' : 'Proyek penting atau angka pencapaian strategis...'}" oninput="handleInputChange()" class="exp-acc w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none">${item.accomplishment || ''}</textarea>
         </div>
       `;
@@ -1570,7 +1568,6 @@
       renderCV();
     }
 
-    // FULL I18N
     function setLanguage(lang) {
       currentLang = lang;
       const btnId = document.getElementById('btn-lang-id');
@@ -1672,7 +1669,7 @@
       if (currentTargetRoles && currentTargetRoles.length > 0) {
         rolesString = currentTargetRoles.map(r => applyTranslation(r)).join(sep);
       } else {
-        rolesString = currentLang === 'en' ? 'Target Executive Roles / Professional Title' : 'Target Posisi / Profesi';
+        rolesString = currentLang === 'en' ? 'Target Position / Professional Roles' : 'Target Posisi / Profesi';
       }
 
       const email = document.getElementById('input-email').value;
@@ -1728,13 +1725,13 @@
         }
       }
 
-      // EXPERIENCES: DUA BARIS SEJAJAR + MAJOR ACCOMPLISHMENT PARAGRAF TEBAL
+      // EXPERIENCES: PEMISAH HALUS (SUBTLE HAIRLINE DIVIDER) ANTARA PEKERJAAN 1 DAN BERIKUTNYA
       let experiencesHTML = '';
       const expElements = document.querySelectorAll('.exp-item');
       if (expElements.length === 0) {
         experiencesHTML = `<p class="text-[11px] text-slate-400 italic">${lbl.emptyExperience}</p>`;
       } else {
-        expElements.forEach(el => {
+        expElements.forEach((el, index) => {
           const role = applyTranslation(el.querySelector('.exp-role').value);
           const comp = el.querySelector('.exp-company').value;
           const per = applyTranslation(el.querySelector('.exp-period').value);
@@ -1748,7 +1745,7 @@
             .map(l => `<li class="ml-4 list-disc text-slate-700 leading-normal">${highlightNumbers(applyTranslation(l.replace(/^[*-]\s*/, '')))}</li>`)
             .join('');
 
-          // MAJOR ACCOMPLISHMENT SBG PARAGRAF NARASI TEBAL (BEBAS BULLETS/DOT & BOX AI)
+          // MAJOR ACCOMPLISHMENT SBG PARAGRAF TEBAL EKSEKUTIF (BEBAS BULLETS/DOT)
           const accParagraph = acc.trim() ? `
             <div class="mt-1.5 text-[11px] text-slate-800 leading-normal pl-0.5">
               <strong class="font-bold text-slate-950">${lbl.majorAccomplishmentLabel}</strong> 
@@ -1756,10 +1753,11 @@
             </div>
           ` : '';
 
+          // PEMISAH HALUS (HAIRLINE BORDER) ANTAR ENTRY
           experiencesHTML += `
-            <div class="cv-entry-block mb-3 last:mb-1">
+            <div class="cv-entry-block mb-3.5 pb-3 border-b border-slate-200/70 last:border-b-0 last:pb-0 last:mb-1">
               <div class="flex justify-between items-baseline text-xs">
-                <span class="font-bold text-slate-950 text-[12.5px] tracking-tight">${role || (currentLang === 'en' ? 'Executive Role' : 'Jabatan')}</span>
+                <span class="font-bold text-slate-950 text-[12.5px] tracking-tight">${role || (currentLang === 'en' ? 'Position' : 'Jabatan')}</span>
                 <span class="font-semibold text-slate-700 text-[11px] shrink-0">${per}</span>
               </div>
               <div class="flex justify-between items-baseline text-[11px] text-slate-600 mb-1">
@@ -1773,7 +1771,7 @@
         });
       }
 
-      // EDUCATIONS
+      // EDUCATIONS: PEMISAH HALUS
       let educationsHTML = '';
       const eduElements = document.querySelectorAll('.edu-item');
       if (eduElements.length === 0) {
@@ -1786,7 +1784,7 @@
           const det = applyTranslation(el.querySelector('.edu-det').value);
 
           educationsHTML += `
-            <div class="cv-entry-block mb-2 last:mb-0.5 text-xs">
+            <div class="cv-entry-block mb-2 pb-1.5 border-b border-slate-200/50 last:border-b-0 last:pb-0 last:mb-0.5 text-xs">
               <div class="flex justify-between items-baseline">
                 <span class="font-bold text-slate-950 text-[12px]">${school || 'Universitas'}</span>
                 <span class="text-slate-600 font-medium text-[11px] shrink-0">${per}</span>
@@ -1883,7 +1881,7 @@
 
         ${(langRaw.trim() || pubRaw.trim()) ? `
           <div class="mt-3">
-            ${renderCategoryHeader(currentLang === 'en' ? 'ADDITIONAL INFORMATION' : 'INFORMASI TAMBAHAN')}
+            ${renderCategoryHeader(lbl.sheetLanguages)}
             <div class="text-[11px] text-slate-700 space-y-0.5">
               ${langRaw.trim() ? `<div><strong class="font-semibold text-slate-900">${lbl.sheetLanguages}:</strong> ${applyTranslation(langRaw)}</div>` : ''}
               ${pubRaw.trim() ? `<div><strong class="font-semibold text-slate-900">${lbl.sheetPublications}:</strong> ${applyTranslation(pubRaw)}</div>` : ''}
