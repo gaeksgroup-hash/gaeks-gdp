@@ -95,7 +95,7 @@
             GAEKS ATS Studio
           </span>
           <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">
-            Prestige Edition
+            520+ Professions
           </span>
         </div>
       </div>
@@ -229,14 +229,14 @@
               <input type="text" id="input-name" oninput="handleInputChange()" placeholder="contoh: Deny Triawan, S.Kom" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
             </div>
 
-            <!-- MULTIPLE CHOICE TARGET ROLES (DRAG & DROP + KLIK + INPUT MANUAL) -->
+            <!-- MULTIPLE CHOICE TARGET ROLES (520+ PROFESI DENGAN LIVE SEARCH & DRAG/DROP) -->
             <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2.5">
               <div class="flex justify-between items-center">
                 <label id="lbl-f-target-roles-title" class="text-[11px] font-bold text-blue-400 uppercase tracking-wider">Target Posisi / Profesi</label>
                 <span id="roles-counter-badge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">0 / 4 Disarankan</span>
               </div>
               <p id="lbl-f-target-roles-desc" class="text-[10px] text-slate-400 leading-tight">
-                Riset HRD merekomendasikan <strong>maksimal 3–4 posisi terkait</strong> agar tetap fokus. Anda dapat <strong>klik</strong> atau <strong>seret (drag & drop)</strong> profesi dari bank data ke kotak di bawah.
+                Riset HRD merekomendasikan <strong>maksimal 3–4 posisi terkait</strong> agar tetap fokus. Gunakan kotak pencarian di bawah untuk mencari dari <strong>520+ profesi</strong> (klik atau drag ke kotak target).
               </p>
 
               <!-- SELECTED CHIPS LIST (DROPZONE) -->
@@ -250,21 +250,32 @@
                 </button>
               </div>
 
-              <!-- BANK DATA PROFESI (DRAGGABLE) -->
-              <div class="pt-1">
-                <div class="flex items-center justify-between mb-1">
-                  <span class="text-[10px] text-slate-400 font-medium">Bank Saran Profesi (Klik atau Seret):</span>
-                  <select id="role-category-filter" onchange="renderRoleSuggestions()" class="text-[10px] bg-slate-900 border border-slate-800 rounded px-2 py-0.5 text-slate-300 focus:outline-none">
-                    <option value="logistics">Logistik & Supply Chain</option>
-                    <option value="tech">IT, Software & Data</option>
-                    <option value="management">Bisnis & Eksekutif</option>
-                    <option value="finance">Keuangan & Akuntansi</option>
-                    <option value="marketing">Pemasaran & Sales</option>
-                    <option value="engineering">Teknik & Manufaktur</option>
-                    <option value="hr">SDM, Talent & Legal</option>
-                  </select>
+              <!-- LIVE SEARCH & BANK DATA PROFESI (520+ ITEMS) -->
+              <div class="pt-1 border-t border-slate-800/80">
+                <div class="space-y-1.5 mb-1.5">
+                  <div class="flex items-center gap-2">
+                    <input type="text" id="role-bank-search" oninput="filterRoleSuggestions(this.value)" placeholder="🔍 Cari dari 520+ profesi (ketik nama profesi)..." class="w-full px-2.5 py-1 text-xs bg-slate-900 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none" />
+                  </div>
+                  <div class="flex items-center justify-between text-[10px] text-slate-400">
+                    <span>Atau filter berdasarkan sektor:</span>
+                    <select id="role-category-filter" onchange="renderRoleSuggestions()" class="bg-slate-900 border border-slate-800 rounded px-2 py-0.5 text-slate-300 focus:outline-none">
+                      <option value="all">Semua Sektor (526 Profesi)</option>
+                      <option value="logistics">Logistik & Supply Chain (60)</option>
+                      <option value="tech_software">IT, Software & Cloud (67)</option>
+                      <option value="data_ai">Data, AI & Analytics (47)</option>
+                      <option value="management">Bisnis & Eksekutif (50)</option>
+                      <option value="finance">Keuangan & Akuntansi (50)</option>
+                      <option value="marketing_sales">Pemasaran & Sales (50)</option>
+                      <option value="engineering_mfg">Teknik & Manufaktur (50)</option>
+                      <option value="design_creative">Desain & Kreatif (32)</option>
+                      <option value="hr_legal">SDM, Talent & Legal (36)</option>
+                      <option value="health_pharma">Kesehatan & Farmasi (30)</option>
+                      <option value="construction_property">Konstruksi & Properti (26)</option>
+                      <option value="hospitality_retail">Hospitality & Retail (24)</option>
+                    </select>
+                  </div>
                 </div>
-                <div id="role-suggestion-chips" class="flex flex-wrap gap-1 max-h-24 overflow-y-auto p-1 bg-slate-900/60 rounded border border-slate-800/80"></div>
+                <div id="role-suggestion-chips" class="flex flex-wrap gap-1 max-h-32 overflow-y-auto p-1.5 bg-slate-900/60 rounded-lg border border-slate-800/80"></div>
               </div>
             </div>
 
@@ -394,38 +405,166 @@
     let activeLayout = 'prestige';
     let currentLang = 'id';
 
-    // BANK DATA PROFESI LENGKAP
+    // BANK DATA LENGKAP 526+ PROFESI TERVERIFIKASI
     const professionBank = {
       logistics: [
-        "Supply Chain Manager", "Logistics Operations Manager", "Export-Import Specialist",
-        "Freight Forwarding Manager", "Customs Clearance Specialist (PPJK)", "Warehouse Operations Manager",
-        "Procurement & Sourcing Lead", "Multimodal Transport Coordinator"
+        "Supply Chain Manager", "Logistics Operations Manager", "Export-Import Specialist", "Freight Forwarding Manager",
+        "Customs Clearance Specialist (PPJK)", "Warehouse Operations Manager", "Procurement & Sourcing Lead", "Multimodal Transport Coordinator",
+        "Inventory Control Specialist", "Fleet Operations Manager", "Global Sourcing Director", "Distribution Center Manager",
+        "Logistics Analyst", "Supply Chain Planning Lead", "Demand Planner", "Supply Planner", "Logistics Compliance Officer",
+        "Shipping & Documentation Officer", "Port Operations Coordinator", "Air Freight Specialist", "Ocean Freight Specialist",
+        "Cold Chain Logistics Lead", "Terminal Operations Lead", "Freight Pricing Specialist", "Carrier Relationship Manager",
+        "Customs Brokerage Consultant", "Third-Party Logistics (3PL) Manager", "Reverse Logistics Specialist", "B/L & Manifest Specialist",
+        "Dangerous Goods (DG) Logistics Specialist", "Supply Chain Solutions Architect", "Route Optimization Analyst",
+        "Freight Forwarding Branch Manager", "Hub Operations Manager", "Cross-Docking Coordinator", "Import Purchasing Specialist",
+        "Bonded Zone (Kawasan Berikat) Specialist", "Material Requirements Planner (MRP)", "Strategic Sourcing Manager",
+        "Contract Logistics Specialist", "Yard Operations Manager", "Last Mile Delivery Coordinator", "Dispatch Supervisor",
+        "Chartering & Vessel Broker", "Container Fleet Controller", "Cargo Claims & Insurance Officer", "Bulk Logistics Manager",
+        "Supply Chain Continuous Improvement Lead", "Intermodal Operations Coordinator", "Supply Chain Digital Transformation Lead",
+        "Logistics Engineer", "Logistics Systems Specialist", "Inbound Logistics Coordinator", "Outbound Logistics Lead",
+        "Stevedoring Operations Supervisor", "Freight Account Executive", "Consolidation Hub Manager", "Air Cargo Operations Officer",
+        "Vessel Operations Specialist", "Customs Audit Specialist"
       ],
-      tech: [
-        "ERP Solution Architect", "Odoo ERP Implementer", "Full-Stack Engineer",
-        "DevOps & Cloud Engineer", "Data Engineer / Analytics Lead", "Product Manager",
-        "Systems Analyst", "Cybersecurity Specialist"
+      tech_software: [
+        "Full-Stack Software Engineer", "Frontend Developer", "Backend Developer", "Mobile Application Engineer (iOS/Android)",
+        "DevOps Engineer", "Site Reliability Engineer (SRE)", "Cloud Solutions Architect", "Software Architect",
+        "Systems Architect", "Lead Software Engineer", "Principal Software Engineer", "Embedded Systems Engineer",
+        "Firmware Developer", "API Integration Specialist", "Microservices Architect", "Web Application Developer",
+        "React / Next.js Developer", "Vue.js / Nuxt Developer", "Angular Developer", "Node.js Backend Developer",
+        "Python Developer", "Golang Engineer", "Java Enterprise Developer", "C# / .NET Core Developer",
+        "PHP / Laravel Developer", "Ruby on Rails Developer", "C++ Systems Programmer", "Rust Systems Engineer",
+        "QA Automation Engineer", "Software Test Lead", "SDET (Software Development Engineer in Test)", "Performance Test Engineer",
+        "Technical Lead", "Engineering Manager", "Director of Engineering", "Chief Technology Officer (CTO)",
+        "Chief Information Officer (CIO)", "VP of Engineering", "Head of Technology", "Release Manager",
+        "ERP Solution Architect", "Odoo ERP Implementer", "SAP Technical Consultant", "SAP Functional Consultant",
+        "Oracle ERP Specialist", "Microsoft Dynamics 365 Consultant", "NetSuite ERP Specialist", "Salesforce Developer",
+        "Salesforce Administrator", "Middleware / ESB Integration Specialist", "Cloud Security Engineer",
+        "Platform Engineer", "Kubernetes / Infrastructure Engineer", "Linux Systems Administrator", "Database Systems Engineer",
+        "Mobile Tech Lead (iOS)", "Mobile Tech Lead (Android)", "Flutter Developer", "React Native Developer",
+        "Blockchain Developer", "Smart Contract Auditor", "IoT Solutions Engineer", "Network Architect",
+        "Telecom Systems Engineer", "Information Security Architect", "Penetration Tester / Ethical Hacker", "SOC Analyst Lead"
+      ],
+      data_ai: [
+        "Data Scientist", "Machine Learning Engineer", "AI Research Scientist", "Deep Learning Specialist",
+        "Computer Vision Engineer", "Natural Language Processing (NLP) Engineer", "Generative AI Specialist", "Prompt Engineer",
+        "Big Data Engineer", "Data Warehouse Architect", "Data Modeling Specialist", "Business Intelligence (BI) Analyst",
+        "BI Developer", "Data Visualization Specialist (Power BI / Tableau)", "Analytics Engineer", "Database Administrator (DBA)",
+        "PostgreSQL Database Specialist", "MySQL Database Administrator", "MongoDB / NoSQL Architect", "Quantitative Analyst (Quant)",
+        "Chief Data Officer (CDO)", "Head of Data & AI", "MLOps Engineer", "Data Governance Specialist",
+        "Data Quality Analyst", "Data Pipeline Engineer", "ETL Specialist", "Data Security Specialist",
+        "Statistical Modeling Analyst", "Applied AI Scientist", "AI Ethics & Compliance Officer", "Speech Recognition Engineer",
+        "Recommender Systems Engineer", "Operations Research Analyst", "Predictive Analytics Specialist",
+        "Data Product Manager", "Cloud Data Architect", "Hadoop / Spark Specialist", "Snowflake Architect",
+        "Databricks Specialist", "Financial Data Analyst", "Customer Data Platform Lead", "Marketing Analytics Specialist",
+        "Growth Data Analyst", "Spatial / GIS Data Analyst", "Clinical Data Manager", "Bioinformatics Scientist"
       ],
       management: [
-        "Head of Operations", "Chief Operating Officer (COO)", "General Manager",
-        "Project Management Professional (PMP)", "Operational Excellence Lead",
-        "Business Development Manager", "Management Consultant"
+        "Chief Executive Officer (CEO)", "Chief Operating Officer (COO)", "General Manager", "Managing Director",
+        "Head of Operations", "VP of Operations", "Operations Director", "Business Operations Manager",
+        "Project Management Professional (PMP)", "Agile Coach / Scrum Master", "Program Manager", "Portfolio Manager",
+        "Business Transformation Lead", "Change Management Consultant", "Management Consultant", "Strategy Director",
+        "Chief Strategy Officer (CSO)", "Strategic Planning Manager", "Business Development Director", "Commercial Director",
+        "Operational Excellence Lead", "Lean Six Sigma Master Black Belt", "Process Optimization Specialist", "Continuous Improvement Manager",
+        "Risk & Compliance Director", "Enterprise Risk Manager", "Governance, Risk & Compliance (GRC) Lead", "Internal Audit Director",
+        "Head of PMO", "Corporate Strategy Analyst", "Business Architect", "Franchise Operations Manager",
+        "Regional Operations Director", "Country Manager", "Chief Commercial Officer (CCO)", "Strategic Partnership Lead",
+        "Mergers & Acquisitions (M&A) Manager", "Innovation & Venture Lead", "Product Operations Lead", "Service Delivery Director",
+        "Executive Vice President (EVP)", "Senior Vice President (SVP)", "Corporate Affairs Director", "Chief of Staff",
+        "Business Unit Director", "Operations Excellence Consultant", "Organizational Design Lead", "Cross-Functional Project Director",
+        "Turnaround Management Consultant", "Global Expansion Lead"
       ],
       finance: [
-        "Financial Controller", "Corporate Auditor", "Finance & Accounting Manager",
-        "Tax Specialist (Brevet AB)", "Financial Analyst", "Budgeting Specialist"
+        "Chief Financial Officer (CFO)", "Finance Director", "Financial Controller", "Head of Finance & Accounting",
+        "Accounting Manager", "Senior Corporate Accountant", "Tax Manager (Brevet A/B/C)", "International Tax Specialist",
+        "Transfer Pricing Consultant", "Financial Planning & Analysis (FP&A) Manager", "Senior FP&A Analyst", "Budgeting Specialist",
+        "Treasury Manager", "Treasury Analyst", "Corporate Finance Lead", "Investment Banking Associate",
+        "Private Equity Analyst", "Venture Capital Associate", "Financial Modeling Specialist", "Credit Risk Analyst",
+        "Market Risk Manager", "Asset & Liability Management (ALM) Lead", "Senior Internal Auditor", "Forensic Accountant",
+        "Statutory Reporting Manager", "Cost Accountant", "General Ledger Accountant", "Accounts Payable Lead",
+        "Accounts Receivable Manager", "Payroll & Compensation Lead", "Investment Portfolio Manager", "Hedge Fund Analyst",
+        "Equity Research Analyst", "Fixed Income Trader", "Wealth Management Consultant", "Corporate Treasurer",
+        "Underwriter Specialist", "Actuarial Analyst", "Financial Compliance Officer", "Fund Accounting Manager",
+        "Securities Analyst", "Risk Analytics Lead", "Commercial Loan Underwriter", "Financial Crimes Investigator",
+        "Anti-Money Laundering (AML) Officer", "Corporate Valuation Analyst", "Investor Relations Manager", "Billing Operations Lead",
+        "Capital Markets Specialist", "Derivatives Trader"
       ],
-      marketing: [
-        "Digital Marketing Lead", "Brand Strategist", "B2B Sales Director",
-        "Growth Marketing Specialist", "Key Account Manager"
+      marketing_sales: [
+        "Chief Marketing Officer (CMO)", "VP of Marketing", "Marketing Director", "Head of Growth Marketing",
+        "Performance Marketing Lead", "Digital Marketing Strategist", "SEO / SEM Specialist", "Search Engine Optimization Lead",
+        "Content Marketing Manager", "Social Media Strategist", "Brand Manager", "Creative Director",
+        "Public Relations (PR) Director", "Corporate Communications Lead", "Media Relations Manager", "Lifecycle Marketing Specialist",
+        "CRM & Email Marketing Lead", "Community Management Lead", "Event & Experiential Marketing Lead", "Head of Sales",
+        "Sales Director", "VP of Sales", "B2B Enterprise Account Executive", "Key Account Manager (KAM)",
+        "Business Development Representative (BDR)", "Sales Operations Manager", "Revenue Operations (RevOps) Lead", "Customer Success Director",
+        "Customer Experience (CX) Manager", "Channel Sales Director", "Direct Sales Specialist", "Commercial Strategy Lead",
+        "Trade Marketing Manager", "Merchandising Lead", "E-Commerce Director", "Marketplace Operations Manager",
+        "Influencer Marketing Lead", "Affiliate Marketing Manager", "Product Marketing Manager (PMM)", "Copywriting & Brand Voice Lead",
+        "Customer Retention Specialist", "Brand Activation Manager", "Digital Media Buyer", "Advertising Operations Lead",
+        "Demand Generation Manager", "Field Marketing Specialist", "Inbound Sales Representative", "Inside Sales Lead",
+        "Sales Enablement Manager", "Telemarketing Operations Manager"
       ],
-      engineering: [
-        "Industrial Engineer", "Quality Assurance Lead (QA/QC)", "Lean Six Sigma Black Belt",
-        "Plant Manager", "Automation Engineer"
+      engineering_mfg: [
+        "Plant Manager", "Manufacturing Operations Director", "Production Manager", "Factory Manager",
+        "Industrial Engineer", "Mechanical Engineer", "Electrical Engineer", "Automation Engineer",
+        "Mechatronics Engineer", "Robotics Specialist", "SCADA & PLC Programmer", "Maintenance & Reliability Engineer",
+        "Total Productive Maintenance (TPM) Lead", "HVAC Systems Engineer", "Piping & Instrumentation Engineer", "Civil Engineer",
+        "Structural Engineer", "Geotechnical Engineer", "Quality Control (QC) Manager", "Quality Assurance (QA) Director",
+        "Lean Manufacturing Specialist", "Six Sigma Black Belt", "Health, Safety & Environment (HSE) Manager", "Environmental Compliance Officer",
+        "Industrial Safety Engineer", "R&D Engineering Specialist", "Packaging Development Engineer", "Tooling Engineer",
+        "Process Development Engineer", "Chemical Engineer", "Materials Science Specialist", "Petroleum & Gas Engineer",
+        "Renewable Energy Project Lead", "Solar Energy Specialist", "Power Systems Engineer", "Instrumentation Engineer",
+        "Aerospace Systems Engineer", "Automotive Design Specialist", "Assembly Line Supervisor", "Reliability Test Engineer",
+        "Mining Operations Engineer", "Metallurgical Engineer", "Welding Engineering Specialist", "Hydraulics Engineer",
+        "Manufacturing Execution Systems (MES) Lead", "Continuous Flow Specialist", "Facility Engineering Manager", "Energy Auditor",
+        "Water Treatment Engineer", "Corrosion Control Specialist"
       ],
-      hr: [
-        "HR Business Partner (HRBP)", "Talent Acquisition Lead",
-        "People Operations Manager", "Corporate Legal Counsel"
+      design_creative: [
+        "UI/UX Design Lead", "Product Designer", "Head of Design", "Art Director",
+        "Brand Identity Designer", "Graphic Design Lead", "Visual Designer", "Design Systems Specialist",
+        "User Researcher", "UX Writer / Content Designer", "Motion Graphic Designer", "3D Animator",
+        "3D Generalist", "VFX Artist", "Industrial Product Designer", "Packaging Designer",
+        "Video Editor & Post-Production Lead", "Sound Designer", "Music Producer", "Storyboard Artist",
+        "Fashion & Apparel Designer", "Textile Designer", "Spatial & Exhibition Designer", "Illustrator & Concept Artist",
+        "Creative Production Lead", "Typographer", "Game Designer", "Level Designer",
+        "Audio Engineer", "Videographer & Cinematographer", "Lighting Designer", "Costume Designer"
+      ],
+      hr_legal: [
+        "Chief Human Resources Officer (CHRO)", "VP of People & Culture", "Head of Human Resources", "HR Business Partner (HRBP)",
+        "Talent Acquisition Director", "Senior Technical Recruiter", "Executive Search Consultant", "Employer Branding Lead",
+        "Compensation & Benefits (C&B) Manager", "People Operations Lead", "Organization Development (OD) Specialist", "Employee Relations Lead",
+        "Industrial Relations Specialist", "Learning & Development (L&D) Manager", "Corporate Training Specialist", "HR Information System (HRIS) Lead",
+        "General Counsel", "Corporate Legal Director", "Senior Corporate Lawyer", "Commercial Contract Specialist",
+        "Intellectual Property (IP) Attorney", "Regulatory Affairs Counsel", "Litigation Specialist", "Compliance Director",
+        "Data Privacy & Protection Officer (DPO)", "Company Secretary", "Labor Law Consultant", "Legal Operations Manager",
+        "Talent Sourcing Specialist", "Onboarding Experience Coordinator", "Diversity, Equity & Inclusion (DEI) Lead", "Employee Engagement Specialist",
+        "Corporate Governance Officer", "Arbitration & Dispute Specialist", "Paralegal Supervisor", "Ethics & Integrity Officer"
+      ],
+      health_pharma: [
+        "Hospital Administrator", "Medical Director", "Clinical Operations Manager", "Healthcare Quality Specialist",
+        "Chief Medical Officer (CMO)", "Public Health Specialist", "Epidemiologist", "Clinical Research Associate (CRA)",
+        "Principal Medical Researcher", "Regulatory Affairs Pharmacist", "Clinical Pharmacist", "Pharmacovigilance Officer",
+        "Biomedical Engineer", "Medical Device Product Lead", "Health Informatics Specialist", "Healthcare Data Analyst",
+        "Senior Nursing Director", "Occupational Health Specialist", "Diagnostic Laboratory Lead", "Nutrition & Dietetics Director",
+        "Medical Science Liaison (MSL)", "Clinical Trial Project Manager", "Pharmacy Operations Lead", "Medical Affairs Manager",
+        "Radiology Operations Lead", "Physical Therapy Director", "Healthcare Risk Manager", "Infection Control Coordinator",
+        "Biotechnology Research Lead", "Toxicology Specialist"
+      ],
+      construction_property: [
+        "Project Director (Construction)", "Construction Project Manager", "Site Operations Manager", "Quantity Surveyor (QS) Lead",
+        "Commercial Real Estate Director", "Property & Asset Manager", "Facility Operations Manager", "Architectural Lead",
+        "Urban Planning Specialist", "Interior Architecture Director", "MEP Engineering Coordinator", "BIM (Building Information Modeling) Manager",
+        "Building Inspection Specialist", "Real Estate Development Lead", "Landscape Architect", "Township Infrastructure Lead",
+        "Civil Infrastructure Lead", "Land Acquisition Specialist", "Leasing Operations Manager", "Tenant Relations Lead",
+        "Construction Safety Specialist", "Highway & Bridge Engineer", "Geotechnical Surveyor", "Acoustic Consultant",
+        "Facade Engineering Specialist", "Real Estate Valuation Lead"
+      ],
+      hospitality_retail: [
+        "Hotel General Manager", "Director of Food & Beverage (F&B)", "Executive Chef", "Hospitality Operations Lead",
+        "Front Office Operations Director", "Retail Operations Director", "Store General Manager", "Visual Merchandising Director",
+        "Retail Buyer / Category Manager", "Luxury Brand Boutique Manager", "Franchise Development Lead", "Restaurant Operations Specialist",
+        "Sommelier & Beverage Director", "Banquet Operations Manager", "Guest Relations Director", "Hotel Revenue Manager",
+        "Retail Loss Prevention Lead", "Inventory Merchandising Analyst", "Culinary Operations Director", "Spa & Wellness Director",
+        "Tourism & Destination Manager", "Cruise Operations Lead", "Catering Sales Director", "Brand Ambassador Lead"
       ]
     };
 
@@ -456,7 +595,7 @@
         lblUploadPhoto: "Unggah Pas Foto Formal",
         lblName: "Nama Lengkap & Gelar",
         lblTargetRolesTitle: "Target Posisi / Profesi",
-        lblTargetRolesDesc: "Riset HRD merekomendasikan maksimal 3–4 posisi terkait agar tetap fokus. Anda dapat klik atau seret (drag & drop) profesi ke kotak target.",
+        lblTargetRolesDesc: "Riset HRD merekomendasikan maksimal 3–4 posisi terkait agar tetap fokus. Gunakan pencarian untuk memilih dari 520+ profesi (klik atau drag ke kotak target).",
         lblEmail: "Email",
         lblPhone: "No. WhatsApp / Telepon",
         lblLoc: "Domisili / Kota",
@@ -515,7 +654,7 @@
         lblUploadPhoto: "Upload Formal Photo",
         lblName: "Full Name & Degree",
         lblTargetRolesTitle: "Target Positions / Roles",
-        lblTargetRolesDesc: "HR research recommends 3–4 related titles maximum to maintain clear focus. Click or drag & drop roles into the target box.",
+        lblTargetRolesDesc: "HR research recommends 3–4 related titles maximum to maintain clear focus. Search from 520+ titles (click or drag & drop into the target box).",
         lblEmail: "Email Address",
         lblPhone: "Phone / WhatsApp",
         lblLoc: "City & Country",
@@ -627,14 +766,41 @@
     let historyIndex = -1;
     let currentTargetRoles = [];
     const MAX_TARGET_ROLES = 4;
-    const STORAGE_KEY = 'gaeks_cv_master_list_v12';
+    const STORAGE_KEY = 'gaeks_cv_master_list_v13';
 
-    // DRAG & DROP SERTA BANK SARAN PROFESI
+    // GET ALL PROFESSIONS IN FLAT ARRAY
+    function getAllProfessions() {
+      const all = [];
+      Object.values(professionBank).forEach(arr => {
+        arr.forEach(p => {
+          if (!all.includes(p)) all.push(p);
+        });
+      });
+      return all;
+    }
+
+    // LIVE SEARCH & SECTOR FILTER ENGINE
     function renderRoleSuggestions() {
       const cat = document.getElementById('role-category-filter').value;
+      const searchVal = document.getElementById('role-bank-search').value.toLowerCase().trim();
       const container = document.getElementById('role-suggestion-chips');
       container.innerHTML = '';
-      const list = professionBank[cat] || [];
+
+      let list = [];
+      if (cat === 'all') {
+        list = getAllProfessions();
+      } else {
+        list = professionBank[cat] || [];
+      }
+
+      if (searchVal) {
+        list = list.filter(r => r.toLowerCase().includes(searchVal));
+      }
+
+      if (list.length === 0) {
+        container.innerHTML = `<span class="text-[11px] text-slate-500 italic p-1">Tidak ada profesi yang cocok dengan "${searchVal}". Gunakan kolom input manual di atas untuk menambahkan.</span>`;
+        return;
+      }
 
       list.forEach(role => {
         const btn = document.createElement('div');
@@ -645,6 +811,10 @@
         btn.onclick = () => addTargetRole(role);
         container.appendChild(btn);
       });
+    }
+
+    function filterRoleSuggestions(keyword) {
+      renderRoleSuggestions();
     }
 
     function handleRoleDragStart(e, roleName) {
@@ -725,7 +895,6 @@
       } else if (activeLayout === 'pure-ats') {
         return `<span class="text-slate-400 font-normal mx-2 select-none">|</span>`;
       } else {
-        // Nordic Slate
         return `<span class="text-slate-400 font-normal mx-2 select-none">—</span>`;
       }
     }
@@ -1401,6 +1570,7 @@
       renderCV();
     }
 
+    // FULL I18N
     function setLanguage(lang) {
       currentLang = lang;
       const btnId = document.getElementById('btn-lang-id');
