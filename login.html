@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Masuk / Daftar Akun | GAEKS Digital</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="auth.js"></script>
+  <style> body { font-family: 'Plus Jakarta Sans', sans-serif; } </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4 selection:bg-blue-600 selection:text-white">
+
+  <div class="max-w-4xl w-full bg-slate-900 rounded-3xl border border-slate-800 shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[580px]">
+    
+    <!-- LEFT SIDEBAR: BRAND SHOWCASE -->
+    <div class="lg:col-span-5 bg-gradient-to-br from-slate-900 via-blue-950/40 to-slate-950 p-8 sm:p-10 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-800">
+      <div class="space-y-6">
+        <a href="index.html" class="flex items-center space-x-2.5">
+          <span class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-extrabold text-white text-sm shadow-md shadow-blue-500/30">G</span>
+          <span class="font-extrabold text-lg bg-gradient-to-r from-blue-400 via-indigo-300 to-white bg-clip-text text-transparent">
+            GAEKS DIGITAL
+          </span>
+        </a>
+
+        <div class="space-y-2 pt-4">
+          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-950 text-blue-300 border border-blue-800">Satu Akun Terpadu</span>
+          <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight leading-snug">
+            Akses Seluruh Solusi Karier & SaaS Eksekutif
+          </h2>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Kelola pembuatan Resume ATS standar internasional, materi presentasi eksekutif, dan arsitektur bisnis modern.
+          </p>
+        </div>
+
+        <div class="space-y-2.5 pt-2 text-xs text-slate-300">
+          <div class="flex items-center gap-2">
+            <span class="text-emerald-400 font-bold">✓</span>
+            <span>ATS CV Studio dengan 520+ bank profesi</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-emerald-400 font-bold">✓</span>
+            <span>15 Varian tema visual eksekutif</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-emerald-400 font-bold">✓</span>
+            <span>Verifikasi email resmi dari no-reply@gaeks.com</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-8 text-[11px] text-slate-500">
+        &copy; 2026 GAEKS Group. All rights reserved.
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: AUTH FORMS -->
+    <div class="lg:col-span-7 p-8 sm:p-10 flex flex-col justify-between bg-slate-900/60">
+      
+      <div>
+        <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800 mb-6 text-xs font-bold">
+          <button id="tab-login" onclick="setAuthTab('login')" class="flex-1 py-2 rounded-lg bg-blue-600 text-white transition">
+            Masuk ke Akun
+          </button>
+          <button id="tab-register" onclick="setAuthTab('register')" class="flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition">
+            Daftar Akun Baru
+          </button>
+        </div>
+
+        <!-- GOOGLE 1-CLICK AUTH BUTTON -->
+        <div class="space-y-4 mb-5">
+          <button type="button" onclick="startGoogleAuth()" class="w-full py-3 px-4 bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs sm:text-sm rounded-xl flex items-center justify-center gap-3 transition shadow-lg shadow-black/30">
+            <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+            <span id="label-google-btn">Lanjutkan dengan Akun Google</span>
+          </button>
+
+          <div class="flex items-center gap-3 text-slate-600 text-xs">
+            <hr class="flex-grow border-slate-800" />
+            <span class="text-[11px] text-slate-400">atau dengan alamat email</span>
+            <hr class="flex-grow border-slate-800" />
+          </div>
+        </div>
+
+        <div id="status-alert" class="hidden p-3.5 rounded-xl text-xs mb-4"></div>
+
+        <!-- FORM LOGIN -->
+        <form id="form-login" onsubmit="submitLogin(event)" class="space-y-3.5">
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Alamat Email</label>
+            <input type="email" id="login-email" required placeholder="nama@email.com" class="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:border-blue-500 focus:outline-none transition" />
+          </div>
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label class="text-[11px] font-semibold text-slate-400">Kata Sandi</label>
+              <a href="https://wa.me/6285608561745?text=Halo%20Admin%20GAEKS%2C%20saya%20butuh%20bantuan%20reset%20kata%20sandi" target="_blank" class="text-[10px] text-blue-400 hover:underline">Lupa sandi?</a>
+            </div>
+            <input type="password" id="login-pass" required placeholder="••••••••" class="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:border-blue-500 focus:outline-none transition" />
+          </div>
+          <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm rounded-xl transition shadow-lg shadow-blue-500/20">
+            Masuk ke Akun Saya &rarr;
+          </button>
+        </form>
+
+        <!-- FORM DAFTAR DENGAN OTP EMAIL -->
+        <div id="form-register" class="hidden space-y-4">
+          <div id="reg-step-request" class="space-y-3.5">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-400 mb-1">Nama Lengkap</label>
+              <input type="text" id="reg-name" required placeholder="Alexander Pratama" class="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:border-blue-500 focus:outline-none transition" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-400 mb-1">Alamat Email</label>
+              <input type="email" id="reg-email" required placeholder="nama@email.com" class="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:border-blue-500 focus:outline-none transition" />
+              <p class="text-[10px] text-slate-500 mt-1">Kami akan mengirimkan 6 digit kode verifikasi resmi dari <strong>no-reply@gaeks.com</strong>.</p>
+            </div>
+            <button type="button" id="btn-send-otp" onclick="requestOtpCode()" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm rounded-xl transition shadow-lg shadow-blue-500/20">
+              Kirim 6 Digit Kode Verifikasi ke Email &rarr;
+            </button>
+          </div>
+
+          <div id="reg-step-verify" class="hidden space-y-3.5">
+            <div class="p-3 bg-blue-950/40 border border-blue-800/60 rounded-xl text-xs text-blue-300">
+              Kode verifikasi telah dikirimkan ke <strong id="target-email-badge" class="text-white"></strong>. Periksa kotak masuk atau spam email Anda.
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-center text-slate-300 mb-1">Masukkan 6 Digit Kode Verifikasi</label>
+              <input type="text" id="reg-otp-code" maxlength="6" placeholder="123456" class="w-full px-3 py-3 text-center text-xl tracking-[10px] font-mono font-black bg-slate-950 border border-blue-500 rounded-xl text-white focus:outline-none shadow-inner" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-400 mb-1">Buat Kata Sandi Akun</label>
+              <input type="password" id="reg-password" placeholder="Minimal 6 karakter" class="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:border-blue-500 focus:outline-none transition" />
+            </div>
+            <button type="button" id="btn-submit-verify" onclick="submitOtpVerification()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm rounded-xl transition shadow-lg shadow-emerald-500/20">
+              Verifikasi Kode & Masuk Sekarang &rarr;
+            </button>
+            <div class="text-center pt-1">
+              <button type="button" onclick="backToStep1()" class="text-xs text-slate-400 hover:text-blue-400 transition">← Ganti email atau kirim ulang kode</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="pt-6 border-t border-slate-800 flex justify-between items-center text-xs text-slate-500">
+        <a href="index.html" class="hover:text-slate-300 transition">&larr; Kembali ke Beranda</a>
+        <a href="pricing.html" class="hover:text-slate-300 transition">Lihat Paket & Layanan</a>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.location.hash.includes('access_token=')) {
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const accessToken = hashParams.get('access_token');
+        if (accessToken) {
+          showAlert("✓ Berhasil terhubung ke Google! Menyiapkan sesi Anda...", true);
+          fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+            headers: { Authorization: `Bearer ${accessToken}` }
+          })
+          .then(r => r.json())
+          .then(profile => {
+            if (profile && profile.email) {
+              GaeksAuth.processVerifiedGoogleUser(profile.email, profile.name, profile.picture);
+              window.location.href = 'cv.html';
+            }
+          })
+          .catch(err => {
+            showAlert("Gagal mengambil profil dari Google. Silakan coba lagi.");
+          });
+          return;
+        }
+      }
+
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('tab') === 'register') {
+        setAuthTab('register');
+      }
+    });
+
+    function setAuthTab(tab) {
+      const tabL = document.getElementById('tab-login');
+      const tabR = document.getElementById('tab-register');
+      const formL = document.getElementById('form-login');
+      const formR = document.getElementById('form-register');
+      const gBtnText = document.getElementById('label-google-btn');
+      hideAlert();
+
+      if (tab === 'login') {
+        tabL.className = "flex-1 py-2 rounded-lg bg-blue-600 text-white transition";
+        tabR.className = "flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition";
+        formL.classList.remove('hidden');
+        formR.classList.add('hidden');
+        gBtnText.innerText = "Lanjutkan dengan Akun Google";
+      } else {
+        tabR.className = "flex-1 py-2 rounded-lg bg-blue-600 text-white transition";
+        tabL.className = "flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition";
+        formR.classList.remove('hidden');
+        formL.classList.add('hidden');
+        gBtnText.innerText = "Daftar Cepat dengan Akun Google";
+      }
+    }
+
+    function showAlert(msg, isSuccess = false) {
+      const box = document.getElementById('status-alert');
+      box.classList.remove('hidden');
+      if (isSuccess) {
+        box.className = "p-3.5 rounded-xl text-xs bg-emerald-950/80 border border-emerald-800 text-emerald-300 font-medium mb-4";
+      } else {
+        box.className = "p-3.5 rounded-xl text-xs bg-rose-950/80 border border-rose-800 text-rose-300 font-medium mb-4";
+      }
+      box.innerHTML = msg;
+    }
+
+    function hideAlert() {
+      document.getElementById('status-alert').classList.add('hidden');
+    }
+
+    function submitLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const pass = document.getElementById('login-pass').value.trim();
+      if (!email || !pass) {
+        showAlert("Silakan masukkan email dan kata sandi.");
+        return;
+      }
+      GaeksAuth.loginWithEmail(email, pass);
+      window.location.href = 'cv.html';
+    }
+
+    function startGoogleAuth() {
+      const clientId = "41832472270-6r8iudma1eho6kn3q6rs4rl7b9ank7n4.apps.googleusercontent.com";
+      const redirectUri = window.location.origin + '/login.html';
+      const googleOAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=email%20profile%20openid&prompt=select_account`;
+      
+      const w = 500, h = 600;
+      const left = (window.screen.width / 2) - (w / 2);
+      const top = (window.screen.height / 2) - (h / 2);
+      const popup = window.open(googleOAuthUrl, "GoogleLoginPopup", `width=${w},height=${h},top=${top},left=${left}`);
+      
+      if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+        window.location.href = googleOAuthUrl;
+      }
+    }
+
+    let storedEmail = '';
+    let storedName = '';
+
+    async function requestOtpCode() {
+      const name = document.getElementById('reg-name').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const btn = document.getElementById('btn-send-otp');
+
+      if (!name || !email) {
+        showAlert("Silakan lengkapi nama dan alamat email.");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "⏳ Mengirim kode dari no-reply@gaeks.com...";
+      hideAlert();
+
+      try {
+        const res = await fetch('/api/auth_otp.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'send_otp', email: email, name: name })
+        });
+        const data = await res.json();
+
+        if (data.status === 'success') {
+          storedEmail = email;
+          storedName = name;
+          document.getElementById('target-email-badge').innerText = email;
+          document.getElementById('reg-step-request').classList.add('hidden');
+          document.getElementById('reg-step-verify').classList.remove('hidden');
+          showAlert("✓ Kode verifikasi 6 digit telah dikirimkan ke email Anda.", true);
+        } else {
+          showAlert(data.message || "Gagal mengirimkan kode verifikasi.");
+        }
+      } catch (err) {
+        showAlert("Gagal menghubungi server: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Kirim 6 Digit Kode Verifikasi ke Email →";
+      }
+    }
+
+    async function submitOtpVerification() {
+      const code = document.getElementById('reg-otp-code').value.trim();
+      const pass = document.getElementById('reg-password').value.trim();
+      const btn = document.getElementById('btn-submit-verify');
+
+      if (!code || code.length !== 6) {
+        showAlert("Masukkan 6 digit kode verifikasi yang Anda terima.");
+        return;
+      }
+      if (!pass || pass.length < 6) {
+        showAlert("Kata sandi minimal 6 karakter.");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "⏳ Memvalidasi kode verifikasi...";
+      hideAlert();
+
+      try {
+        const res = await fetch('/api/auth_otp.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'verify_otp', email: storedEmail, code: code, password: pass })
+        });
+        const data = await res.json();
+
+        if (data.status === 'success') {
+          showAlert("✓ Verifikasi berhasil! Mengalihkan ke studio CV...", true);
+          GaeksAuth.loginWithEmail(storedEmail, pass, storedName);
+          setTimeout(() => { window.location.href = 'cv.html'; }, 800);
+        } else {
+          showAlert(data.message || "Kode verifikasi salah.");
+        }
+      } catch (err) {
+        showAlert("Gagal verifikasi: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Verifikasi Kode & Masuk Sekarang →";
+      }
+    }
+
+    function backToStep1() {
+      document.getElementById('reg-step-verify').classList.add('hidden');
+      document.getElementById('reg-step-request').classList.remove('hidden');
+      hideAlert();
+    }
+  </script>
+</body>
+</html>
