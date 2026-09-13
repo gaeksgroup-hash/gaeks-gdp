@@ -369,6 +369,135 @@
       a.click();
     }
 
+    
+    function switchAuthTab(tab) {
+      const btnIn = document.getElementById('tab-btn-signin');
+      const btnUp = document.getElementById('tab-btn-signup');
+      const viewIn = document.getElementById('auth-view-signin');
+      const viewUp = document.getElementById('auth-view-signup');
+      const alertBox = document.getElementById('auth-alert-msg');
+      if (alertBox) alertBox.classList.add('hidden');
+
+      if (tab === 'signin') {
+        btnIn.className = "flex-1 py-2.5 border-b-2 border-blue-500 text-blue-400 transition";
+        btnUp.className = "flex-1 py-2.5 border-b-2 border-transparent text-slate-400 hover:text-slate-300 transition";
+        viewIn.classList.remove('hidden');
+        viewUp.classList.add('hidden');
+        document.getElementById('google-btn-text').innerText = "Lanjutkan dengan Akun Google";
+      } else {
+        btnUp.className = "flex-1 py-2.5 border-b-2 border-blue-500 text-blue-400 transition";
+        btnIn.className = "flex-1 py-2.5 border-b-2 border-transparent text-slate-400 hover:text-slate-300 transition";
+        viewUp.classList.remove('hidden');
+        viewIn.classList.add('hidden');
+        document.getElementById('google-btn-text').innerText = "Daftar Cepat dengan Akun Google";
+      }
+    }
+
+    function showAuthAlert(msg, isSuccess = false) {
+      const el = document.getElementById('auth-alert-msg');
+      el.classList.remove('hidden');
+      if (isSuccess) {
+        el.className = "p-3 rounded-xl text-xs bg-emerald-950/80 border border-emerald-800 text-emerald-300";
+      } else {
+        el.className = "p-3 rounded-xl text-xs bg-rose-950/80 border border-rose-800 text-rose-300";
+      }
+      el.innerHTML = msg;
+    }
+
+    function handleSignInSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('signin-email').value.trim();
+      const pass = document.getElementById('signin-pass').value.trim();
+      if (!email || !pass) return;
+      GaeksAuth.loginWithEmail(email, pass);
+    }
+
+    let currentOtpEmail = '';
+    let currentOtpName = '';
+
+    async function requestEmailOtp() {
+      const name = document.getElementById('signup-name').value.trim();
+      const email = document.getElementById('signup-email').value.trim();
+      const btn = document.getElementById('btn-request-otp');
+
+      if (!name || !email) {
+        showAuthAlert("Silakan isi nama lengkap dan alamat email Anda.");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "⏳ Mengirim Kode dari no-reply@gaeks.com...";
+
+      try {
+        const res = await fetch('/api/auth_otp.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'send_otp', email: email, name: name })
+        });
+        const data = await res.json();
+
+        if (data.status === 'success') {
+          currentOtpEmail = email;
+          currentOtpName = name;
+          document.getElementById('display-otp-email').innerText = email;
+          document.getElementById('signup-step-1').classList.add('hidden');
+          document.getElementById('signup-step-2').classList.remove('hidden');
+          showAuthAlert("Kode verifikasi 6 digit telah dikirimkan ke email Anda.", true);
+        } else {
+          showAuthAlert(data.message || "Gagal mengirimkan kode verifikasi.");
+        }
+      } catch (err) {
+        showAuthAlert("Kendala koneksi: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Kirim Kode Verifikasi ke Email";
+      }
+    }
+
+    async function verifyAndCompleteRegister() {
+      const code = document.getElementById('signup-otp-code').value.trim();
+      const pass = document.getElementById('signup-password').value.trim();
+      const btn = document.getElementById('btn-verify-otp');
+
+      if (!code || code.length !== 6) {
+        showAuthAlert("Masukkan 6 digit kode verifikasi yang Anda terima.");
+        return;
+      }
+      if (!pass || pass.length < 6) {
+        showAuthAlert("Kata sandi minimal 6 karakter.");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "⏳ Memverifikasi Kode...";
+
+      try {
+        const res = await fetch('/api/auth_otp.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'verify_otp', email: currentOtpEmail, code: code, password: pass })
+        });
+        const data = await res.json();
+
+        if (data.status === 'success') {
+          GaeksAuth.loginWithEmail(currentOtpEmail, pass, currentOtpName);
+        } else {
+          showAuthAlert(data.message || "Kode verifikasi salah.");
+        }
+      } catch (err) {
+        showAuthAlert("Kendala verifikasi: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Verifikasi & Masuk Sekarang";
+      }
+    }
+
+    function resendOtp() {
+      document.getElementById('signup-step-2').classList.add('hidden');
+      document.getElementById('signup-step-1').classList.remove('hidden');
+      requestEmailOtp();
+    }
+
     window.onload = function() {
       setTimeout(() => { if (GaeksAuth.initGoogleAuth) GaeksAuth.initGoogleAuth(); }, 500);
       updateNavbar();

@@ -1,13 +1,16 @@
-// GAEKS DIGITAL ECOSYSTEM - AUTH & USER MANAGEMENT CONTROLLER
+// GAEKS DIGITAL ECOSYSTEM - AUTH, USER MANAGEMENT & GOOGLE OAUTH POPUP
 const VIP_WHITELIST = [
   "gaeks.group@gmail.com",
   "triawan25@gmail.com",
   "ranesath@gmail.com"
 ];
 const SUPER_ADMIN_EMAIL = "gaeks.group@gmail.com";
+const GOOGLE_CLIENT_ID = "41832472270-6r8iudma1eho6kn3q6rs4rl7b9ank7n4.apps.googleusercontent.com";
 
 const AUTH_STORAGE_KEY = 'gaeks_user_session_v2';
 const USERS_DB_KEY = 'gaeks_users_db_v2';
+
+let googleOAuthClient = null;
 
 const GaeksAuth = {
   getUsersDb() {
@@ -44,90 +47,24 @@ const GaeksAuth = {
         registeredAt: Date.now(),
         lastLoginAt: Date.now()
       });
-      this.sendWelcomeEmailNotice(userObj.email, userObj.name);
+      this.sendEmailNotification('welcome', userObj.email, userObj.name);
     }
     this.saveUsersDb(db);
   },
 
-  sendWelcomeEmailNotice(email, name) {
+  sendEmailNotification(actionType, email, name, extraData = {}) {
     try {
-      fetch('/api/send_welcome_email.php', {
+      fetch('/api/mailer.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email, name: name })
+        body: JSON.stringify({
+          action: actionType,
+          email: email,
+          name: name,
+          ...extraData
+        })
       }).catch(() => {});
     } catch(e) {}
-  },
-
-  
-  initGoogleAuth() {
-    if (window.google && window.google.accounts && window.google.accounts.id) {
-      window.google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        callback: (response) => this.handleGoogleCredential(response),
-        auto_select: false
-      });
-
-      const btnIndex = document.getElementById("google-btn-container-index");
-      if (btnIndex) {
-        window.google.accounts.id.renderButton(btnIndex, {
-          theme: "outline",
-          size: "large",
-          width: "100%",
-          text: "continue_with",
-          shape: "pill"
-        });
-      }
-
-      const btnCv = document.getElementById("google-btn-container-cv");
-      if (btnCv) {
-        window.google.accounts.id.renderButton(btnCv, {
-          theme: "outline",
-          size: "large",
-          width: "100%",
-          text: "continue_with",
-          shape: "pill"
-        });
-      }
-    }
-  },
-
-  handleGoogleCredential(response) {
-    try {
-      const base64Url = response.credential.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join(''));
-
-      const payload = JSON.parse(jsonPayload);
-      const email = payload.email.toLowerCase().trim();
-      const name = payload.name || payload.given_name || email.split('@')[0];
-      const avatar = payload.picture || ('https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(name));
-
-      const isVip = VIP_WHITELIST.includes(email);
-      const isSuperAdmin = (email === SUPER_ADMIN_EMAIL);
-
-      const user = {
-        id: 'usr_goog_' + Math.random().toString(36).substr(2, 9),
-        email: email,
-        name: name,
-        avatar: avatar,
-        provider: 'google',
-        isPro: isVip,
-        isAdmin: isSuperAdmin,
-        plan: isVip ? 'PRO_VIP' : 'FREE',
-        planLabel: isVip ? (isSuperAdmin ? 'SUPER ADMIN' : 'GAEKS PRO VIP') : 'Free Tier',
-        loginAt: Date.now()
-      };
-
-      this.recordUserRegistration(user);
-      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
-      window.location.reload();
-    } catch (e) {
-      console.error("Gagal memproses token Google:", e);
-      alert("Terjadi kendala saat memproses akun Google Anda. Silakan coba lagi.");
-    }
   },
 
   getCurrentUser() {
@@ -160,21 +97,62 @@ const GaeksAuth = {
     return user ? (user.email.toLowerCase().trim() === SUPER_ADMIN_EMAIL) : false;
   },
 
-  loginWithEmail(email, password, name = '') {
+  initGoogleAuth() {
+    if (window.google && window.google.accounts && window.google.accounts.oauth2) {
+      try {
+        googleOAuthClient = window.google.accounts.oauth2.initTokenClient({
+          client_id: GOOGLE_CLIENT_ID,
+          scope: 'email profile openid',
+          callback: async (tokenResponse) => {
+            if (tokenResponse && tokenResponse.access_token) {
+              try {
+                const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                  headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+                });
+                const info = await res.json();
+                if (info && info.email) {
+                  GaeksAuth.processVerifiedGoogleUser(info.email, info.name, info.picture);
+                }
+              } catch(err) {
+                console.error("Gagal mengambil data profil Google:", err);
+                alert("Gagal memproses data Google. Silakan coba kembali.");
+              }
+            }
+          }
+        });
+      } catch(e) {
+        console.warn("Google OAuth init error:", e);
+      }
+    }
+  },
+
+  triggerGooglePopup() {
+    if (!googleOAuthClient) {
+      this.initGoogleAuth();
+    }
+    if (googleOAuthClient) {
+      googleOAuthClient.requestAccessToken({ prompt: 'select_account' });
+    } else {
+      alert("Sedang memuat koneksi Google... Mohon tunggu 2 detik dan klik kembali.");
+    }
+  },
+
+  processVerifiedGoogleUser(email, name, avatar) {
     const cleanEmail = email.toLowerCase().trim();
     const isVip = VIP_WHITELIST.includes(cleanEmail);
+    const isSuperAdmin = (cleanEmail === SUPER_ADMIN_EMAIL);
     const displayName = name || cleanEmail.split('@')[0];
 
     const user = {
-      id: 'usr_' + Math.random().toString(36).substr(2, 9),
+      id: 'usr_goog_' + Math.random().toString(36).substr(2, 9),
       email: cleanEmail,
       name: displayName,
-      avatar: 'https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(displayName),
-      provider: 'email',
+      avatar: avatar || ('https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(displayName)),
+      provider: 'google',
       isPro: isVip,
-      isAdmin: (cleanEmail === SUPER_ADMIN_EMAIL),
+      isAdmin: isSuperAdmin,
       plan: isVip ? 'PRO_VIP' : 'FREE',
-      planLabel: isVip ? (cleanEmail === SUPER_ADMIN_EMAIL ? 'SUPER ADMIN' : 'GAEKS PRO VIP') : 'Free Tier',
+      planLabel: isVip ? (isSuperAdmin ? 'SUPER ADMIN' : 'GAEKS PRO VIP') : 'Free Tier',
       loginAt: Date.now()
     };
 
@@ -183,23 +161,22 @@ const GaeksAuth = {
     window.location.reload();
   },
 
-  loginWithGoogle(emailInput = '') {
-    const cleanEmail = (emailInput || prompt("Masukkan Akun Google Anda (contoh: gaeks.group@gmail.com):") || "").toLowerCase().trim();
-    if (!cleanEmail) return;
-
+  loginWithEmail(email, password, customName = '') {
+    const cleanEmail = email.toLowerCase().trim();
     const isVip = VIP_WHITELIST.includes(cleanEmail);
-    const displayName = cleanEmail.split('@')[0].toUpperCase();
+    const isSuperAdmin = (cleanEmail === SUPER_ADMIN_EMAIL);
+    const displayName = customName || cleanEmail.split('@')[0];
 
     const user = {
-      id: 'usr_goog_' + Math.random().toString(36).substr(2, 9),
+      id: 'usr_' + Math.random().toString(36).substr(2, 9),
       email: cleanEmail,
       name: displayName,
       avatar: 'https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(displayName),
-      provider: 'google',
+      provider: 'email',
       isPro: isVip,
-      isAdmin: (cleanEmail === SUPER_ADMIN_EMAIL),
+      isAdmin: isSuperAdmin,
       plan: isVip ? 'PRO_VIP' : 'FREE',
-      planLabel: isVip ? (cleanEmail === SUPER_ADMIN_EMAIL ? 'SUPER ADMIN' : 'GAEKS PRO VIP') : 'Free Tier',
+      planLabel: isVip ? (isSuperAdmin ? 'SUPER ADMIN' : 'GAEKS PRO VIP') : 'Free Tier',
       loginAt: Date.now()
     };
 
@@ -217,8 +194,12 @@ const GaeksAuth = {
     const db = this.getUsersDb();
     const target = db.find(u => u.email.toLowerCase() === email.toLowerCase());
     if (target) {
-      target.plan = (target.plan === 'PRO' || target.plan === 'PRO_VIP') ? 'FREE' : 'PRO';
+      const willBePro = (target.plan !== 'PRO' && target.plan !== 'PRO_VIP');
+      target.plan = willBePro ? 'PRO' : 'FREE';
       this.saveUsersDb(db);
+      if (willBePro) {
+        this.sendEmailNotification('purchase', target.email, target.name, { plan_name: 'GAEKS PRO Member' });
+      }
       return target.plan;
     }
     return null;
