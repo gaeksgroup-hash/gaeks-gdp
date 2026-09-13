@@ -1,0 +1,308 @@
+#!/bin/bash
+set -e
+
+echo "=== 1. Membuat file index.html GAEKS DIGITAL PRODUCT ==="
+
+cat << 'HTML_EOF' > index.html
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GAEKS DIGITAL PRODUCT | Solusi Layanan & Produk Digital</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased min-h-screen flex flex-col justify-between">
+
+  <!-- NAVBAR -->
+  <header class="sticky top-0 z-40 w-full backdrop-blur-md bg-slate-950/80 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="#" class="flex items-center space-x-2">
+        <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+          GAEKS DIGITAL PRODUCT
+        </span>
+      </a>
+      <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-300">
+        <a href="#services" class="hover:text-blue-400 transition-colors">Digital Services</a>
+        <a href="#products" class="hover:text-blue-400 transition-colors">Digital Products</a>
+        <a href="#pricing" class="hover:text-blue-400 transition-colors">Website Builder</a>
+      </nav>
+      <div class="flex items-center space-x-3">
+        <button onclick="openAuthModal()" class="px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-all">
+          Masuk / Daftar
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="relative py-20 px-4 sm:px-6 lg:px-8 text-center bg-gradient-to-b from-slate-900 to-slate-950">
+    <div class="max-w-4xl mx-auto space-y-6">
+      <span class="inline-block px-3 py-1 text-xs font-semibold tracking-wide text-blue-400 uppercase bg-blue-950/60 rounded-full border border-blue-800/60">
+        Ekosistem Digital GAEKS
+      </span>
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
+        Akselerasi Produktivitas dengan <span class="text-blue-400">Layanan & Produk Digital</span>
+      </h1>
+      <p class="text-lg text-slate-400 max-w-2xl mx-auto">
+        Platform terpadu untuk tool produktivitas, e-book bisnis, jasa pembuatan website, hingga panel sosial media marketing.
+      </p>
+      <div class="pt-4 flex flex-wrap justify-center gap-4">
+        <a href="#services" class="px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium transition shadow-lg shadow-blue-500/20">
+          Jelajahi Digital Services
+        </a>
+        <a href="#products" class="px-6 py-3 rounded-lg border border-slate-700 hover:bg-slate-800 text-slate-200 font-medium transition">
+          Lihat Katalog Produk
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIGITAL SERVICES SECTION -->
+  <section id="services" class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+    <div class="mb-10 text-center md:text-left">
+      <div class="inline-block px-2.5 py-0.5 rounded text-xs font-medium bg-indigo-950 text-indigo-300 border border-indigo-800 mb-2">
+        SaaS & Productivity Tools
+      </div>
+      <h2 class="text-3xl font-bold text-white tracking-tight">Digital Services</h2>
+      <p class="text-slate-400 mt-1">Akses tool otomatisasi pintar dengan masa trial 3 hari.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Gaeks Presentation -->
+      <div class="p-8 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <span class="px-3 py-1 text-xs font-semibold rounded-full bg-amber-950/70 text-amber-400 border border-amber-800/60">
+              Trial 3 Hari Gratis
+            </span>
+            <span class="text-xs text-slate-500">Berbayar Bulanan</span>
+          </div>
+          <h3 class="text-2xl font-bold text-white">Gaeks Presentation Maker</h3>
+          <p class="text-slate-400 mt-2 text-sm leading-relaxed">
+            Buat presentasi bisnis dan pitch deck profesional secara otomatis dan terstruktur. Hemat waktu dengan integrasi konten dan template siap pakai.
+          </p>
+          <ul class="mt-4 space-y-2 text-sm text-slate-300">
+            <li class="flex items-center">
+              <span class="text-blue-400 mr-2">✓</span> Ekspor format PDF & PowerPoint
+            </li>
+            <li class="flex items-center">
+              <span class="text-blue-400 mr-2">✓</span> Trial 3 hari penuh tanpa batasan fitur
+            </li>
+          </ul>
+        </div>
+        <div class="mt-8 pt-6 border-t border-slate-800/80 flex items-center justify-between">
+          <span class="text-xs text-slate-400">Wajib login akun</span>
+          <button onclick="requireLogin('Gaeks Presentation')" class="px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition">
+            Mulai Trial 3 Hari
+          </button>
+        </div>
+      </div>
+
+      <!-- CV Maker -->
+      <div class="p-8 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <span class="px-3 py-1 text-xs font-semibold rounded-full bg-amber-950/70 text-amber-400 border border-amber-800/60">
+              Trial 3 Hari Gratis
+            </span>
+            <span class="text-xs text-slate-500">Berbayar Bulanan</span>
+          </div>
+          <h3 class="text-2xl font-bold text-white">CV & Resume Maker</h3>
+          <p class="text-slate-400 mt-2 text-sm leading-relaxed">
+            Rancang resume ATS-friendly dengan standar korporat modern. Tingkatkan peluang seleksi berkas dengan template profesional.
+          </p>
+          <ul class="mt-4 space-y-2 text-sm text-slate-300">
+            <li class="flex items-center">
+              <span class="text-blue-400 mr-2">✓</span> Format standar HRD & lolos sistem ATS
+            </li>
+            <li class="flex items-center">
+              <span class="text-blue-400 mr-2">✓</span> Akses trial 3 hari penuh
+            </li>
+          </ul>
+        </div>
+        <div class="mt-8 pt-6 border-t border-slate-800/80 flex items-center justify-between">
+          <span class="text-xs text-slate-400">Wajib login akun</span>
+          <button onclick="requireLogin('CV Maker')" class="px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition">
+            Mulai Trial 3 Hari
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIGITAL PRODUCTS SECTION -->
+  <section id="products" class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+    <div class="mb-10 text-center md:text-left">
+      <div class="inline-block px-2.5 py-0.5 rounded text-xs font-medium bg-emerald-950 text-emerald-300 border border-emerald-800 mb-2">
+        Katalog Produk
+      </div>
+      <h2 class="text-3xl font-bold text-white tracking-tight">Digital Products</h2>
+      <p class="text-slate-400 mt-1">Solusi praktis untuk kebutuhan bisnis dan pengembangan digital.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- 1. E-Book -->
+      <div class="p-6 rounded-2xl bg-slate-900/70 border border-slate-800 flex flex-col justify-between">
+        <div>
+          <div class="h-10 w-10 rounded-lg bg-blue-900/50 flex items-center justify-center text-blue-400 mb-4 font-bold">
+            EB
+          </div>
+          <h3 class="text-xl font-bold text-white">Katalog E-Book</h3>
+          <p class="text-slate-400 text-sm mt-2">
+            Panduan bisnis digital, operasional logistik, dan manajemen workflow modern.
+          </p>
+          <div class="mt-6 space-y-3">
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80">
+              <p class="text-xs text-slate-400">Buku Unggulan</p>
+              <p class="font-medium text-sm text-slate-200">Panduan Praktis Forwarding & Logistik</p>
+            </div>
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80">
+              <p class="text-xs text-slate-400">Buku Unggulan</p>
+              <p class="font-medium text-sm text-slate-200">Strategi Scale-Up Bisnis Digital</p>
+            </div>
+          </div>
+        </div>
+        <button class="mt-6 w-full py-2.5 rounded-lg border border-blue-500/40 text-blue-400 hover:bg-blue-950/40 text-sm font-medium transition">
+          Lihat Daftar E-Book
+        </button>
+      </div>
+
+      <!-- 2. Website Builder -->
+      <div id="pricing" class="p-6 rounded-2xl bg-slate-900/70 border border-slate-800 flex flex-col justify-between">
+        <div>
+          <div class="h-10 w-10 rounded-lg bg-indigo-900/50 flex items-center justify-center text-indigo-400 mb-4 font-bold">
+            WB
+          </div>
+          <h3 class="text-xl font-bold text-white">Website Builder</h3>
+          <p class="text-slate-400 text-sm mt-2">
+            Paket pembuatan website profesional dengan performa optimal dan tampilan modern.
+          </p>
+          <div class="mt-4 space-y-2 text-xs">
+            <div class="flex justify-between py-2 border-b border-slate-800">
+              <span class="text-slate-300">Landing Page</span>
+              <span class="font-semibold text-white">Mulai Rp 499rb</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-slate-800">
+              <span class="text-slate-300">Company / Portfolio</span>
+              <span class="font-semibold text-white">Mulai Rp 999rb</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-slate-800">
+              <span class="text-slate-300">Custom Web App</span>
+              <span class="font-semibold text-white">Hubungi Kami</span>
+            </div>
+          </div>
+        </div>
+        <a href="https://wa.me/?text=Halo%20Admin%20Gaeks,%20saya%20tertarik%20dengan%20layanan%20Website%20Builder" target="_blank" class="mt-6 w-full text-center py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition">
+          Konsultasi Website
+        </a>
+      </div>
+
+      <!-- 3. SMM -->
+      <div class="p-6 rounded-2xl bg-slate-900/70 border border-slate-800 flex flex-col justify-between">
+        <div>
+          <div class="h-10 w-10 rounded-lg bg-emerald-900/50 flex items-center justify-center text-emerald-400 mb-4 font-bold">
+            SM
+          </div>
+          <h3 class="text-xl font-bold text-white">Social Media Marketing</h3>
+          <p class="text-slate-400 text-sm mt-2">
+            Panel optimasi dan manajemen campaign sosial media untuk meningkatkan eksposur merek Anda.
+          </p>
+          <p class="text-xs text-slate-500 mt-4">
+            *Diarahkan langsung ke dashboard website SMM.
+          </p>
+        </div>
+        <a href="https://gaeks.com" target="_blank" rel="noopener noreferrer" class="mt-6 w-full text-center py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium transition">
+          Buka Website SMM &rarr;
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- AUTH MODAL -->
+  <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 m-4 shadow-2xl relative">
+      <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        ✕
+      </button>
+      <div class="text-center mb-6">
+        <h3 class="text-xl font-bold text-white">Masuk ke Akun Anda</h3>
+        <p id="modalNotice" class="text-xs text-slate-400 mt-1">
+          Login akun untuk mengakses trial layanan Digital Service.
+        </p>
+      </div>
+
+      <button onclick="alert('Hubungkan dengan kredensial Google OAuth Anda.')" class="w-full flex items-center justify-center space-x-3 py-2.5 px-4 rounded-lg bg-white text-slate-800 font-medium hover:bg-slate-100 transition shadow-sm text-sm">
+        <svg class="w-4 h-4" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+        <span>Lanjutkan dengan Akun Google</span>
+      </button>
+
+      <div class="flex items-center my-4">
+        <div class="flex-grow border-t border-slate-800"></div>
+        <span class="px-2 text-xs text-slate-500 uppercase">atau email</span>
+        <div class="flex-grow border-t border-slate-800"></div>
+      </div>
+
+      <form onsubmit="event.preventDefault(); alert('Login disubmit.');" class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Email</label>
+          <input type="email" required placeholder="nama@domain.com" class="w-full px-3 py-2 text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-blue-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Kata Sandi</label>
+          <input type="password" required placeholder="••••••••" class="w-full px-3 py-2 text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-blue-500" />
+        </div>
+        <button type="submit" class="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition">
+          Masuk
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-900 bg-slate-950 py-8 px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500">
+    <p>&copy; 2026 GAEKS DIGITAL PRODUCT. Seluruh hak cipta dilindungi.</p>
+  </footer>
+
+  <script>
+    function openAuthModal(serviceName) {
+      const modal = document.getElementById('authModal');
+      const notice = document.getElementById('modalNotice');
+      if (serviceName) {
+        notice.innerText = `Silakan masuk untuk mulai trial 3 hari di ${serviceName}.`;
+      } else {
+        notice.innerText = 'Login untuk mengakses ekosistem layanan digital GAEKS.';
+      }
+      modal.classList.remove('hidden');
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.add('hidden');
+    }
+
+    function requireLogin(serviceName) {
+      openAuthModal(serviceName);
+    }
+  </script>
+</body>
+</html>
+HTML_EOF
+
+echo "=== 2. Melakukan Commit & Push ke GitHub ==="
+git branch -M main
+git add index.html
+git commit -m "feat: setup landing page GAEKS DIGITAL PRODUCT" || echo "Tidak ada perubahan baru untuk di-commit."
+git push origin main
+
+echo "=== Sukses di-push ke GitHub! ==="
