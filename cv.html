@@ -14,26 +14,101 @@
     .font-cv-body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     .font-prestige { font-family: 'Merriweather', Georgia, serif; }
 
-    /* VARIAN ARSITEKTUR TEMA */
+    /* ================= 15 ARSITEKTUR TEMA VISUAL ================= */
+    /* 1. Prestige Executive (FREE) */
     .style-prestige {
       --accent-heading: #0f172a;
       --accent-rule: #1e293b;
+      --sheet-bg: #ffffff;
     }
+    /* 2. Modern Corporate (FREE) */
     .style-modern-corporate {
       --accent-heading: #1e3a8a;
       --accent-rule: #1e3a8a;
+      --sheet-bg: #ffffff;
     }
+    /* 3. Pure Classic ATS (FREE) */
     .style-pure-ats {
       --accent-heading: #000000;
       --accent-rule: #000000;
+      --sheet-bg: #ffffff;
     }
+    /* 4. Nordic Slate (FREE) */
     .style-nordic-slate {
       --accent-heading: #1e293b;
       --accent-rule: #64748b;
+      --sheet-bg: #ffffff;
+    }
+    /* 5. Silicon Tech (FREE) */
+    .style-silicon-tech {
+      --accent-heading: #047857;
+      --accent-rule: #10b981;
+      --sheet-bg: #ffffff;
+    }
+    /* 6. Emerald Horizon (PRO) */
+    .style-emerald-horizon {
+      --accent-heading: #065f46;
+      --accent-rule: #059669;
+      --sheet-bg: #f6fbf8;
+    }
+    /* 7. Crimson Elegance (PRO) */
+    .style-crimson-elegance {
+      --accent-heading: #881337;
+      --accent-rule: #be123c;
+      --sheet-bg: #fdf8f9;
+    }
+    /* 8. Obsidian Minimal (PRO) */
+    .style-obsidian-minimal {
+      --accent-heading: #090d16;
+      --accent-rule: #090d16;
+      --sheet-bg: #ffffff;
+    }
+    /* 9. Oxford Two-Tone (PRO) */
+    .style-oxford-navy {
+      --accent-heading: #0f172a;
+      --accent-rule: #1e293b;
+      --sheet-bg: #ffffff;
+    }
+    /* 10. Swiss Editorial (PRO) */
+    .style-swiss-editorial {
+      --accent-heading: #000000;
+      --accent-rule: #000000;
+      --sheet-bg: #ffffff;
+    }
+    /* 11. Imperial Gold (PRO) */
+    .style-imperial-gold {
+      --accent-heading: #92400e;
+      --accent-rule: #d97706;
+      --sheet-bg: #fdfbf7;
+    }
+    /* 12. Azure Blue (PRO) */
+    .style-azure-sky {
+      --accent-heading: #1d4ed8;
+      --accent-rule: #3b82f6;
+      --sheet-bg: #f8faff;
+    }
+    /* 13. Metropolitan Boxed (PRO) */
+    .style-metro-corporate {
+      --accent-heading: #1e293b;
+      --accent-rule: #cbd5e1;
+      --sheet-bg: #ffffff;
+    }
+    /* 14. Boutique Creative (PRO) */
+    .style-boutique-creative {
+      --accent-heading: #292524;
+      --accent-rule: #78716c;
+      --sheet-bg: #faf8f5;
+    }
+    /* 15. Apex Monolith (PRO) */
+    .style-apex-monolith {
+      --accent-heading: #0f172a;
+      --accent-rule: #334155;
+      --sheet-bg: #ffffff;
     }
 
     .heading-accent { color: var(--accent-heading) !important; }
     .rule-border { border-color: var(--accent-rule) !important; }
+    .cv-sheet-themed-bg { background-color: var(--sheet-bg) !important; }
 
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: #090d16; }
@@ -53,8 +128,6 @@
         padding: 10mm 14mm !important;
         box-shadow: none !important;
         border: none !important;
-        background: #ffffff !important;
-        color: #1e293b !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
@@ -95,7 +168,7 @@
             GAEKS ATS Studio
           </span>
           <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">
-            Executive Edition
+            15 Visual Themes
           </span>
         </div>
       </div>
@@ -120,9 +193,6 @@
         <p id="ui-dash-subtitle" class="text-xs sm:text-sm text-slate-400 mt-1">Format eksekutif dengan kepadatan informasi optimal, bebas dari elemen visual template AI.</p>
       </div>
       <div class="flex flex-wrap gap-2">
-        <button onclick="loadSampleReferenceCV()" class="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 text-xs font-bold hover:bg-slate-800 transition">
-          <span id="ui-btn-load-sample">+ Muat Sampel CV Deny Triawan</span>
-        </button>
         <button onclick="createNewBlankCV()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-500/20 flex items-center space-x-1.5 transition">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
           <span id="ui-btn-create-blank">+ Buat CV Baru (Kosong)</span>
@@ -166,7 +236,7 @@
         </div>
       </div>
 
-      <!-- KONTROL FITUR -->
+      <!-- KONTROL FITUR & 15 TEMA SELECTOR -->
       <div class="flex flex-wrap items-center gap-2">
         <div class="flex items-center bg-slate-900 p-1 rounded-lg border border-slate-800 space-x-1">
           <button onclick="undo()" id="btn-undo" title="Undo (Ctrl+Z)" disabled class="px-2 py-1 rounded text-xs text-slate-500 disabled:opacity-40 hover:text-white transition">↶ Undo</button>
@@ -178,12 +248,30 @@
           <button onclick="setLanguage('en')" id="btn-lang-en" class="px-2.5 py-1 rounded text-slate-400 hover:text-white transition">EN 🇬🇧</button>
         </div>
 
-        <!-- 4 TEMA ARSITEKTUR EKSEKUTIF -->
-        <div class="flex items-center space-x-1 bg-slate-900 p-1 rounded-lg border border-slate-800 text-xs font-semibold">
-          <button onclick="setThemeLayout('prestige')" id="btn-layout-prestige" class="px-2.5 py-1 rounded bg-blue-950 text-blue-300 border border-blue-600 font-bold">Prestige Executive</button>
-          <button onclick="setThemeLayout('modern-corporate')" id="btn-layout-modern-corporate" class="px-2.5 py-1 rounded text-slate-400 hover:text-white">Modern Corporate</button>
-          <button onclick="setThemeLayout('pure-ats')" id="btn-layout-pure-ats" class="px-2.5 py-1 rounded text-slate-400 hover:text-white">Pure Classic ATS</button>
-          <button onclick="setThemeLayout('nordic-slate')" id="btn-layout-nordic-slate" class="px-2.5 py-1 rounded text-slate-400 hover:text-white">Nordic Slate</button>
+        <!-- 15 TEMA DROPDOWN SELECTOR -->
+        <div class="flex items-center bg-slate-900 p-1 rounded-lg border border-slate-800">
+          <label class="text-[10px] text-slate-400 font-bold px-2 hidden sm:inline">Tema:</label>
+          <select id="theme-selector-dropdown" onchange="handleThemeSelect(this.value)" class="px-2 py-1 text-xs bg-slate-950 border border-slate-800 rounded font-bold text-blue-300 focus:border-blue-500 focus:outline-none cursor-pointer">
+            <optgroup label="5 Tema Terbuka (FREE)">
+              <option value="prestige">1. Prestige Executive (Free)</option>
+              <option value="modern-corporate">2. Modern Corporate (Free)</option>
+              <option value="pure-ats">3. Pure Classic ATS (Free)</option>
+              <option value="nordic-slate">4. Nordic Slate (Free)</option>
+              <option value="silicon-tech">5. Silicon Tech (Free)</option>
+            </optgroup>
+            <optgroup label="10 Tema Berbayar (GAEKS PRO 🔒)">
+              <option value="emerald-horizon">6. Emerald Horizon (PRO 🔒)</option>
+              <option value="crimson-elegance">7. Crimson Elegance (PRO 🔒)</option>
+              <option value="obsidian-minimal">8. Obsidian Minimal (PRO 🔒)</option>
+              <option value="oxford-navy">9. Oxford Two-Tone (PRO 🔒)</option>
+              <option value="swiss-editorial">10. Swiss Editorial (PRO 🔒)</option>
+              <option value="imperial-gold">11. Imperial Gold (PRO 🔒)</option>
+              <option value="azure-sky">12. Azure Blue (PRO 🔒)</option>
+              <option value="metro-corporate">13. Metropolitan Boxed (PRO 🔒)</option>
+              <option value="boutique-creative">14. Boutique Creative (PRO 🔒)</option>
+              <option value="apex-monolith">15. Apex Monolith (PRO 🔒)</option>
+            </optgroup>
+          </select>
         </div>
       </div>
     </div>
@@ -337,7 +425,7 @@
             <div id="education-list" class="space-y-4"></div>
           </div>
 
-          <!-- FORM 4: KEAHLIAN & KOMPETENSI (DENGAN PRESET CEPAT) -->
+          <!-- FORM 4: KEAHLIAN & KOMPETENSI -->
           <div id="ftab-content-skills" class="hidden space-y-4">
             <div class="flex justify-between items-center pb-2 border-b border-slate-800">
               <div>
@@ -365,7 +453,7 @@
             <div id="certifications-list" class="space-y-3"></div>
           </div>
 
-          <!-- FORM 6: INFORMASI TAMBAHAN (BAHASA, PUBLIKASI, AFILIASI, DLL) -->
+          <!-- FORM 6: INFORMASI TAMBAHAN -->
           <div id="ftab-content-extras" class="hidden space-y-3.5">
             <div class="flex justify-between items-center pb-2 border-b border-slate-800">
               <div>
@@ -398,13 +486,50 @@
         </div>
 
         <!-- LEMBAR A4 RESUME -->
-        <div id="cv-preview-sheet" class="font-cv-body w-full max-w-[780px] bg-white text-slate-800 shadow-2xl rounded-sm p-8 sm:p-11 min-h-[1050px] border border-slate-200">
+        <div id="cv-preview-sheet" class="font-cv-body cv-sheet-themed-bg w-full max-w-[780px] text-slate-800 shadow-2xl rounded-sm p-8 sm:p-11 min-h-[1050px] border border-slate-200">
           <div id="sheet-render-root"></div>
         </div>
       </div>
 
     </div>
   </section>
+
+  <!-- ================= MODAL GAEKS PRO (UPGRADE MEMBER BERBAYAR) ================= -->
+  <div id="pro-theme-modal" class="no-print hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-start justify-between">
+        <div class="flex items-center space-x-2">
+          <span class="text-2xl">🔒</span>
+          <div>
+            <h3 class="font-extrabold text-lg text-white" id="modal-pro-title">Tema Premium (GAEKS PRO)</h3>
+            <p class="text-xs text-slate-400">Eksklusif untuk member terdaftar GAEKS Digital.</p>
+          </div>
+        </div>
+        <button onclick="closeProModal()" class="text-slate-400 hover:text-white text-base font-bold">&times;</button>
+      </div>
+
+      <div class="p-4 bg-slate-950/80 rounded-xl border border-slate-800 text-xs space-y-2 text-slate-300">
+        <div class="flex items-center gap-2 text-amber-400 font-bold">
+          <span>✨ Keunggulan Tema Visual PRO:</span>
+        </div>
+        <ul class="space-y-1.5 list-disc list-inside text-slate-400">
+          <li>Desain bermain warna lembar kerja (*Ivory, Emerald, Cool Azure, Linen*).</li>
+          <li>Kartu identitas dua warna (*Two-Tone Header Card*) standar C-Level.</li>
+          <li>Tipografi editorial presisi tinggi dengan format konsultasi eksekutif.</li>
+          <li>Akses penuh ke seluruh 15 varian tema CV tanpa watermark.</li>
+        </ul>
+      </div>
+
+      <div class="space-y-2 pt-1">
+        <a id="btn-upgrade-wa" href="https://wa.me/6285608561745?text=Halo%20Admin%20GAEKS%2C%20saya%20tertarik%20upgrade%20ke%20Member%20Berbayar%20untuk%20membuka%2015%20Tema%20CV%20Premium" target="_blank" class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition shadow-lg shadow-emerald-600/20">
+          <span>💬 Buka Akses Member via WhatsApp</span>
+        </a>
+        <button onclick="previewProThemeTemporarily()" class="w-full py-2 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs rounded-xl transition">
+          Coba Pratinjau Sementara di Layar
+        </button>
+      </div>
+    </div>
+  </div>
 
   <footer class="no-print border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
     <p>&copy; 2026 GAEKS DIGITAL PRODUCT. Standard ATS Resume Engine.</p>
@@ -414,6 +539,26 @@
   <script>
     let activeLayout = 'prestige';
     let currentLang = 'id';
+    let pendingProTheme = null;
+
+    // DEFINISI 15 TEMA (5 FREE + 10 PRO LOCKED)
+    const themesConfig = [
+      { id: 'prestige', name: 'Prestige Executive', free: true },
+      { id: 'modern-corporate', name: 'Modern Corporate', free: true },
+      { id: 'pure-ats', name: 'Pure Classic ATS', free: true },
+      { id: 'nordic-slate', name: 'Nordic Slate', free: true },
+      { id: 'silicon-tech', name: 'Silicon Tech', free: true },
+      { id: 'emerald-horizon', name: 'Emerald Horizon (PRO)', free: false },
+      { id: 'crimson-elegance', name: 'Crimson Elegance (PRO)', free: false },
+      { id: 'obsidian-minimal', name: 'Obsidian Minimal (PRO)', free: false },
+      { id: 'oxford-navy', name: 'Oxford Two-Tone (PRO)', free: false },
+      { id: 'swiss-editorial', name: 'Swiss Editorial (PRO)', free: false },
+      { id: 'imperial-gold', name: 'Imperial Gold (PRO)', free: false },
+      { id: 'azure-sky', name: 'Azure Blue (PRO)', free: false },
+      { id: 'metro-corporate', name: 'Metropolitan Boxed (PRO)', free: false },
+      { id: 'boutique-creative', name: 'Boutique Creative (PRO)', free: false },
+      { id: 'apex-monolith', name: 'Apex Monolith (PRO)', free: false }
+    ];
 
     // BANK DATA LENGKAP 526+ PROFESI
     const professionBank = {
@@ -586,7 +731,6 @@
         btnDownloadPdf: "Download PDF",
         dashTitle: "Manajemen Resume & CV Profesional",
         dashSubtitle: "Format eksekutif dengan kepadatan informasi optimal, bebas dari elemen visual template AI.",
-        btnLoadSample: "+ Muat Sampel CV Deny Triawan",
         btnCreateBlank: "+ Buat CV Baru (Kosong)",
         tabAllActive: "Semua CV Aktif",
         tabTrash: "Tempat Sampah",
@@ -626,7 +770,6 @@
         lblExtraTitle: "Informasi Tambahan",
         btnAddExtra: "+ Tambah Informasi Tambahan",
 
-        // REDAKSI RESMI DOKUMEN
         sheetSummary: "PROFIL PROFESIONAL",
         sheetExperience: "PENGALAMAN PROFESIONAL",
         sheetEducation: "PENDIDIKAN",
@@ -650,7 +793,6 @@
         btnDownloadPdf: "Export PDF",
         dashTitle: "Professional Resume & CV Manager",
         dashSubtitle: "Executive density layout engineered for maximum page space utilization and true ATS readability.",
-        btnLoadSample: "+ Load Sample: Deny Triawan CV",
         btnCreateBlank: "+ Create New Resume (Blank)",
         tabAllActive: "All Active Resumes",
         tabTrash: "Trash Bin",
@@ -690,7 +832,6 @@
         lblExtraTitle: "Additional Information",
         btnAddExtra: "+ Add Additional Section",
 
-        // GLOBAL ATS STANDARD HEADINGS
         sheetSummary: "PROFESSIONAL SUMMARY",
         sheetExperience: "PROFESSIONAL EXPERIENCE",
         sheetEducation: "EDUCATION",
@@ -787,7 +928,7 @@
     let historyIndex = -1;
     let currentTargetRoles = [];
     const MAX_TARGET_ROLES = 4;
-    const STORAGE_KEY = 'gaeks_cv_master_list_v16';
+    const STORAGE_KEY = 'gaeks_cv_master_list_v17';
 
     function getAllProfessions() {
       const all = [];
@@ -906,17 +1047,18 @@
     }
 
     function getRoleSeparatorForTheme() {
-      if (activeLayout === 'prestige') {
+      if (activeLayout === 'prestige' || activeLayout === 'boutique-creative') {
         return `<span class="text-slate-400 font-normal mx-2 select-none">•</span>`;
-      } else if (activeLayout === 'modern-corporate') {
+      } else if (activeLayout === 'modern-corporate' || activeLayout === 'azure-sky' || activeLayout === 'oxford-navy') {
         return `<span class="text-slate-400 font-normal mx-2 select-none">/</span>`;
-      } else if (activeLayout === 'pure-ats') {
+      } else if (activeLayout === 'pure-ats' || activeLayout === 'obsidian-minimal' || activeLayout === 'swiss-editorial') {
         return `<span class="text-slate-400 font-normal mx-2 select-none">|</span>`;
       } else {
         return `<span class="text-slate-400 font-normal mx-2 select-none">—</span>`;
       }
     }
 
+    // 100% BLANK CV DOCUMENT SAAT MEMULAI
     function createBlankCvObject(title = "CV Baru Tanpa Judul") {
       return {
         id: 'cv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
@@ -945,129 +1087,14 @@
       };
     }
 
-    function getDenyTriawanSampleData() {
-      return {
-        id: 'cv_sample_deny_triawan',
-        title: "Contoh CV: Deny Triawan (Supply Chain & Operations)",
-        updatedAt: Date.now(),
-        deletedAt: null,
-        data: {
-          name: "Deny Triawan",
-          targetRoles: [
-            "Supply Chain Manager",
-            "Logistics Operations Manager",
-            "ERP Solution Architect",
-            "Export-Import Specialist"
-          ],
-          email: "triawan25@gmail.com",
-          phone: "+62 856-0856-1745",
-          location: "Semarang, Indonesia",
-          linkedin: "triawan25",
-          portfolio: "gaeks.com",
-          summary: "Executive professional with comprehensive expertise in Supply Chain Management, International Logistics, Export-Import Customs Compliance, and ERP Solution Architecture (Odoo & Cloud ERP). Demonstrated track record of leading high-stakes import logistics for 100 Transjakarta buses, ensuring 100% regulatory compliance across PIB/PEB/Manifest/BL, and optimizing warehouse inventory workflows aligned with ISO 31000.",
-          skillGroups: [
-            {
-              category: "Supply Chain & Logistics",
-              skills: "Supply Chain Management, Freight Forwarding, Customs Clearance (PIB, PEB, Manifest, BL, COO), Multimodal Transport, Inventory Optimization (ISO 31000)"
-            },
-            {
-              category: "ERP & Systems Architecture",
-              skills: "Odoo ERP Deployment, ESB ERP, Business Process Mapping (IBM/COBIT), PostgreSQL, Python, Linux Server, RESTful APIs"
-            },
-            {
-              category: "Data & Business Analytics",
-              skills: "SAP Analytics Cloud, Power BI, Google Data Studio, Advanced Financial Modeling, KPI & SLA Governance"
-            }
-          ],
-          certificationsList: [
-            {
-              name: "Database Design and Programming with SQL",
-              issuer: "Oracle Academy",
-              period: "Mastery Level / Professional",
-              credentialId: "Oracle Certified Expert"
-            },
-            {
-              name: "Microsoft Office Desktop Training",
-              issuer: "Microsoft Partner Program",
-              period: "Certified Professional",
-              credentialId: "MS-DESK-2020"
-            }
-          ],
-          extrasList: [
-            {
-              type: "Bahasa",
-              details: "Bahasa Indonesia (Native), English (C1 Proficient - TOEFL IBT/PBT)"
-            },
-            {
-              type: "Publikasi Ilmiah",
-              details: "IEEE SIET 2017 Publication: Increased information retrieval capabilities on e-commerce websites using scraping techniques"
-            }
-          ],
-          isPhotoEnabled: true,
-          layout: 'prestige',
-          experiences: [
-            {
-              role: "Head of Operations",
-              company: "PT. Milenial Solusi Internusa",
-              period: "May 2024 - Present",
-              location: "South Tangerang, Banten",
-              desc: "Directed end-to-end operational workflows across Customer Service, Documentation, and Sourcing teams, supporting comprehensive Odoo ERP implementation to streamline interdepartmental operations.\nOversaw strict compliance and validation for critical international shipping documentation including PIB, PEB, Manifest, Bill of Lading (BL), and Certificate of Origin (COO).\nEngineered cost mitigation strategies, vendor tariff comparisons, and contract negotiations with international shipping agents.\nRolled out formal departmental KPI frameworks and risk mitigation protocols to eliminate daily fulfillment bottlenecks.",
-              accomplishment: "Led high-stakes end-to-end import project for 100 Transjakarta buses, successfully coordinating vessel chartering, agency agreements, and customs clearance while deploying Odoo ERP to digitize operational processes."
-            },
-            {
-              role: "Head Of Operations",
-              company: "PT Mangkok Besar Cuan",
-              period: "May 2022 - June 2023",
-              location: "South Jakarta, DKI Jakarta",
-              desc: "Engineered comprehensive workflows, job descriptions, and cross-functional process maps aligning operational execution with corporate objectives.\nExecuted continuous monthly management training curricula for multi-tier branch supervisors and outsourced operational staff.\nImplemented ISO 31000 inventory management practices, optimizing stock shelving turnover and supply requisition cycles.\nIntegrated cloud ERP infrastructure, successfully migrating Bill of Materials (BOM) datasets and operational inventory catalogs.",
-              accomplishment: "Completed full-scale ERP Cloud deployment including POS data migration, digital procurement ordering, and automated operational reporting."
-            },
-            {
-              role: "Customer Service & Shipping Specialist",
-              company: "Surya Cemerlang Logistic",
-              period: "Jan 2022 - May 2022",
-              location: "West Jakarta",
-              desc: "Managed daily coordination with global overseas agents and commercial accounts to schedule multimodal cargo shipments.\nDrafted and audited key shipping instruments including Shipping Instructions (SI), Bill of Lading (BL), and customs compliance filings (Manifest, PIB, PEB).\nCoordinated domestic inland trucking partners to guarantee timely end-to-end cargo delivery to consignees.",
-              accomplishment: "Maintained 100% compliance across all international shipping documentation (PIB/PEB/BL) during peak logistics volume periods with zero regulatory penalties."
-            },
-            {
-              role: "Head Of Research And Development",
-              company: "Nusaputera",
-              period: "June 2019 - Feb 2022",
-              location: "Semarang, Central Java",
-              desc: "Architected institutional Business Process Mapping and department operational worksheets utilizing IBM project management tools.\nDesigned IT governance policies based on COBIT framework and engineered software requirements for Education ERP.\nDeployed integrated campus networking infrastructure utilizing Ubiquiti and MikroTik hardware with DDoS protection and tree-queue bandwidth management.",
-              accomplishment: "Implemented secure and scalable institutional network infrastructure for ERP rollout with real-time DDoS mitigation and optimized bandwidth allocation."
-            }
-          ],
-          educations: [
-            {
-              school: "Diponegoro University",
-              location: "Semarang, Central Java",
-              degree: "Master of Information System (M.IS / 42 Credits Completed)",
-              period: "Sept 2017 - Jan 2020",
-              gpa: "Graduate Study Program",
-              details: "Research Focus: Node.js & TCP/IP Architecture on Enterprise Linux Environment"
-            },
-            {
-              school: "Universitas Teknologi Digital Indonesia (STMIK Akakom)",
-              location: "Yogyakarta, Indonesia",
-              degree: "Bachelor of Computer Science (S.Kom)",
-              period: "Sept 2012 - Aug 2016",
-              gpa: "GPA 3.38 / 4.00 (Sangat Memuaskan)",
-              details: "Best Research Paper Award IEEE SIET 2017: Web Information Retrieval via Advanced Scraping Techniques"
-            }
-          ]
-        }
-      };
-    }
-
+    // LOAD CV LIST (BEBAS DARI SAMPLE DENY TRIAWAN)
     function loadCvList() {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         try { cvList = JSON.parse(raw); } catch(e) { cvList = []; }
       }
       if (!cvList || cvList.length === 0) {
-        cvList = [getDenyTriawanSampleData()];
+        cvList = [createBlankCvObject(currentLang === 'en' ? 'My First Resume' : 'CV Pertama Saya')];
         saveCvList();
       }
       autoPurgeTrash();
@@ -1157,7 +1184,7 @@
             <div>
               <div class="flex items-start justify-between gap-2 mb-2">
                 <h3 class="font-bold text-white text-base truncate">${cv.title || 'CV Tanpa Judul'}</h3>
-                <span class="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">Prestige</span>
+                <span class="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">Executive</span>
               </div>
               <p class="text-xs text-slate-400 font-medium line-clamp-2">${rolesDisplay}</p>
               <div class="mt-4 pt-3 border-t border-slate-800/80 text-[11px] text-slate-500 space-y-1">
@@ -1198,15 +1225,6 @@
       cvList.unshift(newCv);
       saveCvList();
       openEditor(newCv.id);
-    }
-
-    function loadSampleReferenceCV() {
-      const sample = getDenyTriawanSampleData();
-      sample.id = 'cv_' + Date.now();
-      cvList.unshift(sample);
-      saveCvList();
-      renderDashboardGrid();
-      alert(currentLang === 'en' ? "Sample Deny Triawan CV successfully added to your dashboard!" : "Sampel CV Deny Triawan berhasil dimuat ke daftar!");
     }
 
     function duplicateCV(id) {
@@ -1292,7 +1310,10 @@
       renderSkillGroups(d.skillGroups || []);
       renderCertificationsList(d.certificationsList || []);
       renderExtrasList(d.extrasList || []);
-      setThemeLayout(d.layout || 'prestige');
+      
+      const targetLyt = d.layout || 'prestige';
+      document.getElementById('theme-selector-dropdown').value = targetLyt;
+      setThemeLayout(targetLyt);
     }
 
     function extractFormData() {
@@ -1416,7 +1437,7 @@
       document.getElementById('btn-redo').disabled = (historyIndex >= historyStack.length - 1);
     }
 
-    // DYNAMIC SKILL GROUPS
+    // FORM SKILL GROUPS
     function addSkillGroup(group = { category: 'Keahlian Teknis & Inti', skills: '' }) {
       const container = document.getElementById('skill-groups-container');
       const div = document.createElement('div');
@@ -1526,7 +1547,7 @@
       handleInputChange();
     }
 
-    // FORM PENDIDIKAN TERSTRUKTUR (KAMPUS, LOKASI, GELAR, PERIODE, IPK/PREDIKAT, RISET)
+    // FORM PENDIDIKAN TERSTRUKTUR
     function addEducation(item = { school: '', location: '', degree: '', period: '', gpa: '', details: '' }) {
       const list = document.getElementById('education-list');
       const div = document.createElement('div');
@@ -1577,7 +1598,7 @@
       handleInputChange();
     }
 
-    // FORM SERTIFIKASI & LISENSI RESMI (MODUL DINAMIS)
+    // FORM SERTIFIKASI & LISENSI
     function addCertificationItem(item = { name: '', issuer: '', period: '', credentialId: '' }) {
       const list = document.getElementById('certifications-list');
       const div = document.createElement('div');
@@ -1609,7 +1630,7 @@
       handleInputChange();
     }
 
-    // FORM INFORMASI TAMBAHAN (BAHASA, PUBLIKASI, AFILIASI, DLL)
+    // FORM INFORMASI TAMBAHAN
     function addExtraItem(item = { type: 'Bahasa', details: '' }) {
       const list = document.getElementById('extras-list');
       const div = document.createElement('div');
@@ -1688,27 +1709,55 @@
       });
     }
 
+    // ================= 15 TEMA HANDLER (FREE VS PRO LOCKED) =================
+    function handleThemeSelect(themeId) {
+      const target = themesConfig.find(t => t.id === themeId);
+      if (!target) return;
+
+      if (!target.free) {
+        pendingProTheme = target;
+        showProModal(target);
+        return;
+      }
+
+      setThemeLayout(themeId);
+    }
+
+    function showProModal(theme) {
+      document.getElementById('modal-pro-title').innerText = `Tema ${theme.name} (GAEKS PRO 🔒)`;
+      const waLink = `https://wa.me/6285608561745?text=Halo%20Admin%20GAEKS%2C%20saya%20tertarik%20upgrade%20ke%20Member%20Berbayar%20untuk%20membuka%2015%20Tema%20CV%20Premium%20(Tema%3A%20${encodeURIComponent(theme.name)})`;
+      document.getElementById('btn-upgrade-wa').href = waLink;
+      document.getElementById('pro-theme-modal').classList.remove('hidden');
+    }
+
+    function closeProModal() {
+      document.getElementById('pro-theme-modal').classList.add('hidden');
+      document.getElementById('theme-selector-dropdown').value = activeLayout;
+      pendingProTheme = null;
+    }
+
+    function previewProThemeTemporarily() {
+      if (pendingProTheme) {
+        setThemeLayout(pendingProTheme.id);
+        document.getElementById('theme-selector-dropdown').value = pendingProTheme.id;
+      }
+      closeProModal();
+    }
+
     function setThemeLayout(name) {
       activeLayout = name;
       const body = document.getElementById('main-body');
-      body.className = body.className.replace(/style-\w+/g, '') + ' style-' + name;
+      body.className = body.className.replace(/style-[\w-]+/g, '') + ' style-' + name;
 
-      const labels = {
-        prestige: "Prestige Executive",
-        "modern-corporate": "Modern Corporate",
-        "pure-ats": "Pure Classic ATS",
-        "nordic-slate": "Nordic Slate"
-      };
-      document.getElementById('label-active-layout').innerText = labels[name] || name;
+      const current = themesConfig.find(t => t.id === name);
+      document.getElementById('label-active-layout').innerText = current ? current.name : name;
 
-      ['prestige', 'modern-corporate', 'pure-ats', 'nordic-slate'].forEach(t => {
-        const btn = document.getElementById('btn-layout-' + t);
-        if (btn) {
-          btn.className = (t === name)
-            ? "px-2.5 py-1 rounded bg-blue-950 text-blue-300 border border-blue-600 font-bold"
-            : "px-2.5 py-1 rounded text-slate-400 hover:text-white";
-        }
-      });
+      const cv = cvList.find(c => c.id === currentCvId);
+      if (cv) {
+        cv.data.layout = activeLayout;
+        cv.updatedAt = Date.now();
+        saveCvList();
+      }
 
       renderCV();
     }
@@ -1733,7 +1782,6 @@
       document.getElementById('ui-btn-download-pdf').innerText = dict.btnDownloadPdf;
       document.getElementById('ui-dash-title').innerText = dict.dashTitle;
       document.getElementById('ui-dash-subtitle').innerText = dict.dashSubtitle;
-      document.getElementById('ui-btn-load-sample').innerText = dict.btnLoadSample;
       document.getElementById('ui-btn-create-blank').innerText = dict.btnCreateBlank;
       document.getElementById('ui-tab-all-active').innerText = dict.tabAllActive;
       document.getElementById('ui-tab-trash').innerText = dict.tabTrash;
@@ -1840,12 +1888,12 @@
         ? `<div class="flex flex-wrap items-center justify-center sm:justify-start gap-y-1 text-[11px] text-slate-600 mt-1 font-normal">${contactItems.join(contactSeparator)}</div>`
         : '';
 
-      // GENERATOR JUDUL KATEGORI RESMI
+      // GENERATOR JUDUL KATEGORI RESMI BERDASARKAN 15 TEMA
       function renderCategoryHeader(titleText) {
-        if (activeLayout === 'prestige') {
+        if (activeLayout === 'prestige' || activeLayout === 'boutique-creative') {
           return `
             <div class="cv-section-title border-b border-slate-900 pb-0.5 mb-2 mt-3 flex items-center justify-between">
-              <h2 class="text-[12px] font-bold font-prestige uppercase tracking-wider text-slate-950">${titleText}</h2>
+              <h2 class="text-[12px] font-bold font-prestige uppercase tracking-wider heading-accent">${titleText}</h2>
               <span class="text-[9px] font-serif text-slate-400 italic hidden sm:inline">Executive Portfolio</span>
             </div>
           `;
@@ -1855,17 +1903,30 @@
               <h2 class="text-[11.5px] font-bold uppercase tracking-widest text-black">${titleText}</h2>
             </div>
           `;
-        } else if (activeLayout === 'modern-corporate') {
+        } else if (activeLayout === 'metro-corporate') {
           return `
-            <div class="cv-section-title border-b-2 border-blue-900 pb-0.5 mb-2 mt-3 flex items-center gap-2">
-              <span class="w-1.5 h-3 bg-blue-900 rounded-sm"></span>
-              <h2 class="text-[11.5px] font-bold uppercase tracking-wider text-blue-950">${titleText}</h2>
+            <div class="cv-section-title mb-2 mt-3 flex items-center">
+              <span class="px-2.5 py-0.5 bg-slate-100 border border-slate-300 rounded text-[11px] font-extrabold uppercase tracking-wider heading-accent">${titleText}</span>
+            </div>
+          `;
+        } else if (activeLayout === 'apex-monolith') {
+          return `
+            <div class="cv-section-title border-y-2 border-slate-800 py-0.5 mb-2 mt-3 flex items-center justify-between">
+              <h2 class="text-[11.5px] font-black uppercase tracking-wider heading-accent">${titleText}</h2>
+              <span class="text-[9px] font-mono text-slate-500 uppercase tracking-widest">STANDARD ATS</span>
+            </div>
+          `;
+        } else if (activeLayout === 'swiss-editorial') {
+          return `
+            <div class="cv-section-title border-l-4 rule-border pl-2 pb-0.5 mb-2 mt-3">
+              <h2 class="text-[11.5px] font-extrabold uppercase tracking-wider heading-accent">${titleText}</h2>
             </div>
           `;
         } else {
           return `
-            <div class="cv-section-title border-b border-slate-400 pb-0.5 mb-2 mt-3">
-              <h2 class="text-[11.5px] font-semibold uppercase tracking-wider text-slate-800">${titleText}</h2>
+            <div class="cv-section-title border-b-2 rule-border pb-0.5 mb-2 mt-3 flex items-center gap-2">
+              <span class="w-1.5 h-3 rule-border border-l-2"></span>
+              <h2 class="text-[11.5px] font-bold uppercase tracking-wider heading-accent">${titleText}</h2>
             </div>
           `;
         }
@@ -1915,7 +1976,7 @@
         });
       }
 
-      // EDUCATIONS: TATA LETAK TERSTRUKTUR DENGAN PREDIKAT & RISET TIDAK TERPUTUS
+      // EDUCATIONS
       let educationsHTML = '';
       const eduElements = document.querySelectorAll('.edu-item');
       if (eduElements.length === 0) {
@@ -1966,7 +2027,7 @@
         });
       }
 
-      // SKILLS: MODULAR COMPETENCIES MATRIX
+      // SKILLS
       let skillsGroupHTML = '';
       document.querySelectorAll('.skill-group-item').forEach(el => {
         const cat = applyTranslation(el.querySelector('.sg-category').value);
@@ -1984,7 +2045,7 @@
         skillsGroupHTML = `<p class="text-[11px] text-slate-400 italic">${lbl.emptySkills}</p>`;
       }
 
-      // CERTIFICATIONS & LICENSES: MODUL TERSTRUKTUR SEJAJAR
+      // CERTIFICATIONS & LICENSES
       let certsHTML = '';
       const certElements = document.querySelectorAll('.cert-item');
       if (certElements.length === 0) {
@@ -2013,7 +2074,7 @@
         });
       }
 
-      // ADDITIONAL INFORMATION (EXTRAS): MODULAR SECTIONS
+      // ADDITIONAL INFORMATION (EXTRAS)
       let extrasHTML = '';
       const extraElements = document.querySelectorAll('.extra-item');
       if (extraElements.length === 0) {
@@ -2033,26 +2094,28 @@
         });
       }
 
-      // ================= HEADER: SIMETRIS DENGAN PAS FOTO 4:5 =================
+      // ================= HEADER DUA WARNA ATAU HEADER SIMETRIS =================
       let headerHTML = '';
+      const isOxfordNavy = (activeLayout === 'oxford-navy');
+
       if (hasPhoto) {
         headerHTML = `
-          <div class="pb-3 border-b-2 rule-border flex items-center gap-5">
+          <div class="pb-3 border-b-2 rule-border flex items-center gap-5 ${isOxfordNavy ? 'p-4 bg-slate-900 text-white rounded-t-lg -mx-8 -mt-8 sm:-mx-11 sm:-mt-11 mb-3' : (activeLayout === 'modern-corporate' ? 'p-3.5 bg-slate-50 rounded-lg' : '')}">
             <div class="shrink-0">
               <img class="w-24 h-28 rounded-md object-cover border border-slate-300 shadow-sm" src="${photoData}" alt="${name}" />
             </div>
             <div class="flex-grow flex flex-col justify-center min-h-[112px]">
-              <h1 class="text-2xl sm:text-[26px] font-bold tracking-tight text-slate-950 ${activeLayout === 'prestige' ? 'font-prestige' : ''} leading-none">${name}</h1>
-              <p class="text-[11.5px] sm:text-[12px] font-semibold text-slate-700 mt-1.5 tracking-wide leading-snug">${rolesString}</p>
+              <h1 class="text-2xl sm:text-[26px] font-bold tracking-tight ${isOxfordNavy ? 'text-white' : 'text-slate-950'} ${activeLayout === 'prestige' ? 'font-prestige' : ''} leading-none">${name}</h1>
+              <p class="text-[11.5px] sm:text-[12px] font-semibold ${isOxfordNavy ? 'text-blue-200' : 'text-slate-700'} mt-1.5 tracking-wide leading-snug">${rolesString}</p>
               ${contactLine}
             </div>
           </div>
         `;
       } else {
         headerHTML = `
-          <div class="pb-3 border-b-2 rule-border ${activeLayout === 'pure-ats' ? 'text-center' : 'text-center sm:text-left'}">
-            <h1 class="text-2xl sm:text-[26px] font-bold tracking-tight text-slate-950 ${activeLayout === 'prestige' ? 'font-prestige' : ''} leading-none">${name}</h1>
-            <p class="text-[11.5px] sm:text-[12px] font-semibold text-slate-700 mt-1.5 tracking-wide leading-snug">${rolesString}</p>
+          <div class="pb-3 border-b-2 rule-border ${isOxfordNavy ? 'p-4 bg-slate-900 text-white rounded-t-lg -mx-8 -mt-8 sm:-mx-11 sm:-mt-11 mb-3' : (activeLayout === 'pure-ats' ? 'text-center' : (activeLayout === 'modern-corporate' ? 'p-3.5 bg-slate-50 rounded-lg' : 'text-center sm:text-left'))}">
+            <h1 class="text-2xl sm:text-[26px] font-bold tracking-tight ${isOxfordNavy ? 'text-white' : 'text-slate-950'} ${activeLayout === 'prestige' ? 'font-prestige' : ''} leading-none">${name}</h1>
+            <p class="text-[11.5px] sm:text-[12px] font-semibold ${isOxfordNavy ? 'text-blue-200' : 'text-slate-700'} mt-1.5 tracking-wide leading-snug">${rolesString}</p>
             ${contactLine}
           </div>
         `;
