@@ -1,4 +1,4 @@
-// GAEKS DIGITAL ECOSYSTEM - AUTH & DYNAMIC REDIRECT
+// GAEKS DIGITAL ECOSYSTEM - AUTH, USER MANAGEMENT & REDIRECT ENGINE
 const VIP_WHITELIST = [
   "gaeks.group@gmail.com",
   "triawan25@gmail.com",
@@ -117,12 +117,8 @@ const GaeksAuth = {
     this.recordUserRegistration(user);
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
 
-    const dest = targetUrl || new URLSearchParams(window.location.search).get('redirect') || (window.location.pathname.includes('login.html') ? 'cv.html' : '');
-    if (dest) {
-      window.location.href = dest;
-    } else {
-      window.location.reload();
-    }
+    const finalDest = targetUrl || new URLSearchParams(window.location.search).get('redirect') || 'index.html';
+    window.location.replace(finalDest);
   },
 
   loginWithEmail(email, password, customName = '', targetUrl = '') {
@@ -147,17 +143,13 @@ const GaeksAuth = {
     this.recordUserRegistration(user);
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
 
-    const dest = targetUrl || new URLSearchParams(window.location.search).get('redirect') || (window.location.pathname.includes('login.html') ? 'cv.html' : '');
-    if (dest) {
-      window.location.href = dest;
-    } else {
-      window.location.reload();
-    }
+    const finalDest = targetUrl || new URLSearchParams(window.location.search).get('redirect') || 'index.html';
+    window.location.replace(finalDest);
   },
 
   logout() {
     localStorage.removeItem(AUTH_STORAGE_KEY);
-    window.location.reload();
+    window.location.replace('index.html');
   },
 
   toggleUserPlan(email) {

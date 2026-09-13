@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <script>
+    (function() {
+      var s = localStorage.getItem('gaeks_user_session_v2');
+      if (!s) {
+        window.location.replace('login.html?redirect=cv.html');
+      }
+    })();
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GAEKS ATS CV Studio | Executive Resume Engine</title>

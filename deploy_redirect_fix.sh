@@ -1,3 +1,8 @@
+#!/bin/bash
+set -e
+
+echo "=== 1. Memperbarui login.html (Satu Tombol Google & Pengalihan Cerdas) ==="
+cat << 'EOF_LOGIN' > login.html
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -16,7 +21,7 @@
 
   <div class="max-w-4xl w-full bg-slate-900 rounded-3xl border border-slate-800 shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[580px]">
     
-    <!-- LEFT SIDEBAR -->
+    <!-- LEFT SIDEBAR: BRAND SHOWCASE -->
     <div class="lg:col-span-5 bg-gradient-to-br from-slate-900 via-blue-950/40 to-slate-950 p-8 sm:p-10 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-800">
       <div class="space-y-6">
         <a href="index.html" class="flex items-center space-x-2.5">
@@ -57,7 +62,7 @@
       </div>
     </div>
 
-    <!-- RIGHT PANEL -->
+    <!-- RIGHT PANEL: AUTH FORMS -->
     <div class="lg:col-span-7 p-8 sm:p-10 flex flex-col justify-between bg-slate-900/60">
       
       <div>
@@ -167,7 +172,7 @@
     function getRedirectTarget() {
       const urlParams = new URLSearchParams(window.location.search);
       const r = urlParams.get('redirect');
-      if (r) return decodeURIComponent(r);
+      if (r) return r;
       return 'index.html';
     }
 
@@ -220,6 +225,7 @@
       document.getElementById('status-alert').classList.add('hidden');
     }
 
+    // PENGALIHAN CERDAS SETELAH GOOGLE LOGIN
     function handleCredentialResponse(response) {
       try {
         const base64Url = response.credential.split('.')[1];
@@ -348,3 +354,201 @@
   </script>
 </body>
 </html>
+EOF_LOGIN
+
+echo "=== 2. Memperbarui auth.js dengan Parameter Pengalihan Dinamis ==="
+cat << 'EOF_AUTH' > auth.js
+// GAEKS DIGITAL ECOSYSTEM - AUTH & DYNAMIC REDIRECT
+const VIP_WHITELIST = [
+  "gaeks.group@gmail.com",
+  "triawan25@gmail.com",
+  "ranesath@gmail.com"
+];
+const SUPER_ADMIN_EMAIL = "gaeks.group@gmail.com";
+const GOOGLE_CLIENT_ID = "41832472270-6r8iudma1eho6kn3q6rs4rl7b9ank7n4.apps.googleusercontent.com";
+
+const AUTH_STORAGE_KEY = 'gaeks_user_session_v2';
+const USERS_DB_KEY = 'gaeks_users_db_v2';
+
+const GaeksAuth = {
+  getUsersDb() {
+    const raw = localStorage.getItem(USERS_DB_KEY);
+    if (!raw) {
+      const initial = [
+        { id: 'usr_adm_1', email: 'gaeks.group@gmail.com', name: 'GAEKS Group (Admin)', provider: 'google', plan: 'PRO_VIP', registeredAt: Date.now() - 86400000 * 5, lastLoginAt: Date.now() },
+        { id: 'usr_vip_2', email: 'triawan25@gmail.com', name: 'Deny Triawan', provider: 'google', plan: 'PRO_VIP', registeredAt: Date.now() - 86400000 * 4, lastLoginAt: Date.now() },
+        { id: 'usr_vip_3', email: 'ranesath@gmail.com', name: 'Ranesath', provider: 'google', plan: 'PRO_VIP', registeredAt: Date.now() - 86400000 * 3, lastLoginAt: Date.now() }
+      ];
+      localStorage.setItem(USERS_DB_KEY, JSON.stringify(initial));
+      return initial;
+    }
+    try { return JSON.parse(raw); } catch(e) { return []; }
+  },
+
+  saveUsersDb(db) {
+    localStorage.setItem(USERS_DB_KEY, JSON.stringify(db));
+  },
+
+  recordUserRegistration(userObj) {
+    const db = this.getUsersDb();
+    const existingIndex = db.findIndex(u => u.email.toLowerCase() === userObj.email.toLowerCase());
+    if (existingIndex >= 0) {
+      db[existingIndex].lastLoginAt = Date.now();
+      if (userObj.name) db[existingIndex].name = userObj.name;
+    } else {
+      db.unshift({
+        id: userObj.id || 'usr_' + Date.now(),
+        email: userObj.email,
+        name: userObj.name || userObj.email.split('@')[0],
+        provider: userObj.provider || 'email',
+        plan: userObj.plan || 'FREE',
+        registeredAt: Date.now(),
+        lastLoginAt: Date.now()
+      });
+      this.sendEmailNotification('welcome', userObj.email, userObj.name);
+    }
+    this.saveUsersDb(db);
+  },
+
+  sendEmailNotification(actionType, email, name, extraData = {}) {
+    try {
+      fetch('/api/mailer.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: actionType,
+          email: email,
+          name: name,
+          ...extraData
+        })
+      }).catch(() => {});
+    } catch(e) {}
+  },
+
+  getCurrentUser() {
+    const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+    if (!raw) return null;
+    try {
+      const user = JSON.parse(raw);
+      if (user && user.email) {
+        const clean = user.email.toLowerCase().trim();
+        user.isAdmin = (clean === SUPER_ADMIN_EMAIL);
+        if (VIP_WHITELIST.includes(clean)) {
+          user.isPro = true;
+          user.plan = 'PRO_VIP';
+          user.planLabel = (clean === SUPER_ADMIN_EMAIL) ? 'SUPER ADMIN (Akses Penuh)' : 'GAEKS PRO VIP (Akses Penuh)';
+        }
+      }
+      return user;
+    } catch(e) {
+      return null;
+    }
+  },
+
+  isProUser() {
+    const user = this.getCurrentUser();
+    return user ? !!user.isPro : false;
+  },
+
+  isAdmin() {
+    const user = this.getCurrentUser();
+    return user ? (user.email.toLowerCase().trim() === SUPER_ADMIN_EMAIL) : false;
+  },
+
+  processVerifiedGoogleUser(email, name, avatar, targetUrl = '') {
+    const cleanEmail = email.toLowerCase().trim();
+    const isVip = VIP_WHITELIST.includes(cleanEmail);
+    const isSuperAdmin = (cleanEmail === SUPER_ADMIN_EMAIL);
+    const displayName = name || cleanEmail.split('@')[0];
+
+    const user = {
+      id: 'usr_goog_' + Math.random().toString(36).substr(2, 9),
+      email: cleanEmail,
+      name: displayName,
+      avatar: avatar || ('https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(displayName)),
+      provider: 'google',
+      isPro: isVip,
+      isAdmin: isSuperAdmin,
+      plan: isVip ? 'PRO_VIP' : 'FREE',
+      planLabel: isVip ? (isSuperAdmin ? 'SUPER ADMIN' : 'GAEKS PRO VIP') : 'Free Tier',
+      loginAt: Date.now()
+    };
+
+    this.recordUserRegistration(user);
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
+
+    const dest = targetUrl || new URLSearchParams(window.location.search).get('redirect') || (window.location.pathname.includes('login.html') ? 'cv.html' : '');
+    if (dest) {
+      window.location.href = dest;
+    } else {
+      window.location.reload();
+    }
+  },
+
+  loginWithEmail(email, password, customName = '', targetUrl = '') {
+    const cleanEmail = email.toLowerCase().trim();
+    const isVip = VIP_WHITELIST.includes(cleanEmail);
+    const isSuperAdmin = (cleanEmail === SUPER_ADMIN_EMAIL);
+    const displayName = customName || cleanEmail.split('@')[0];
+
+    const user = {
+      id: 'usr_' + Math.random().toString(36).substr(2, 9),
+      email: cleanEmail,
+      name: displayName,
+      avatar: 'https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(displayName),
+      provider: 'email',
+      isPro: isVip,
+      isAdmin: isSuperAdmin,
+      plan: isVip ? 'PRO_VIP' : 'FREE',
+      planLabel: isVip ? (isSuperAdmin ? 'SUPER ADMIN' : 'GAEKS PRO VIP') : 'Free Tier',
+      loginAt: Date.now()
+    };
+
+    this.recordUserRegistration(user);
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
+
+    const dest = targetUrl || new URLSearchParams(window.location.search).get('redirect') || (window.location.pathname.includes('login.html') ? 'cv.html' : '');
+    if (dest) {
+      window.location.href = dest;
+    } else {
+      window.location.reload();
+    }
+  },
+
+  logout() {
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    window.location.reload();
+  },
+
+  toggleUserPlan(email) {
+    const db = this.getUsersDb();
+    const target = db.find(u => u.email.toLowerCase() === email.toLowerCase());
+    if (target) {
+      const willBePro = (target.plan !== 'PRO' && target.plan !== 'PRO_VIP');
+      target.plan = willBePro ? 'PRO' : 'FREE';
+      this.saveUsersDb(db);
+      if (willBePro) {
+        this.sendEmailNotification('purchase', target.email, target.name, { plan_name: 'GAEKS PRO Member' });
+      }
+      return target.plan;
+    }
+    return null;
+  }
+};
+EOF_AUTH
+
+echo "=== 3. Memperbarui index.html dengan Parameter ?redirect= ==="
+python3 -c '
+with open("index.html") as f: idx = f.read()
+idx = idx.replace("href=\"login.html\"", "href=\"login.html?redirect=index.html\"")
+idx = idx.replace("function handleServiceAccess(targetUrl) {", "function handleServiceAccess(targetUrl) {\n      const user = GaeksAuth.getCurrentUser();\n      if (user) { window.location.href = targetUrl; }\n      else { window.location.href = \"login.html?redirect=\" + encodeURIComponent(targetUrl); return; }")
+with open("index.html", "w") as f: f.write(idx)
+print("index.html updated.")
+'
+
+echo "=== 4. Mem-push pembaruan ke GitHub Repository ==="
+git add login.html auth.js index.html
+git commit -m "fix: remove duplicate Google button and implement dynamic redirect back to origin page or service" || true
+git push origin main --force
+
+echo "=== SELESAI! Silakan buka https://gdp.gaeks.com/login.html ==="

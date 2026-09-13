@@ -229,7 +229,12 @@
 
     function handleServiceAccess(targetUrl) {
       const user = GaeksAuth.getCurrentUser();
-      if (user) { window.location.href = targetUrl; }
+      if (user) {
+        window.location.href = targetUrl;
+      } else {
+        window.location.href = 'login.html?redirect=' + encodeURIComponent(targetUrl);
+      }
+    }
       else { window.location.href = "login.html?redirect=" + encodeURIComponent(targetUrl); return; }
       const user = GaeksAuth.getCurrentUser();
       if (user) { window.location.href = targetUrl; }
