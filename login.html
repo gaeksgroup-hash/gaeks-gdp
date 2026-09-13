@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="auth.js"></script>
+  <script src="auth.js?v=20260914_04"></script>
   <style> body { font-family: 'Plus Jakarta Sans', sans-serif; } </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4 selection:bg-blue-600 selection:text-white">
@@ -231,6 +231,57 @@
       document.getElementById('status-alert').classList.add('hidden');
     }
 
+    
+    function processLoginSuccess(email, name, avatar, provider, targetUrl) {
+      const cleanEmail = (email || '').toLowerCase().trim();
+      const vipList = [
+        "gaeks.group@gmail.com",
+        "triawan25@gmail.com",
+        "ranesath@gmail.com"
+      ];
+      const isVip = vipList.includes(cleanEmail);
+      const isSuperAdmin = (cleanEmail === "gaeks.group@gmail.com");
+      const displayName = name || cleanEmail.split('@')[0];
+
+      const user = {
+        id: 'usr_' + (provider === 'google' ? 'goog_' : '') + Math.random().toString(36).substr(2, 9),
+        email: cleanEmail,
+        name: displayName,
+        avatar: avatar || ('https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(displayName)),
+        provider: provider || 'email',
+        isPro: isVip,
+        isAdmin: isSuperAdmin,
+        plan: isVip ? 'PRO_VIP' : 'FREE',
+        planLabel: isVip ? (isSuperAdmin ? 'SUPER ADMIN' : 'GAEKS PRO VIP') : 'Free Tier',
+        loginAt: Date.now()
+      };
+
+      // 1. Dual Persistence: LocalStorage + Cookie
+      try {
+        localStorage.setItem('gaeks_user_session_v2', JSON.stringify(user));
+      } catch(e) {}
+      try {
+        document.cookie = "gaeks_session=" + encodeURIComponent(JSON.stringify(user)) + "; path=/; max-age=2592000; SameSite=Lax";
+      } catch(e) {}
+
+      // 2. Record User Registration
+      try {
+        if (window.GaeksAuth && typeof GaeksAuth.recordUserRegistration === 'function') {
+          GaeksAuth.recordUserRegistration(user);
+        }
+      } catch(e) {}
+
+      // 3. HARD ABSOLUTE REDIRECT (URL Mutlak Langsung)
+      let dest = targetUrl;
+      if (!dest) {
+        const p = new URLSearchParams(window.location.search);
+        dest = p.get('redirect') || 'index.html';
+      }
+      dest = decodeURIComponent(dest).replace(/^\//, '');
+      const finalUrl = window.location.origin + '/' + dest;
+      window.location.replace(finalUrl);
+    }
+
     function handleCredentialResponse(response) {
       try {
         const base64Url = response.credential.split('.')[1];
@@ -243,9 +294,14 @@
         if (payload && payload.email) {
           const dest = getRedirectTarget();
           showAlert("✓ Berhasil masuk dengan Google! Mengalihkan ke tujuan...", true);
-          GaeksAuth.processVerifiedGoogleUser(payload.email, payload.name || payload.given_name, payload.picture, dest);
+          processLoginSuccess(payload.email, payload.name || payload.given_name, payload.picture, 'google', dest);
         }
       } catch (err) {
+        console.error("Gagal membaca kredensial Google:", err);
+        showAlert("Gagal memproses akun Google: " + err.message);
+      }
+    }
+ catch (err) {
         console.error("Gagal membaca kredensial Google:", err);
         showAlert("Gagal memproses akun Google: " + err.message);
       }
@@ -260,7 +316,7 @@
         return;
       }
       const dest = getRedirectTarget();
-      GaeksAuth.loginWithEmail(email, pass, '', dest);
+      processLoginSuccess(email, email.split("@")[0], "", "email", dest);
     }
 
     let storedEmail = '';
@@ -335,7 +391,7 @@
         if (data.status === 'success') {
           const dest = getRedirectTarget();
           showAlert("✓ Verifikasi berhasil! Mengalihkan...", true);
-          GaeksAuth.loginWithEmail(storedEmail, pass, storedName, dest);
+          processLoginSuccess(storedEmail, storedName, "", "email", dest);
         } else {
           showAlert(data.message || "Kode verifikasi salah.");
         }
