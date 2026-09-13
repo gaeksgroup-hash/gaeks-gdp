@@ -59,6 +59,77 @@ const GaeksAuth = {
     } catch(e) {}
   },
 
+  
+  initGoogleAuth() {
+    if (window.google && window.google.accounts && window.google.accounts.id) {
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: (response) => this.handleGoogleCredential(response),
+        auto_select: false
+      });
+
+      const btnIndex = document.getElementById("google-btn-container-index");
+      if (btnIndex) {
+        window.google.accounts.id.renderButton(btnIndex, {
+          theme: "outline",
+          size: "large",
+          width: "100%",
+          text: "continue_with",
+          shape: "pill"
+        });
+      }
+
+      const btnCv = document.getElementById("google-btn-container-cv");
+      if (btnCv) {
+        window.google.accounts.id.renderButton(btnCv, {
+          theme: "outline",
+          size: "large",
+          width: "100%",
+          text: "continue_with",
+          shape: "pill"
+        });
+      }
+    }
+  },
+
+  handleGoogleCredential(response) {
+    try {
+      const base64Url = response.credential.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+
+      const payload = JSON.parse(jsonPayload);
+      const email = payload.email.toLowerCase().trim();
+      const name = payload.name || payload.given_name || email.split('@')[0];
+      const avatar = payload.picture || ('https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(name));
+
+      const isVip = VIP_WHITELIST.includes(email);
+      const isSuperAdmin = (email === SUPER_ADMIN_EMAIL);
+
+      const user = {
+        id: 'usr_goog_' + Math.random().toString(36).substr(2, 9),
+        email: email,
+        name: name,
+        avatar: avatar,
+        provider: 'google',
+        isPro: isVip,
+        isAdmin: isSuperAdmin,
+        plan: isVip ? 'PRO_VIP' : 'FREE',
+        planLabel: isVip ? (isSuperAdmin ? 'SUPER ADMIN' : 'GAEKS PRO VIP') : 'Free Tier',
+        loginAt: Date.now()
+      };
+
+      this.recordUserRegistration(user);
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
+      window.location.reload();
+    } catch (e) {
+      console.error("Gagal memproses token Google:", e);
+      alert("Terjadi kendala saat memproses akun Google Anda. Silakan coba lagi.");
+    }
+  },
+
   getCurrentUser() {
     const raw = localStorage.getItem(AUTH_STORAGE_KEY);
     if (!raw) return null;

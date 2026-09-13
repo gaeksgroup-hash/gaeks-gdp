@@ -151,6 +151,7 @@
       }
     }
   </style>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body class="bg-slate-950 text-slate-100 antialiased min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white style-prestige" id="main-body">
 
@@ -2161,6 +2162,7 @@
     }
 
     window.onload = function() {
+      setTimeout(() => { if (GaeksAuth.initGoogleAuth) GaeksAuth.initGoogleAuth(); }, 500);
       loadCvList();
       showDashboardView();
       setLanguage('id');

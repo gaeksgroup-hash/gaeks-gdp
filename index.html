@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="auth.js"></script>
   <style> body { font-family: 'Plus Jakarta Sans', sans-serif; } </style>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body class="bg-slate-950 text-slate-100 antialiased min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white">
 
@@ -237,6 +238,7 @@
     }
 
     function openAuthModal() {
+      setTimeout(() => { if (GaeksAuth.initGoogleAuth) GaeksAuth.initGoogleAuth(); }, 100);
       document.getElementById('auth-modal').classList.remove('hidden');
     }
 
@@ -368,6 +370,7 @@
     }
 
     window.onload = function() {
+      setTimeout(() => { if (GaeksAuth.initGoogleAuth) GaeksAuth.initGoogleAuth(); }, 500);
       updateNavbar();
     };
   </script>
