@@ -3,17 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GAEKS ATS CV Studio | Deny Triawan Professional Resume</title>
+  <title>GAEKS ATS CV Studio | Universal Professional Resume Engine</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
   
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    .cv-sheet-font { font-family: 'Inter', sans-serif; }
+    
+    .font-modern-sans { font-family: 'Plus Jakarta Sans', sans-serif !important; }
+    .font-classic-serif { font-family: 'Merriweather', Georgia, serif !important; }
+    .font-clean-inter { font-family: 'Inter', sans-serif !important; }
 
-    /* DEFINISI TEMA & CORAK LAYOUT */
+    /* DEFINISI TEMA & AKSEN */
     .theme-executive {
       --accent: #1e3a8a;
       --accent-soft: #eff6ff;
@@ -48,7 +51,7 @@
       border: 1px solid var(--accent-border) !important;
     }
 
-    /* CSS CETAK A4 PRESISI KHUSUS ATS */
+    /* CETAK A4 PRESISI ATS (HYPERLINKS TETAP TERJAGA) */
     @media print {
       body * { visibility: hidden !important; }
       #cv-preview-sheet, #cv-preview-sheet * { visibility: visible !important; }
@@ -58,7 +61,7 @@
         top: 0 !important;
         width: 100% !important;
         margin: 0 !important;
-        padding: 10mm 14mm !important;
+        padding: 12mm 15mm !important;
         box-shadow: none !important;
         border: none !important;
         background: #ffffff !important;
@@ -67,6 +70,7 @@
         print-color-adjust: exact !important;
       }
       .no-print { display: none !important; }
+      a { text-decoration: none !important; color: inherit !important; }
       @page { size: A4 portrait; margin: 0; }
     }
   </style>
@@ -87,7 +91,7 @@
             GAEKS ATS Studio
           </span>
           <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">
-            Europass Pro Engine
+            Universal Pro
           </span>
         </div>
       </div>
@@ -109,7 +113,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 border-b border-slate-800 gap-4">
       <div>
         <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Portofolio CV & Resume ATS</h1>
-        <p class="text-xs sm:text-sm text-slate-400 mt-1">Kelola variasi resume Anda dengan 4 gaya arsitektur layout standar internasional.</p>
+        <p class="text-xs sm:text-sm text-slate-400 mt-1">Didesain universal untuk segala profesi: Teknologi, Logistik, Bisnis, Keuangan, Teknik, & Medis.</p>
       </div>
       <div class="flex gap-2">
         <button onclick="resetToDenyTriawanOfficial()" class="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 text-xs font-bold hover:bg-slate-800 transition">
@@ -166,13 +170,21 @@
           <button onclick="redo()" id="btn-redo" title="Redo (Ctrl+Y)" disabled class="px-2 py-1 rounded text-xs text-slate-500 disabled:opacity-40 hover:text-white transition">↷ Redo</button>
         </div>
 
+        <!-- FONT SELECTOR -->
+        <div class="bg-slate-900 p-1 rounded-lg border border-slate-800 flex items-center text-xs font-semibold">
+          <span class="text-[10px] text-slate-400 px-1.5">Font:</span>
+          <button onclick="setFontStyle('modern-sans')" id="btn-font-modern" class="px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-600">Sans</button>
+          <button onclick="setFontStyle('classic-serif')" id="btn-font-serif" class="px-2 py-0.5 rounded text-slate-400 hover:text-white">Serif</button>
+          <button onclick="setFontStyle('clean-inter')" id="btn-font-inter" class="px-2 py-0.5 rounded text-slate-400 hover:text-white">Inter</button>
+        </div>
+
         <!-- DUAL LANGUAGE -->
         <div class="bg-slate-900 p-1 rounded-lg border border-slate-800 flex items-center text-xs font-bold">
           <button onclick="setLanguage('id')" id="btn-lang-id" class="px-2.5 py-1 rounded bg-blue-600 text-white transition">ID 🇮🇩</button>
           <button onclick="setLanguage('en')" id="btn-lang-en" class="px-2.5 py-1 rounded text-slate-400 hover:text-white transition">EN 🇬🇧</button>
         </div>
 
-        <!-- 4 PILIHAN GAYA & ARSITEKTUR LAYOUT -->
+        <!-- LAYOUT SELECTOR -->
         <div class="flex items-center space-x-1 bg-slate-900 p-1 rounded-lg border border-slate-800 text-xs font-semibold">
           <button onclick="setThemeLayout('europass')" id="btn-layout-europass" class="px-2 py-1 rounded text-slate-400 hover:text-white">Europass</button>
           <button onclick="setThemeLayout('executive')" id="btn-layout-executive" class="px-2 py-1 rounded bg-blue-950 text-blue-300 border border-blue-600">Executive</button>
@@ -188,17 +200,19 @@
       <!-- FORMULIR INPUT (5 KOLOM) -->
       <div class="no-print lg:col-span-5 bg-slate-900/90 rounded-2xl border border-slate-800 p-4 sm:p-5 max-h-[85vh] overflow-y-auto space-y-4">
         
+        <!-- TAB SELECTOR FORMULIR -->
         <div class="flex border-b border-slate-800 pb-2 space-x-1 overflow-x-auto">
           <button onclick="switchFormTab('profile')" id="ftab-btn-profile" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 text-white whitespace-nowrap">Profil & Kontak</button>
           <button onclick="switchFormTab('experience')" id="ftab-btn-experience" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap">Pengalaman</button>
           <button onclick="switchFormTab('education')" id="ftab-btn-education" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap">Pendidikan</button>
-          <button onclick="switchFormTab('skills')" id="ftab-btn-skills" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap">Keahlian</button>
+          <button onclick="switchFormTab('skills')" id="ftab-btn-skills" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap">Keahlian & Tag</button>
+          <button onclick="switchFormTab('extras')" id="ftab-btn-extras" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap">Sertifikasi & Bahasa</button>
         </div>
 
-        <!-- FORM 1: PROFIL -->
+        <!-- FORM 1: PROFIL & KONTAK -->
         <div id="ftab-content-profile" class="space-y-3">
           <div class="flex justify-between items-center pb-2 border-b border-slate-800">
-            <span class="text-xs font-bold uppercase text-blue-400">Data Personal Deny Triawan</span>
+            <span class="text-xs font-bold uppercase text-blue-400">Data Personal & Link Kontak</span>
             <label class="flex items-center space-x-1.5 text-xs text-slate-300 cursor-pointer">
               <input type="checkbox" id="input-toggle-photo" onchange="togglePhoto()" class="rounded bg-slate-950 border-slate-700 text-blue-600 focus:ring-0" />
               <span>Gunakan Pas Foto</span>
@@ -214,45 +228,45 @@
           </div>
 
           <div>
-            <label class="block text-[11px] text-slate-400 mb-1">Nama Lengkap</label>
+            <label class="block text-[11px] text-slate-400 mb-1">Nama Lengkap & Gelar</label>
             <input type="text" id="input-name" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white" />
           </div>
           <div>
-            <label class="block text-[11px] text-slate-400 mb-1">Target Posisi / Preferred Job</label>
+            <label class="block text-[11px] text-slate-400 mb-1">Target Posisi / Profesi</label>
             <input type="text" id="input-title" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white" />
           </div>
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="block text-[11px] text-slate-400 mb-1">Email</label>
-              <input type="email" id="input-email" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white" />
+              <label class="block text-[11px] text-slate-400 mb-1">Email (Auto-generated link)</label>
+              <input type="email" id="input-email" oninput="handleInputChange()" placeholder="nama@domain.com" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
             </div>
             <div>
-              <label class="block text-[11px] text-slate-400 mb-1">No. WhatsApp / HP</label>
-              <input type="text" id="input-phone" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white" />
+              <label class="block text-[11px] text-slate-400 mb-1">No. WhatsApp / HP (Auto link chat)</label>
+              <input type="text" id="input-phone" oninput="handleInputChange()" placeholder="+62 8xx" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
             </div>
           </div>
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="block text-[11px] text-slate-400 mb-1">Alamat Lengkap</label>
-              <input type="text" id="input-location" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white" />
+              <label class="block text-[11px] text-slate-400 mb-1">Domisili / Alamat</label>
+              <input type="text" id="input-location" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
             </div>
             <div>
-              <label class="block text-[11px] text-slate-400 mb-1">LinkedIn Profile</label>
-              <input type="text" id="input-linkedin" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white" />
+              <label class="block text-[11px] text-slate-400 mb-1">LinkedIn URL / Username</label>
+              <input type="text" id="input-linkedin" oninput="handleInputChange()" placeholder="triawan25 atau https://linkedin.com/..." class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
             </div>
           </div>
           <div>
-            <label class="block text-[11px] text-slate-400 mb-1">Portfolio / Website</label>
-            <input type="text" id="input-portfolio" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white" />
+            <label class="block text-[11px] text-slate-400 mb-1">Portfolio / Personal Website</label>
+            <input type="text" id="input-portfolio" oninput="handleInputChange()" placeholder="gaeks.com atau https://..." class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
           </div>
           <div>
             <div class="flex justify-between items-center mb-1">
               <label class="text-[11px] text-slate-400">Ringkasan Profesional (Executive Summary)</label>
               <button onclick="aiTranslateField('input-summary')" type="button" class="text-[10px] text-blue-400 hover:text-blue-300 font-semibold flex items-center gap-1">
-                <span>✨ Terjemahkan ke English</span>
+                <span>✨ Format ke English</span>
               </button>
             </div>
-            <textarea id="input-summary" rows="4" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white"></textarea>
+            <textarea id="input-summary" rows="4" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none"></textarea>
           </div>
         </div>
 
@@ -270,7 +284,7 @@
         <!-- FORM 3: PENDIDIKAN -->
         <div id="ftab-content-education" class="hidden space-y-3">
           <div class="flex justify-between items-center pb-2 border-b border-slate-800">
-            <span class="text-xs font-bold uppercase text-blue-400">Pendidikan & Pelatihan</span>
+            <span class="text-xs font-bold uppercase text-blue-400">Pendidikan Formal</span>
             <button onclick="addEducation()" class="text-xs px-2.5 py-1 bg-blue-950 text-blue-300 hover:bg-blue-900 rounded-lg border border-blue-800 transition">
               + Tambah Gelar
             </button>
@@ -278,28 +292,70 @@
           <div id="education-list" class="space-y-3.5"></div>
         </div>
 
-        <!-- FORM 4: KEAHLIAN -->
-        <div id="ftab-content-skills" class="hidden space-y-3">
+        <!-- FORM 4: KEAHLIAN MULTI-KATEGORI & SUGGESTION CHIPS -->
+        <div id="ftab-content-skills" class="hidden space-y-4">
           <div class="pb-2 border-b border-slate-800">
-            <span class="text-xs font-bold uppercase text-blue-400">Keahlian, Tools & Sertifikasi</span>
+            <span class="text-xs font-bold uppercase text-blue-400">Keahlian Berdasarkan Industri</span>
+            <p class="text-[11px] text-slate-400 mt-0.5">Pilih kategori di dropdown, lalu klik tag keahlian untuk memasukkannya ke CV dalam 1 klik.</p>
           </div>
+
+          <!-- DROPDOWN SELECTOR KATEGORI INDUSTRI -->
           <div>
-            <label class="block text-[11px] text-slate-400 mb-1">Keahlian Supply Chain & ERP (Pisahkan koma)</label>
-            <textarea id="input-skills" rows="3" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white"></textarea>
+            <label class="block text-[11px] text-slate-400 mb-1">Pilih Bidang / Kategori Profesi</label>
+            <select id="skill-category-select" onchange="renderSkillSuggestions()" class="w-full px-3 py-2 text-xs bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none">
+              <option value="logistics">Logistik, Supply Chain & Forwarding</option>
+              <option value="tech">Teknologi Informasi, Software & Data</option>
+              <option value="management">Bisnis, Manajemen Proyek & Eksekutif</option>
+              <option value="finance">Keuangan, Akuntansi & Perbankan</option>
+              <option value="marketing">Pemasaran Digital, Sales & Komunikasi</option>
+              <option value="engineering">Teknik, Manufaktur & Mutu</option>
+              <option value="healthcare">Kesehatan, Medis & Farmasi</option>
+              <option value="softskills">Soft Skills & Kepemimpinan</option>
+            </select>
           </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">Tools, Software & Hardware (Pisahkan koma)</label>
-            <input type="text" id="input-tools" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white" />
+
+          <!-- 1-CLICK TAG SUGGESTIONS -->
+          <div class="p-3 bg-slate-950/70 border border-slate-800/80 rounded-xl space-y-2">
+            <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Rekomendasi Siap Klik:</span>
+            <div id="skill-suggestion-chips" class="flex flex-wrap gap-1.5"></div>
           </div>
+
           <div>
-            <label class="block text-[11px] text-slate-400 mb-1">Sertifikasi Resmi & Publikasi Ilmiah</label>
-            <textarea id="input-certifications" rows="3" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white"></textarea>
+            <label class="block text-[11px] text-slate-400 mb-1">Daftar Keahlian Utama Anda (Pisahkan koma)</label>
+            <textarea id="input-skills" rows="3" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">Tools, Software & Platform (Pisahkan koma)</label>
+            <input type="text" id="input-tools" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+        </div>
+
+        <!-- FORM 5: SERTIFIKASI & BAHASA -->
+        <div id="ftab-content-extras" class="hidden space-y-4">
+          <div class="pb-2 border-b border-slate-800">
+            <span class="text-xs font-bold uppercase text-blue-400">Sertifikasi, Bahasa & Pencapaian</span>
+          </div>
+
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">Sertifikasi & Lisensi Resmi (Tiap baris 1 sertifikasi)</label>
+            <textarea id="input-certifications" rows="3" oninput="handleInputChange()" placeholder="Oracle Academy SQL Mastery&#10;Sertifikasi Ahli Kepabeanan (PPJK)" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">Kemampuan Bahasa (Pisahkan koma)</label>
+            <input type="text" id="input-languages" oninput="handleInputChange()" placeholder="Bahasa Indonesia (Native), English (C1 Proficient)" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">Publikasi / Portofolio Ekstra</label>
+            <textarea id="input-publications" rows="2" oninput="handleInputChange()" placeholder="Publikasi Ilmiah IEEE SIET 2017" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none"></textarea>
           </div>
         </div>
 
       </div>
 
-      <!-- PRATINJAU LEMBAR A4 DENGAN 4 ARSITEKTUR LAYOUT -->
+      <!-- PRATINJAU LEMBAR A4 DENGAN ARSITEKTUR LAYOUT TERPILIH (7 KOLOM) -->
       <div class="lg:col-span-7 flex flex-col items-center">
         
         <div class="no-print w-full flex justify-between items-center mb-2 px-2 text-xs text-slate-400">
@@ -307,7 +363,7 @@
             <span class="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
             <span class="font-bold text-slate-300">Format Lembar A4 ATS</span>
             <span id="label-active-lang" class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-blue-950 text-blue-300 border border-blue-800">Bahasa Indonesia</span>
-            <span id="label-active-layout" class="text-[10px] text-slate-400 font-semibold">Executive Layout</span>
+            <span id="label-active-layout" class="text-[10px] text-slate-400 font-semibold">Executive Corporate</span>
           </div>
           <button onclick="window.print()" class="font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1">
             <span>Download PDF</span> &rarr;
@@ -315,11 +371,8 @@
         </div>
 
         <!-- LEMBAR A4 RESUME -->
-        <div id="cv-preview-sheet" class="cv-sheet-font w-full max-w-[780px] bg-white text-slate-800 shadow-2xl rounded-sm p-8 sm:p-12 min-h-[1050px] border border-slate-200">
-          
-          <!-- RENDER KONTEN AKAN DILAKUKAN OLEH renderCV() BERDASARKAN LAYOUT -->
+        <div id="cv-preview-sheet" class="cv-sheet-font font-modern-sans w-full max-w-[780px] bg-white text-slate-800 shadow-2xl rounded-sm p-8 sm:p-12 min-h-[1050px] border border-slate-200">
           <div id="sheet-render-root"></div>
-
         </div>
       </div>
 
@@ -327,38 +380,87 @@
   </section>
 
   <footer class="no-print border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
-    <p>&copy; 2026 GAEKS DIGITAL PRODUCT. Standard ATS Resume Engine.</p>
+    <p>&copy; 2026 GAEKS DIGITAL PRODUCT. Universal ATS Resume Studio.</p>
   </footer>
 
   <!-- SCRIPT LOGIKA UTAMA -->
   <script>
     let activeLayout = 'executive';
     let currentLang = 'id';
+    let currentFont = 'modern-sans';
+
+    // PRESET KEAHLIAN LENGKAP UNTUK SEMUA PROFESI
+    const skillCategoriesData = {
+      logistics: [
+        "Supply Chain Management", "Freight Forwarding", "Customs Clearance (PPJK)", 
+        "Odoo ERP", "ESB ERP", "Bill of Lading (BL)", "PIB & PEB Compliance", 
+        "Vendor Negotiation", "Inventory Optimization (ISO 31000)", "Multimodal Logistics"
+      ],
+      tech: [
+        "Full-Stack Web Development", "Cloud Architecture (AWS/GCP)", "DevOps & CI/CD", 
+        "PostgreSQL & MySQL", "RESTful API & GraphQL", "Python & Node.js", 
+        "Cybersecurity & Firewall", "Docker & Kubernetes", "Network Engineering (MikroTik/Ubiquiti)", "Data Analysis (PowerBI)"
+      ],
+      management: [
+        "Strategic Planning", "Cross-functional Leadership", "Project Management (Agile/Scrum)", 
+        "KPI & OKR Development", "Risk Assessment & Mitigation", "P&L Management", 
+        "Stakeholder Communication", "Business Process Mapping (UML/COBIT)", "Change Management"
+      ],
+      finance: [
+        "Financial Modeling", "Corporate Budgeting & Forecasting", "Tax Compliance (PPh/PPN)", 
+        "Internal & External Auditing", "Cash Flow Optimization", "SAP S/4HANA Finance", 
+        "Financial Reporting (IFRS/PSAK)", "Cost-Benefit Analysis", "Excel Advanced & VBA"
+      ],
+      marketing: [
+        "Digital Marketing Strategy", "SEO & SEM Optimization", "Social Media Campaign Management", 
+        "B2B Sales & Lead Generation", "Brand Identity & Positioning", "CRM Implementation (HubSpot)", 
+        "Conversion Rate Optimization (CRO)", "Copywriting & Storytelling", "Market Research & Analytics"
+      ],
+      engineering: [
+        "AutoCAD & SolidWorks", "Quality Management (ISO 9001)", "Lean Six Sigma", 
+        "PLC Programming & Automation", "Electrical Circuit Design", "Structural Analysis", 
+        "Predictive Maintenance", "Industrial Safety (K3/OSHA)"
+      ],
+      healthcare: [
+        "Patient Diagnosis & Care", "Clinical Protocol Compliance", "Electronic Health Records (EHR)", 
+        "Healthcare Quality Assurance", "Pharmacotherapy", "Medical Device Operation", 
+        "Public Health Education", "Emergency Response & First Aid"
+      ],
+      softskills: [
+        "Executive Public Speaking", "High-Stakes Contract Negotiation", "Complex Problem Solving", 
+        "Emotional Intelligence", "Team Mentoring & Coaching", "Conflict Resolution", 
+        "Time Management & Prioritization", "Adaptability & Resilience"
+      ]
+    };
 
     const i18n = {
       id: {
         summary: "Ringkasan Profesional",
         experience: "Pengalaman Kerja",
-        education: "Pendidikan & Pelatihan",
+        education: "Pendidikan Formal",
         skills: "Keahlian & Penguasaan Teknologi",
         coreSkills: "Keahlian Utama:",
         tools: "Tools & Platform:",
-        certifications: "Sertifikasi & Publikasi",
+        certifications: "Sertifikasi & Lisensi",
+        languages: "Kemampuan Bahasa:",
+        publications: "Publikasi & Portofolio:",
         majorAccomplishment: "Pencapaian Utama (Major Accomplishment):",
-        sector: "Sektor Bisnis:",
+        sector: "Sektor Industri:",
         badgeLabel: "Bahasa Indonesia",
         present: "Sekarang"
       },
       en: {
         summary: "Professional Summary",
         experience: "Work Experience",
-        education: "Education & Training",
+        education: "Education",
         skills: "Skills & Technologies",
         coreSkills: "Core Competencies:",
         tools: "Tools & Platforms:",
-        certifications: "Certifications & Publications",
+        certifications: "Certifications & Licenses",
+        languages: "Languages:",
+        publications: "Publications & Projects:",
         majorAccomplishment: "Major Accomplishment:",
-        sector: "Business or sector:",
+        sector: "Industry Sector:",
         badgeLabel: "English (Translated)",
         present: "Present"
       }
@@ -408,14 +510,41 @@
       return res;
     }
 
+    // HELPER AUTO FORMAT HYPERLINKS
+    function formatEmailLink(email) {
+      if (!email) return '';
+      return `<a href="mailto:${email}" class="hover:underline transition text-slate-600 hover:text-blue-600">${email}</a>`;
+    }
+
+    function formatPhoneLink(phone) {
+      if (!phone) return '';
+      // Buat wa.me link jika angka format indonesia/internasional
+      const cleanNumber = phone.replace(/[^0-9]/g, '');
+      const waLink = cleanNumber.startsWith('0') ? '62' + cleanNumber.slice(1) : cleanNumber;
+      return `<a href="https://wa.me/${waLink}" target="_blank" class="hover:underline transition text-slate-600 hover:text-emerald-600">${phone}</a>`;
+    }
+
+    function formatLinkedInLink(raw) {
+      if (!raw) return '';
+      const url = raw.startsWith('http') ? raw : `https://linkedin.com/in/${raw.replace(/^@/, '')}`;
+      const display = raw.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//, '');
+      return `<a href="${url}" target="_blank" class="hover:underline transition text-slate-600 hover:text-blue-700 font-medium">linkedin.com/in/${display}</a>`;
+    }
+
+    function formatPortfolioLink(raw) {
+      if (!raw) return '';
+      const url = raw.startsWith('http') ? raw : `https://${raw}`;
+      const display = raw.replace(/^https?:\/\//, '');
+      return `<a href="${url}" target="_blank" class="hover:underline transition text-slate-600 hover:text-indigo-600 font-medium">${display}</a>`;
+    }
+
     let cvList = [];
     let currentCvId = null;
     let currentDashboardTab = 'active';
     let historyStack = [];
     let historyIndex = -1;
-    const STORAGE_KEY = 'gaeks_cv_master_list_v3';
+    const STORAGE_KEY = 'gaeks_cv_master_list_v4';
 
-    // 100% DATA RESMI DARI FILE CV DENY TRIAWAN
     function getDenyTriawanOfficialData() {
       return {
         id: 'cv_deny_triawan_official',
@@ -431,11 +560,14 @@
           linkedin: "triawan25",
           portfolio: "gaeks.com",
           summary: "Profesional berpengalaman dengan keahlian komprehensif dalam Manajemen Rantai Pasok (Supply Chain), Operasional Logistik, Kepabeanan Internasional, dan Arsitektur Solusi ERP (Odoo & Cloud ERP). Memiliki rekam jejak sukses dalam memimpin proyek pengadaan & impor strategis 100 bus Transjakarta, mengaudit kepatuhan PIB/PEB/Manifest/BL, serta merampingkan sistem inventaris pergudangan berbasis ISO 31000.",
-          skills: "Supply Chain Management, Freight Forwarding, Customs Clearance (PIB, PEB, Manifest, BL, COO), Odoo ERP Implementation, Business Process Mapping (IBM/COBIT), Vendor Contract Negotiation, ISO 31000 Risk Management, KPI Development",
+          skills: "Supply Chain Management, Freight Forwarding, Customs Clearance (PIB, PEB, Manifest, BL, COO), Odoo ERP, ESB ERP, Business Process Mapping (IBM/COBIT), Vendor Contract Negotiation, ISO 31000 Risk Management, KPI Development",
           tools: "Odoo ERP, SAP Analytics Cloud, Power BI, Google Data Studio, MS Office Mastery, Figma, GitBash, Slack, Mikrotik, Ubiquiti, PostgreSQL, Python, Linux",
-          certifications: "Database Design and Programming with SQL — Oracle Academy (Expert/Mastery)\nMicrosoft Office Desktop Training — Microsoft Partner Program (Mastery)\nPublikasi Ilmiah IEEE: Increased information retrieval capabilities on e-commerce websites using scraping techniques (SIET 2017)",
+          certifications: "Database Design and Programming with SQL — Oracle Academy (Expert/Mastery)\nMicrosoft Office Desktop Training — Microsoft Partner Program (Mastery)",
+          languages: "Bahasa Indonesia (Native), English (C1 Proficient - TOEFL IBT/PBT)",
+          publications: "Publikasi Ilmiah IEEE: Increased information retrieval capabilities on e-commerce websites using scraping techniques (SIET 2017)",
           isPhotoEnabled: true,
           layout: 'executive',
+          fontStyle: 'modern-sans',
           experiences: [
             {
               role: "Head of Operations",
@@ -486,12 +618,6 @@
               school: "Universitas Teknologi Digital Indonesia (STMIK Akakom)",
               period: "Sept 2012 - Aug 2016",
               details: "IPK 3.38 • Peneliti Makalah Terbaik IEEE: Peningkatan Temu Balik Informasi pada Website E-Commerce Menggunakan Teknik Scraping (SIET 2017)"
-            },
-            {
-              degree: "Pelatihan Tingkat Lanjut",
-              school: "Oracle Academy & Microsoft Partner",
-              period: "2016 - 2018",
-              details: "Sertifikasi SQL Database Programming (Oracle Academy) & Sertifikasi Microsoft Office Desktop Mastery"
             }
           ]
         }
@@ -590,7 +716,7 @@
             <div>
               <div class="flex items-start justify-between gap-2 mb-2">
                 <h3 class="font-bold text-white text-base truncate">${cv.title || 'CV Deny Triawan'}</h3>
-                <span class="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">Europass & ATS</span>
+                <span class="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">Universal ATS</span>
               </div>
               <p class="text-xs text-slate-400 font-medium line-clamp-2">${d.title || 'Supply Chain & Operations Manager'}</p>
               <div class="mt-4 pt-3 border-t border-slate-800/80 text-[11px] text-slate-500 space-y-1">
@@ -629,7 +755,7 @@
     function createNewCV() {
       const newCv = getDenyTriawanOfficialData();
       newCv.id = 'cv_' + Date.now();
-      newCv.title = "Deny Triawan - CV (Baru)";
+      newCv.title = "CV Saya " + (cvList.length + 1);
       cvList.unshift(newCv);
       saveCvList();
       openEditor(newCv.id);
@@ -690,6 +816,7 @@
       historyIndex = 0;
       updateUndoRedoButtons();
 
+      renderSkillSuggestions();
       renderCV();
     }
 
@@ -710,11 +837,14 @@
       document.getElementById('input-skills').value = d.skills || '';
       document.getElementById('input-tools').value = d.tools || '';
       document.getElementById('input-certifications').value = d.certifications || '';
+      document.getElementById('input-languages').value = d.languages || '';
+      document.getElementById('input-publications').value = d.publications || '';
       document.getElementById('input-toggle-photo').checked = !!d.isPhotoEnabled;
       
       togglePhoto();
       renderFormLists(d.experiences || [], d.educations || []);
       setThemeLayout(d.layout || 'executive');
+      setFontStyle(d.fontStyle || 'modern-sans');
     }
 
     function extractFormData() {
@@ -725,7 +855,7 @@
           company: el.querySelector('.exp-company').value,
           period: el.querySelector('.exp-period').value,
           location: el.querySelector('.exp-loc').value,
-          sector: el.querySelector('.exp-sector') ? el.querySelector('.exp-sector').value : 'Freight Forwarding',
+          sector: el.querySelector('.exp-sector') ? el.querySelector('.exp-sector').value : '',
           desc: el.querySelector('.exp-desc').value,
           accomplishment: el.querySelector('.exp-acc') ? el.querySelector('.exp-acc').value : ''
         });
@@ -753,8 +883,11 @@
         skills: document.getElementById('input-skills').value,
         tools: document.getElementById('input-tools').value,
         certifications: document.getElementById('input-certifications').value,
+        languages: document.getElementById('input-languages').value,
+        publications: document.getElementById('input-publications').value,
         isPhotoEnabled: document.getElementById('input-toggle-photo').checked,
         layout: activeLayout,
+        fontStyle: currentFont,
         experiences: exps,
         educations: edus
       };
@@ -810,6 +943,34 @@
       document.getElementById('btn-redo').disabled = (historyIndex >= historyStack.length - 1);
     }
 
+    // SKILL SUGGESTIONS DROPDOWN CONTROLLER
+    function renderSkillSuggestions() {
+      const cat = document.getElementById('skill-category-select').value;
+      const chipsContainer = document.getElementById('skill-suggestion-chips');
+      chipsContainer.innerHTML = '';
+      const list = skillCategoriesData[cat] || [];
+
+      list.forEach(skill => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = "px-2.5 py-1 rounded-md text-[11px] font-medium bg-slate-900 border border-slate-700 text-slate-300 hover:bg-blue-600 hover:text-white hover:border-blue-500 transition";
+        btn.innerText = "+ " + skill;
+        btn.onclick = () => addSkillToInput(skill);
+        chipsContainer.appendChild(btn);
+      });
+    }
+
+    function addSkillToInput(skillName) {
+      const input = document.getElementById('input-skills');
+      let current = input.value.split(',').map(s => s.trim()).filter(Boolean);
+      if (!current.includes(skillName)) {
+        current.push(skillName);
+        input.value = current.join(', ');
+        handleInputChange();
+      }
+    }
+
+    // AUTO ANCHOR EXPERIENCES
     function addExperience(item = { role: '', company: '', period: '', location: '', sector: '', desc: '', accomplishment: '' }) {
       const list = document.getElementById('experience-list');
       const div = document.createElement('div');
@@ -828,7 +989,7 @@
         </div>
         <div class="grid grid-cols-3 gap-2">
           <div>
-            <label class="block text-[10px] text-slate-400 mb-0.5">Periode (mis: May 2024 - Present)</label>
+            <label class="block text-[10px] text-slate-400 mb-0.5">Periode Kerja</label>
             <input type="text" value="${item.period}" oninput="handleInputChange()" class="exp-period w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
           </div>
           <div>
@@ -877,7 +1038,7 @@
             <input type="text" placeholder="Gelar" value="${item.degree}" oninput="handleInputChange()" class="edu-deg w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
           </div>
           <div>
-            <label class="block text-[10px] text-slate-400 mb-0.5">Institusi / Universitas</label>
+            <label class="block text-[10px] text-slate-400 mb-0.5">Institusi / Kampus</label>
             <input type="text" placeholder="Kampus" value="${item.school}" oninput="handleInputChange()" class="edu-school w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
           </div>
         </div>
@@ -929,7 +1090,7 @@
     }
 
     function switchFormTab(tab) {
-      ['profile', 'experience', 'education', 'skills'].forEach(t => {
+      ['profile', 'experience', 'education', 'skills', 'extras'].forEach(t => {
         const content = document.getElementById(`ftab-content-${t}`);
         const btn = document.getElementById(`ftab-btn-${t}`);
         if (t === tab) {
@@ -942,7 +1103,6 @@
       });
     }
 
-    // GANTI TEMA & ARSITEKTUR LAYOUT
     function setThemeLayout(name) {
       activeLayout = name;
       const body = document.getElementById('app-body');
@@ -966,6 +1126,25 @@
       });
 
       renderCV();
+    }
+
+    function setFontStyle(fontName) {
+      currentFont = fontName;
+      const sheet = document.getElementById('cv-preview-sheet');
+      sheet.classList.remove('font-modern-sans', 'font-classic-serif', 'font-clean-inter');
+      sheet.classList.add('font-' + fontName);
+
+      ['modern', 'serif', 'inter'].forEach(f => {
+        const btn = document.getElementById('btn-font-' + f);
+        if (btn) {
+          const map = { modern: 'modern-sans', serif: 'classic-serif', inter: 'clean-inter' };
+          btn.className = (map[f] === fontName)
+            ? "px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-600 font-bold"
+            : "px-2 py-0.5 rounded text-slate-400 hover:text-white";
+        }
+      });
+
+      handleInputChange();
     }
 
     function setLanguage(lang) {
@@ -1009,7 +1188,7 @@
       return text.replace(/(\b\d+(\.\d+)?%\b|\b(Rp|USD|\$)\s?[\d.,]+(\s?(juta|miliar|k|m))?|\b\d+x\b|\b\d{2,}\b|\b100\sTransjakarta\sbuses\b|\b100\sbus\sTransjakarta\b)/gi, '<strong class="font-bold text-slate-950">$1</strong>');
     }
 
-    // RENDER SHEET UTAMA BERDASARKAN 4 LAYOUT
+    // RENDER SHEET UTAMA
     function renderCV() {
       const root = document.getElementById('sheet-render-root');
       const lbl = i18n[currentLang];
@@ -1023,6 +1202,12 @@
       const port = document.getElementById('input-portfolio').value || 'gaeks.com';
       const summary = highlightNumbers(applyTranslation(document.getElementById('input-summary').value));
       const hasPhoto = document.getElementById('input-toggle-photo').checked;
+
+      // FORMAT HYPERLINKS
+      const emailLink = formatEmailLink(email);
+      const phoneLink = formatPhoneLink(phone);
+      const linkedinLink = formatLinkedInLink(linkedin);
+      const portfolioLink = formatPortfolioLink(port);
 
       // KUMPULKAN EXPERIENCES
       let experiencesHTML = '';
@@ -1055,12 +1240,9 @@
         ` : '';
 
         if (activeLayout === 'europass') {
-          // GAYA 1: EUROPASS MODERN (Dua kolom linier: Tanggal di kiri, Detail di kanan)
           experiencesHTML += `
             <div class="grid grid-cols-12 gap-3 mb-4 pb-3 border-b border-slate-100 last:border-none">
-              <div class="col-span-3 text-[11px] font-bold accent-text pt-0.5">
-                ${per}
-              </div>
+              <div class="col-span-3 text-[11px] font-bold accent-text pt-0.5">${per}</div>
               <div class="col-span-9">
                 <div class="font-bold text-slate-950 text-xs">${role} <span class="font-semibold text-slate-600">— ${comp}</span></div>
                 <div class="text-[11px] text-slate-500 italic mb-1.5">${itemLoc}</div>
@@ -1071,7 +1253,6 @@
             </div>
           `;
         } else if (activeLayout === 'tech') {
-          // GAYA 2: TECH / SOLUTION ARCHITECT (Card pill accents & clean split line)
           experiencesHTML += `
             <div class="mb-4 pl-3.5 border-l-2 accent-border relative">
               <div class="flex flex-wrap justify-between items-baseline gap-1">
@@ -1090,7 +1271,6 @@
             </div>
           `;
         } else if (activeLayout === 'harvard') {
-          // GAYA 3: HARVARD MINIMALIST (Garis tipis, hierarki klasik, tanpa kotak mencolok)
           experiencesHTML += `
             <div class="mb-3.5 pb-2 border-b border-slate-200/60 last:border-none">
               <div class="flex justify-between items-baseline text-xs">
@@ -1106,7 +1286,6 @@
             </div>
           `;
         } else {
-          // GAYA 4: EXECUTIVE CORPORATE (Default)
           experiencesHTML += `
             <div class="mb-4">
               <div class="flex flex-wrap justify-between items-baseline gap-1">
@@ -1158,7 +1337,7 @@
         }
       });
 
-      // KEAHLIAN
+      // KEAHLIAN & TOOLS
       const rawSkills = document.getElementById('input-skills').value;
       const skillsChips = rawSkills.split(',').map(s => s.trim()).filter(Boolean).map(s => 
         `<span class="badge-theme px-2.5 py-0.5 rounded text-[11px] font-semibold">${applyTranslation(s)}</span>`
@@ -1169,13 +1348,19 @@
         `<span class="bg-slate-100 text-slate-700 border border-slate-200 px-2 py-0.5 rounded text-[11px] font-medium">${t}</span>`
       ).join(' ');
 
-      // SERTIFIKASI
+      // EKSTRA: SERTIFIKASI, BAHASA, PUBLIKASI
       const certRaw = document.getElementById('input-certifications').value;
       const certHTML = certRaw.trim() ? certRaw.split('\n').filter(l => l.trim()).map(l => `• ${applyTranslation(l.trim())}`).join('<br>') : '';
 
-      // ASSEMBLE HTML BERDASARKAN TEMA
+      const langRaw = document.getElementById('input-languages').value;
+      const langHTML = langRaw.trim() ? applyTranslation(langRaw) : '';
+
+      const pubRaw = document.getElementById('input-publications').value;
+      const pubHTML = pubRaw.trim() ? applyTranslation(pubRaw) : '';
+
+      // ASSEMBLE SHEET CONTENT
       root.innerHTML = `
-        <!-- HEADER DENGAN DATA RESMI DENY TRIAWAN -->
+        <!-- HEADER DENGAN DATA RESMI DENY TRIAWAN & CLICKABLE HYPERLINKS -->
         <div class="pb-4 border-b-2 accent-border flex flex-col sm:flex-row items-center sm:items-start gap-4">
           ${hasPhoto ? `
             <div class="shrink-0">
@@ -1186,26 +1371,31 @@
             <h1 class="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight accent-text">${name}</h1>
             <p class="text-xs sm:text-[13px] font-bold text-slate-800 mt-0.5 tracking-wide leading-snug">${title}</p>
             
-            <!-- CONTACT STRIP DENGAN IKON PROFESIONAL -->
-            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-600 mt-2 font-medium justify-center sm:justify-start">
-              <span class="inline-flex items-center gap-1">
+            <!-- CONTACT STRIP DENGAN LINK KLIK OTOMATIS & IKON ELEGAN -->
+            <div class="flex flex-wrap items-center gap-x-3.5 gap-y-1.5 text-xs text-slate-600 mt-2.5 font-medium justify-center sm:justify-start">
+              <span class="inline-flex items-center gap-1.5">
                 <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                <span>${email}</span>
+                ${emailLink}
               </span>
               <span>•</span>
-              <span class="inline-flex items-center gap-1">
+              <span class="inline-flex items-center gap-1.5">
                 <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                <span>${phone}</span>
+                ${phoneLink}
               </span>
               <span>•</span>
-              <span class="inline-flex items-center gap-1">
+              <span class="inline-flex items-center gap-1.5">
                 <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                <span>Semarang, Indonesia</span>
+                <span>${loc}</span>
               </span>
               <span>•</span>
-              <span class="inline-flex items-center gap-1">
+              <span class="inline-flex items-center gap-1.5">
                 <span class="font-bold text-[10px] text-slate-600 px-1 py-0.2 rounded bg-slate-100 border border-slate-200">in</span>
-                <span>linkedin.com/in/${linkedin}</span>
+                ${linkedinLink}
+              </span>
+              <span>•</span>
+              <span class="inline-flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                ${portfolioLink}
               </span>
             </div>
           </div>
@@ -1246,11 +1436,19 @@
           </div>
         </div>
 
-        <!-- SERTIFIKASI -->
+        <!-- SERTIFIKASI & LISENSI -->
         ${certHTML ? `
           <div class="mt-4">
             <h2 class="text-xs font-bold uppercase tracking-wider accent-text border-b accent-border pb-1 mb-1.5">${lbl.certifications}</h2>
             <div class="text-xs leading-relaxed text-slate-700">${certHTML}</div>
+          </div>
+        ` : ''}
+
+        <!-- BAHASA & PUBLIKASI -->
+        ${(langHTML || pubHTML) ? `
+          <div class="mt-4 pt-2 border-t border-slate-200/80 text-xs text-slate-700 space-y-1">
+            ${langHTML ? `<div><strong>${lbl.languages}</strong> ${langHTML}</div>` : ''}
+            ${pubHTML ? `<div><strong>${lbl.publications}</strong> ${pubHTML}</div>` : ''}
           </div>
         ` : ''}
       `;
