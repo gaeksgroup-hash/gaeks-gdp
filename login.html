@@ -171,7 +171,7 @@
       return 'index.html';
     }
 
-    // Jika sudah ada sesi, langsung forward tanpa render form
+    // Auto-forward jika sudah ada sesi aktif v3
     (function() {
       try {
         const u = GaeksAuth.getCurrentUser();
@@ -231,7 +231,7 @@
       document.getElementById('status-alert').classList.add('hidden');
     }
 
-    
+    // PROSESOR SESI MANDIRI V3 (LOCALSTORAGE + COOKIE)
     function processLoginSuccess(email, name, avatar, provider, targetUrl) {
       const cleanEmail = (email || '').toLowerCase().trim();
       const vipList = [
@@ -256,22 +256,20 @@
         loginAt: Date.now()
       };
 
-      // 1. Dual Persistence: LocalStorage + Cookie
       try {
-        localStorage.setItem('gaeks_user_session_v2', JSON.stringify(user));
+        localStorage.setItem('gaeks_user_session_v3', JSON.stringify(user));
       } catch(e) {}
+      
       try {
-        document.cookie = "gaeks_session=" + encodeURIComponent(JSON.stringify(user)) + "; path=/; max-age=2592000; SameSite=Lax";
+        document.cookie = "gaeks_session_v3=" + encodeURIComponent(JSON.stringify(user)) + "; path=/; max-age=2592000; SameSite=Lax";
       } catch(e) {}
 
-      // 2. Record User Registration
       try {
         if (window.GaeksAuth && typeof GaeksAuth.recordUserRegistration === 'function') {
           GaeksAuth.recordUserRegistration(user);
         }
       } catch(e) {}
 
-      // 3. HARD ABSOLUTE REDIRECT (URL Mutlak Langsung)
       let dest = targetUrl;
       if (!dest) {
         const p = new URLSearchParams(window.location.search);
@@ -297,11 +295,6 @@
           processLoginSuccess(payload.email, payload.name || payload.given_name, payload.picture, 'google', dest);
         }
       } catch (err) {
-        console.error("Gagal membaca kredensial Google:", err);
-        showAlert("Gagal memproses akun Google: " + err.message);
-      }
-    }
- catch (err) {
         console.error("Gagal membaca kredensial Google:", err);
         showAlert("Gagal memproses akun Google: " + err.message);
       }
@@ -408,6 +401,4 @@
       document.getElementById('reg-step-request').classList.remove('hidden');
       hideAlert();
     }
-  </script>
-</body>
-</html>
+\n</script>\n</body>\n</html>

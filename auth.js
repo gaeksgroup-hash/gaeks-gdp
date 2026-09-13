@@ -1,4 +1,11 @@
-// GAEKS DIGITAL ECOSYSTEM - AUTH, DUAL PERSISTENCE & HARD REDIRECT
+// GAEKS DIGITAL ECOSYSTEM - AUTH ENGINE V3 (CLEAN SLATE)
+try {
+  localStorage.removeItem('gaeks_user_session_v1');
+  localStorage.removeItem('gaeks_user_session_v2');
+  localStorage.removeItem('gaeks_user_session');
+  document.cookie = "gaeks_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+} catch(e) {}
+
 const VIP_WHITELIST = [
   "gaeks.group@gmail.com",
   "triawan25@gmail.com",
@@ -7,8 +14,8 @@ const VIP_WHITELIST = [
 const SUPER_ADMIN_EMAIL = "gaeks.group@gmail.com";
 const GOOGLE_CLIENT_ID = "41832472270-6r8iudma1eho6kn3q6rs4rl7b9ank7n4.apps.googleusercontent.com";
 
-const AUTH_STORAGE_KEY = 'gaeks_user_session_v2';
-const USERS_DB_KEY = 'gaeks_users_db_v2';
+const AUTH_STORAGE_KEY = 'gaeks_user_session_v3';
+const USERS_DB_KEY = 'gaeks_users_db_v3';
 
 const GaeksAuth = {
   getUsersDb() {
@@ -71,7 +78,7 @@ const GaeksAuth = {
     try { raw = localStorage.getItem(AUTH_STORAGE_KEY); } catch(e) {}
     if (!raw) {
       try {
-        const m = document.cookie.match(/gaeks_session=([^;]+)/);
+        const m = document.cookie.match(/gaeks_session_v3=([^;]+)/);
         if (m) raw = decodeURIComponent(m[1]);
       } catch(e) {}
     }
@@ -103,82 +110,9 @@ const GaeksAuth = {
     return user ? (user.email.toLowerCase().trim() === SUPER_ADMIN_EMAIL) : false;
   },
 
-  saveSessionDual(user) {
-    try {
-      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
-    } catch(e) {}
-    try {
-      document.cookie = "gaeks_session=" + encodeURIComponent(JSON.stringify(user)) + "; path=/; max-age=2592000; SameSite=Lax";
-    } catch(e) {}
-  },
-
-  processVerifiedGoogleUser(email, name, avatar, targetUrl = '') {
-    const cleanEmail = email.toLowerCase().trim();
-    const isVip = VIP_WHITELIST.includes(cleanEmail);
-    const isSuperAdmin = (cleanEmail === SUPER_ADMIN_EMAIL);
-    const displayName = name || cleanEmail.split('@')[0];
-
-    const user = {
-      id: 'usr_goog_' + Math.random().toString(36).substr(2, 9),
-      email: cleanEmail,
-      name: displayName,
-      avatar: avatar || ('https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(displayName)),
-      provider: 'google',
-      isPro: isVip,
-      isAdmin: isSuperAdmin,
-      plan: isVip ? 'PRO_VIP' : 'FREE',
-      planLabel: isVip ? (isSuperAdmin ? 'SUPER ADMIN' : 'GAEKS PRO VIP') : 'Free Tier',
-      loginAt: Date.now()
-    };
-
-    this.saveSessionDual(user);
-    this.recordUserRegistration(user);
-
-    let dest = targetUrl;
-    if (!dest) {
-      const p = new URLSearchParams(window.location.search);
-      dest = p.get('redirect') || 'index.html';
-    }
-    dest = decodeURIComponent(dest).replace(/^\//, '');
-    const finalUrl = window.location.origin + '/' + dest;
-    window.location.replace(finalUrl);
-  },
-
-  loginWithEmail(email, password, customName = '', targetUrl = '') {
-    const cleanEmail = email.toLowerCase().trim();
-    const isVip = VIP_WHITELIST.includes(cleanEmail);
-    const isSuperAdmin = (cleanEmail === SUPER_ADMIN_EMAIL);
-    const displayName = customName || cleanEmail.split('@')[0];
-
-    const user = {
-      id: 'usr_' + Math.random().toString(36).substr(2, 9),
-      email: cleanEmail,
-      name: displayName,
-      avatar: 'https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(displayName),
-      provider: 'email',
-      isPro: isVip,
-      isAdmin: isSuperAdmin,
-      plan: isVip ? 'PRO_VIP' : 'FREE',
-      planLabel: isVip ? (isSuperAdmin ? 'SUPER ADMIN' : 'GAEKS PRO VIP') : 'Free Tier',
-      loginAt: Date.now()
-    };
-
-    this.saveSessionDual(user);
-    this.recordUserRegistration(user);
-
-    let dest = targetUrl;
-    if (!dest) {
-      const p = new URLSearchParams(window.location.search);
-      dest = p.get('redirect') || 'index.html';
-    }
-    dest = decodeURIComponent(dest).replace(/^\//, '');
-    const finalUrl = window.location.origin + '/' + dest;
-    window.location.replace(finalUrl);
-  },
-
   logout() {
     try { localStorage.removeItem(AUTH_STORAGE_KEY); } catch(e) {}
-    try { document.cookie = "gaeks_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"; } catch(e) {}
+    try { document.cookie = "gaeks_session_v3=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"; } catch(e) {}
     window.location.replace(window.location.origin + '/index.html');
   },
 

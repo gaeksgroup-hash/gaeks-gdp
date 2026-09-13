@@ -4,10 +4,10 @@
   <script>
     (function() {
       var raw = null;
-      try { raw = localStorage.getItem('gaeks_user_session_v2'); } catch(e) {}
+      try { raw = localStorage.getItem('gaeks_user_session_v3'); } catch(e) {}
       if (!raw) {
         try {
-          var m = document.cookie.match(/gaeks_session=([^;]+)/);
+          var m = document.cookie.match(/gaeks_session_v3=([^;]+)/);
           if (m) raw = decodeURIComponent(m[1]);
         } catch(e) {}
       }
