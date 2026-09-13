@@ -225,8 +225,6 @@
   </footer>
 
   <script>
-    let pendingRedirect = null;
-
     function handleServiceAccess(targetUrl) {
       const user = GaeksAuth.getCurrentUser();
       if (user) {
@@ -234,46 +232,6 @@
       } else {
         window.location.href = 'login.html?redirect=' + encodeURIComponent(targetUrl);
       }
-    }
-      else { window.location.href = "login.html?redirect=" + encodeURIComponent(targetUrl); return; }
-      const user = GaeksAuth.getCurrentUser();
-      if (user) { window.location.href = targetUrl; }
-      else { window.location.href = 'login.html'; return; }
-      const user = GaeksAuth.getCurrentUser();
-      if (user) {
-        window.location.href = targetUrl;
-      } else {
-        pendingRedirect = targetUrl;
-        openAuthModal();
-      }
-    }
-
-    function openAuthModal() {
-      setTimeout(() => { if (GaeksAuth.initGoogleAuth) GaeksAuth.initGoogleAuth(); }, 100);
-      document.getElementById('auth-modal').classList.remove('hidden');
-    }
-
-    function closeAuthModal() {
-      document.getElementById('auth-modal').classList.add('hidden');
-    }
-
-    function loginGoogle() {
-      GaeksAuth.loginWithGoogle();
-      if (pendingRedirect) window.location.href = pendingRedirect;
-    }
-
-    function handleEmailSubmit(e) {
-      e.preventDefault();
-      const email = document.getElementById('auth-email').value;
-      const pass = document.getElementById('auth-pass').value;
-      const name = document.getElementById('auth-name').value;
-      GaeksAuth.loginWithEmail(email, pass, name);
-      if (pendingRedirect) window.location.href = pendingRedirect;
-    }
-
-    function quickLogin(email, name) {
-      GaeksAuth.loginWithEmail(email, 'password123', name);
-      if (pendingRedirect) window.location.href = pendingRedirect;
     }
 
     function updateNavbar() {
@@ -283,42 +241,49 @@
       const adminBtn = document.getElementById('nav-btn-admin');
 
       if (user) {
-        btnLogin.classList.add('hidden');
-        pill.classList.remove('hidden');
-        document.getElementById('nav-user-avatar').src = user.avatar;
-        document.getElementById('nav-user-name').innerText = user.name;
-        
+        if (btnLogin) btnLogin.classList.add('hidden');
+        if (pill) pill.classList.remove('hidden');
+        const avatar = document.getElementById('nav-user-avatar');
+        if (avatar) avatar.src = user.avatar;
+        const name = document.getElementById('nav-user-name');
+        if (name) name.innerText = user.name;
+
         const badge = document.getElementById('nav-user-badge');
-        if (user.isAdmin) {
-          badge.className = "px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-amber-950 text-amber-300 border border-amber-800";
-          badge.innerText = "ADMIN";
-          adminBtn.classList.remove('hidden');
-        } else if (user.isPro) {
-          badge.className = "px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-emerald-950 text-emerald-300 border border-emerald-800";
-          badge.innerText = "PRO VIP";
-        } else {
-          badge.className = "px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-blue-950 text-blue-300 border border-blue-800";
-          badge.innerText = "FREE";
+        if (badge) {
+          if (user.isAdmin) {
+            badge.className = "px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-amber-950 text-amber-300 border border-amber-800";
+            badge.innerText = "ADMIN";
+            if (adminBtn) adminBtn.classList.remove('hidden');
+          } else if (user.isPro) {
+            badge.className = "px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-emerald-950 text-emerald-300 border border-emerald-800";
+            badge.innerText = "PRO VIP";
+          } else {
+            badge.className = "px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-blue-950 text-blue-300 border border-blue-800";
+            badge.innerText = "FREE";
+          }
         }
       } else {
-        btnLogin.classList.remove('hidden');
-        pill.classList.add('hidden');
-        adminBtn.classList.add('hidden');
+        if (btnLogin) btnLogin.classList.remove('hidden');
+        if (pill) pill.classList.add('hidden');
+        if (adminBtn) adminBtn.classList.add('hidden');
       }
     }
 
     function openAdminModal() {
       renderAdminUsersTable();
-      document.getElementById('admin-modal').classList.remove('hidden');
+      const m = document.getElementById('admin-modal');
+      if (m) m.classList.remove('hidden');
     }
 
     function closeAdminModal() {
-      document.getElementById('admin-modal').classList.add('hidden');
+      const m = document.getElementById('admin-modal');
+      if (m) m.classList.add('hidden');
     }
 
     function renderAdminUsersTable(searchKeyword = '') {
       const users = GaeksAuth.getUsersDb();
       const tbody = document.getElementById('admin-user-table-body');
+      if (!tbody) return;
       tbody.innerHTML = '';
 
       let filtered = users;
@@ -327,10 +292,11 @@
         filtered = users.filter(u => u.email.toLowerCase().includes(kw) || (u.name && u.name.toLowerCase().includes(kw)));
       }
 
-      document.getElementById('admin-user-count').innerText = `${filtered.length} Pengguna`;
+      const countEl = document.getElementById('admin-user-count');
+      if (countEl) countEl.innerText = `${filtered.length} Pengguna`;
 
       if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500 italic">Tidak ada pengguna yang cocok.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500 italic">Tidak ada pengguna.</td></tr>`;
         return;
       }
 
@@ -380,139 +346,10 @@
       a.click();
     }
 
-    
-    function switchAuthTab(tab) {
-      const btnIn = document.getElementById('tab-btn-signin');
-      const btnUp = document.getElementById('tab-btn-signup');
-      const viewIn = document.getElementById('auth-view-signin');
-      const viewUp = document.getElementById('auth-view-signup');
-      const alertBox = document.getElementById('auth-alert-msg');
-      if (alertBox) alertBox.classList.add('hidden');
-
-      if (tab === 'signin') {
-        btnIn.className = "flex-1 py-2.5 border-b-2 border-blue-500 text-blue-400 transition";
-        btnUp.className = "flex-1 py-2.5 border-b-2 border-transparent text-slate-400 hover:text-slate-300 transition";
-        viewIn.classList.remove('hidden');
-        viewUp.classList.add('hidden');
-        document.getElementById('google-btn-text').innerText = "Lanjutkan dengan Akun Google";
-      } else {
-        btnUp.className = "flex-1 py-2.5 border-b-2 border-blue-500 text-blue-400 transition";
-        btnIn.className = "flex-1 py-2.5 border-b-2 border-transparent text-slate-400 hover:text-slate-300 transition";
-        viewUp.classList.remove('hidden');
-        viewIn.classList.add('hidden');
-        document.getElementById('google-btn-text').innerText = "Daftar Cepat dengan Akun Google";
-      }
-    }
-
-    function showAuthAlert(msg, isSuccess = false) {
-      const el = document.getElementById('auth-alert-msg');
-      el.classList.remove('hidden');
-      if (isSuccess) {
-        el.className = "p-3 rounded-xl text-xs bg-emerald-950/80 border border-emerald-800 text-emerald-300";
-      } else {
-        el.className = "p-3 rounded-xl text-xs bg-rose-950/80 border border-rose-800 text-rose-300";
-      }
-      el.innerHTML = msg;
-    }
-
-    function handleSignInSubmit(e) {
-      e.preventDefault();
-      const email = document.getElementById('signin-email').value.trim();
-      const pass = document.getElementById('signin-pass').value.trim();
-      if (!email || !pass) return;
-      GaeksAuth.loginWithEmail(email, pass);
-    }
-
-    let currentOtpEmail = '';
-    let currentOtpName = '';
-
-    async function requestEmailOtp() {
-      const name = document.getElementById('signup-name').value.trim();
-      const email = document.getElementById('signup-email').value.trim();
-      const btn = document.getElementById('btn-request-otp');
-
-      if (!name || !email) {
-        showAuthAlert("Silakan isi nama lengkap dan alamat email Anda.");
-        return;
-      }
-
-      btn.disabled = true;
-      btn.innerText = "⏳ Mengirim Kode dari no-reply@gaeks.com...";
-
-      try {
-        const res = await fetch('/api/auth_otp.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'send_otp', email: email, name: name })
-        });
-        const data = await res.json();
-
-        if (data.status === 'success') {
-          currentOtpEmail = email;
-          currentOtpName = name;
-          document.getElementById('display-otp-email').innerText = email;
-          document.getElementById('signup-step-1').classList.add('hidden');
-          document.getElementById('signup-step-2').classList.remove('hidden');
-          showAuthAlert("Kode verifikasi 6 digit telah dikirimkan ke email Anda.", true);
-        } else {
-          showAuthAlert(data.message || "Gagal mengirimkan kode verifikasi.");
-        }
-      } catch (err) {
-        showAuthAlert("Kendala koneksi: " + err.message);
-      } finally {
-        btn.disabled = false;
-        btn.innerText = "Kirim Kode Verifikasi ke Email";
-      }
-    }
-
-    async function verifyAndCompleteRegister() {
-      const code = document.getElementById('signup-otp-code').value.trim();
-      const pass = document.getElementById('signup-password').value.trim();
-      const btn = document.getElementById('btn-verify-otp');
-
-      if (!code || code.length !== 6) {
-        showAuthAlert("Masukkan 6 digit kode verifikasi yang Anda terima.");
-        return;
-      }
-      if (!pass || pass.length < 6) {
-        showAuthAlert("Kata sandi minimal 6 karakter.");
-        return;
-      }
-
-      btn.disabled = true;
-      btn.innerText = "⏳ Memverifikasi Kode...";
-
-      try {
-        const res = await fetch('/api/auth_otp.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'verify_otp', email: currentOtpEmail, code: code, password: pass })
-        });
-        const data = await res.json();
-
-        if (data.status === 'success') {
-          GaeksAuth.loginWithEmail(currentOtpEmail, pass, currentOtpName);
-        } else {
-          showAuthAlert(data.message || "Kode verifikasi salah.");
-        }
-      } catch (err) {
-        showAuthAlert("Kendala verifikasi: " + err.message);
-      } finally {
-        btn.disabled = false;
-        btn.innerText = "Verifikasi & Masuk Sekarang";
-      }
-    }
-
-    function resendOtp() {
-      document.getElementById('signup-step-2').classList.add('hidden');
-      document.getElementById('signup-step-1').classList.remove('hidden');
-      requestEmailOtp();
-    }
-
-    window.onload = function() {
-      setTimeout(() => { if (GaeksAuth.initGoogleAuth) GaeksAuth.initGoogleAuth(); }, 500);
-      updateNavbar();
-    };
+    // Jalankan segera saat file diparsing browser
+    updateNavbar();
+    window.addEventListener('DOMContentLoaded', updateNavbar);
+    window.addEventListener('load', updateNavbar);
   </script>
 </body>
 </html>

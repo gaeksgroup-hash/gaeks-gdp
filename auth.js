@@ -119,6 +119,13 @@ const GaeksAuth = {
 
     const finalDest = targetUrl || new URLSearchParams(window.location.search).get('redirect') || 'index.html';
     window.location.replace(finalDest);
+  };
+
+    this.recordUserRegistration(user);
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
+
+    const finalDest = targetUrl || new URLSearchParams(window.location.search).get('redirect') || 'index.html';
+    window.location.replace(finalDest);
   },
 
   loginWithEmail(email, password, customName = '', targetUrl = '') {
@@ -139,6 +146,13 @@ const GaeksAuth = {
       planLabel: isVip ? (isSuperAdmin ? 'SUPER ADMIN' : 'GAEKS PRO VIP') : 'Free Tier',
       loginAt: Date.now()
     };
+
+    this.recordUserRegistration(user);
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
+
+    const finalDest = targetUrl || new URLSearchParams(window.location.search).get('redirect') || 'index.html';
+    window.location.replace(finalDest);
+  };
 
     this.recordUserRegistration(user);
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
