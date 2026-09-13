@@ -1,35 +1,38 @@
 <!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GAEKS Digital Products | Corporate ATS Studio & Enterprise SaaS</title>
+  <title>GAEKS Digital Products | Executive Career, SaaS & Business Ecosystem</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <script src="auth.js?v=20260914_04"></script>
-  <style> body { font-family: 'Plus Jakarta Sans', sans-serif; } </style>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="auth.js?v=20260914_06"></script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .hero-glow {
+      background: radial-gradient(circle at 50% 10%, rgba(37, 99, 235, 0.15), transparent 70%);
+    }
+  </style>
 </head>
-<body class="bg-slate-950 text-slate-100 antialiased min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
 
-  <!-- NAVBAR UTAMA -->
-  <header class="sticky top-0 z-50 w-full backdrop-blur-md bg-slate-950/90 border-b border-slate-800">
+  <!-- NAVBAR -->
+  <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <a href="index.html" class="flex items-center space-x-2">
-          <span class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-extrabold text-white text-sm shadow-md shadow-blue-500/30">G</span>
-          <span class="font-extrabold text-lg bg-gradient-to-r from-blue-400 via-indigo-300 to-white bg-clip-text text-transparent">
-            GAEKS DIGITAL
-          </span>
-        </a>
-      </div>
+      
+      <a href="index.html" class="flex items-center space-x-2.5">
+        <span class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-extrabold text-white text-xs shadow-md shadow-blue-500/30">G</span>
+        <span class="font-extrabold text-base tracking-tight bg-gradient-to-r from-blue-400 via-indigo-300 to-white bg-clip-text text-transparent">
+          GAEKS DIGITAL
+        </span>
+      </a>
 
       <nav class="hidden md:flex items-center space-x-6 text-xs font-semibold text-slate-400">
-        <a href="#services" class="hover:text-white transition">Layanan Digital</a>
+        <a href="#services" class="hover:text-white transition">Digital Services</a>
+        <a href="#products" class="hover:text-white transition">Digital Products</a>
         <a href="pricing.html" class="hover:text-white transition">Paket & Harga</a>
-        <a href="cv.html" class="hover:text-white transition">ATS CV Studio</a>
       </nav>
 
       <div class="flex items-center space-x-2.5">
@@ -39,189 +42,238 @@
 
         <div id="nav-user-pill" class="hidden flex items-center space-x-2">
           <a href="profile.html" class="flex items-center space-x-2 p-1 pr-3 rounded-full bg-slate-900 border border-slate-700 hover:border-blue-500 transition">
-            <img id="nav-user-avatar" class="w-6 h-6 rounded-full object-cover" src="" alt="Avatar" />
+            <img id="nav-user-avatar" class="w-6 h-6 rounded-full object-cover" src="https://api.dicebear.com/7.x/initials/svg?seed=User" alt="Avatar" />
             <span id="nav-user-name" class="text-xs font-semibold text-slate-200 max-w-[100px] truncate">User</span>
             <span id="nav-user-badge" class="px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-blue-950 text-blue-300 border border-blue-800">FREE</span>
           </a>
         </div>
 
-        <button id="nav-btn-login" onclick="window.location.href='login.html'" class="px-4 py-2 text-xs font-bold rounded-xl bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20 transition flex items-center gap-1.5">
+        <a href="login.html?redirect=index.html" id="nav-btn-login" class="px-4 py-2 text-xs font-bold rounded-xl bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20 transition flex items-center gap-1.5">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
           <span>Masuk / Daftar</span>
-        </button>
+        </a>
       </div>
+
+      <script>
+        (function() {
+          try {
+            var raw = localStorage.getItem('gaeks_user_session_v3');
+            if (!raw) {
+              var m = document.cookie.match(/gaeks_session_v3=([^;]+)/);
+              if (m) raw = decodeURIComponent(m[1]);
+            }
+            if (raw) {
+              var u = JSON.parse(raw);
+              if (u && u.email) {
+                var b = document.getElementById('nav-btn-login');
+                var p = document.getElementById('nav-user-pill');
+                if (b) b.style.display = 'none';
+                if (p) { p.classList.remove('hidden'); p.style.display = 'flex'; }
+                var av = document.getElementById('nav-user-avatar');
+                if (av && u.avatar) av.src = u.avatar;
+                var nm = document.getElementById('nav-user-name');
+                if (nm && u.name) nm.innerText = u.name;
+              }
+            }
+          } catch(e) {}
+        })();
+      </script>
+
     </div>
   </header>
 
-  <!-- HERO -->
-  <main class="flex-grow">
-    <section class="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-5">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-950/80 border border-blue-800/80 text-[11px] font-bold text-blue-300">
+  <!-- HERO SECTION -->
+  <section class="hero-glow py-16 sm:py-24 border-b border-slate-800/60 relative">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+      
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-950/70 border border-blue-800/80 text-blue-300 text-xs font-semibold">
         <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-        <span>Ekosistem Aplikasi Digital GAEKS Group</span>
+        Ekosistem Digital Terpadu GAEKS Group
       </div>
-      <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight max-w-3xl mx-auto">
-        Bangun Karier Eksekutif & Infrastruktur Bisnis Modern
+
+      <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight sm:leading-none">
+        Karier Eksekutif, Presentasi Pitch Deck & Solusi Digital Modern
       </h1>
+
       <p class="text-sm sm:text-base text-slate-400 max-w-2xl mx-auto leading-relaxed">
-        Satu akun terpadu untuk menyusun Resume ATS berstandar global, slide presentasi pitch deck investor, dan arsitektur transformasi proses bisnis.
+        Akses instan ke generator Resume ATS berstandar global, pembuat presentasi bisnis trial 3 hari, sistem ERP logistik, e-book bisnis, dan layanan website korporat.
       </p>
+
       <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
-        <button onclick="handleServiceAccess('cv.html')" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs sm:text-sm shadow-xl shadow-blue-500/25 transition">
-          🚀 Buka ATS CV Studio Sekarang
-        </button>
-        <a href="pricing.html" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 font-bold text-xs sm:text-sm transition">
-          Lihat 15 Tema Visual & Harga
+        <a href="#services" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs sm:text-sm shadow-xl shadow-blue-500/25 transition flex items-center justify-center gap-2">
+          <span>🚀 Buka Digital Services (Wajib Login)</span>
+        </a>
+        <a href="#products" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 font-bold text-xs sm:text-sm transition text-center">
+          <span>📦 Jelajahi Produk Digital</span>
         </a>
       </div>
-      <p class="text-[11px] text-slate-500">*Wajib mendaftar / masuk menggunakan akun Google atau email Anda sebelum mengakses layanan.</p>
-    </section>
 
-    <!-- LAYANAN -->
-    <section id="services" class="py-12 border-t border-slate-900 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="p-6 bg-slate-900/90 rounded-2xl border border-slate-800 hover:border-blue-500/50 transition shadow-xl flex flex-col justify-between space-y-5">
-          <div class="space-y-3">
-            <div class="w-10 h-10 rounded-xl bg-blue-950 text-blue-400 flex items-center justify-center font-bold text-lg border border-blue-800/80">📄</div>
-            <div class="flex items-center justify-between">
-              <h3 class="font-extrabold text-base text-white">GAEKS ATS CV Studio</h3>
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">Aktif & Siap Pakai</span>
-            </div>
-            <p class="text-xs text-slate-400 leading-relaxed">
-              Dilengkapi <strong>520+ bank profesi</strong>, pencarian live search instan, 15 varian tema visual, anti-cut PDF export, dan tanpa watermark buatan AI.
+    </div>
+  </section>
+
+  <!-- SECTION 1: DIGITAL SERVICES (WAJIB LOGIN) -->
+  <section id="services" class="py-16 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 space-y-10 border-b border-slate-800">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div>
+        <span class="text-xs font-extrabold uppercase tracking-widest text-blue-400 font-mono">DIGITAL SERVICES</span>
+        <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight mt-1">Layanan Interaktif Berbasis Cloud</h2>
+        <p class="text-xs sm:text-sm text-slate-400 mt-1">Untuk menggunakan fitur ini, Anda wajib masuk atau mendaftar terlebih dahulu.</p>
+      </div>
+      <span class="text-xs text-slate-500 italic">*Pendaftaran gratis via Akun Google atau Email OTP</span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <!-- SERVICE 1: GAEKS PRESENTATION MAKER -->
+      <div class="p-8 rounded-3xl bg-slate-900/80 border border-slate-800 hover:border-indigo-500/60 transition duration-300 flex flex-col justify-between shadow-xl relative overflow-hidden group">
+        <div class="space-y-4">
+          <div class="flex justify-between items-start">
+            <span class="w-12 h-12 rounded-2xl bg-indigo-950 border border-indigo-800 text-indigo-400 flex items-center justify-center font-black text-lg">P</span>
+            <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-indigo-950 text-indigo-300 border border-indigo-800">
+              Trial 3 Hari &bull; Berlangganan
+            </span>
+          </div>
+
+          <div>
+            <h3 class="text-xl font-bold text-white group-hover:text-indigo-400 transition">Gaeks Presentation Maker</h3>
+            <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+              Platform pembuat materi presentasi pitch deck investor, laporan operasional bisnis, dan slide eksekutif 16:9 berstandar Venture Capital dengan ekspor PDF instan.
             </p>
           </div>
-          <button onclick="handleServiceAccess('cv.html')" class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition text-center">
-            Coba Pembuat CV ATS &rarr;
+
+          <ul class="text-xs text-slate-300 space-y-2 pt-2">
+            <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> Template Slide Pitch Deck Startup (Problem, Solution, TAM/SAM/SOM)</li>
+            <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> 4 Varian tema warna eksekutif</li>
+            <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> Uji coba gratis 3 hari penuh tanpa komitmen</li>
+          </ul>
+        </div>
+
+        <div class="pt-6 mt-6 border-t border-slate-800/80">
+          <button onclick="handleServiceAccess('presentation.html')" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20">
+            <span>Mulai Uji Coba 3 Hari Presentation Maker &rarr;</span>
           </button>
         </div>
+      </div>
 
-        <div class="p-6 bg-slate-900/60 rounded-2xl border border-slate-800/80 transition shadow-xl flex flex-col justify-between space-y-5">
-          <div class="space-y-3">
-            <div class="w-10 h-10 rounded-xl bg-purple-950 text-purple-400 flex items-center justify-center font-bold text-lg border border-purple-800/80">📊</div>
-            <div class="flex items-center justify-between">
-              <h3 class="font-extrabold text-base text-white">GAEKS Presentation Maker</h3>
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800">Tahap Pengembangan</span>
-            </div>
-            <p class="text-xs text-slate-400 leading-relaxed">
-              Generator presentasi pitch deck eksekutif untuk pendanaan startup (Trial 3 hari & SaaS bulanan). Otomatisasi struktur alur cerita dan blueprint visual slide.
+      <!-- SERVICE 2: CV MAKER (ATS CV STUDIO) -->
+      <div class="p-8 rounded-3xl bg-slate-900/80 border border-slate-800 hover:border-blue-500/60 transition duration-300 flex flex-col justify-between shadow-xl relative overflow-hidden group">
+        <div class="space-y-4">
+          <div class="flex justify-between items-start">
+            <span class="w-12 h-12 rounded-2xl bg-blue-950 border border-blue-800 text-blue-400 flex items-center justify-center font-black text-lg">CV</span>
+            <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-blue-950 text-blue-300 border border-blue-800">
+              520+ Profesi &bull; 15 Tema
+            </span>
+          </div>
+
+          <div>
+            <h3 class="text-xl font-bold text-white group-hover:text-blue-400 transition">ATS CV Maker Studio</h3>
+            <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+              Penyusun resume profesional dengan live search bank profesi global, tata letak anti-potong A4, struktur kompetensi teruji HRD, dan unduhan dokumen bersih tanpa watermark.
             </p>
           </div>
-          <button onclick="alert('Layanan GAEKS Presentation Maker sedang dalam tahap finalisasi dan akan segera hadir!')" class="w-full py-2.5 rounded-xl bg-slate-800 text-slate-400 font-bold text-xs transition text-center">
-            Segera Hadir (Trial 3 Hari)
+
+          <ul class="text-xs text-slate-300 space-y-2 pt-2">
+            <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> 520+ Bank data profesi dengan pencarian langsung</li>
+            <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> 15 Varian tema visual eksekutif berstandar internasional</li>
+            <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> Pengarsipan otomatis & tempat sampah terproteksi 3 hari</li>
+          </ul>
+        </div>
+
+        <div class="pt-6 mt-6 border-t border-slate-800/80">
+          <button onclick="handleServiceAccess('cv.html')" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20">
+            <span>Buka ATS CV Studio Sekarang &rarr;</span>
           </button>
         </div>
+      </div>
 
-        <div class="p-6 bg-slate-900/60 rounded-2xl border border-slate-800/80 transition shadow-xl flex flex-col justify-between space-y-5">
-          <div class="space-y-3">
-            <div class="w-10 h-10 rounded-xl bg-emerald-950 text-emerald-400 flex items-center justify-center font-bold text-lg border border-emerald-800/80">⚙️</div>
-            <div class="flex items-center justify-between">
-              <h3 class="font-extrabold text-base text-white">ERP & Business Process</h3>
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">Konsultasi</span>
-            </div>
-            <p class="text-xs text-slate-400 leading-relaxed">
-              Arsitektur sistem ERP (Odoo & Dolibarr), integrasi supply chain, pemetaan alur proses bisnis ISO 31000, serta otomatisasi operasional logistik ekspor-impor.
-            </p>
+    </div>
+  </section>
+
+  <!-- SECTION 2: DIGITAL PRODUCTS -->
+  <section id="products" class="py-16 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 space-y-10 border-b border-slate-800">
+    <div>
+      <span class="text-xs font-extrabold uppercase tracking-widest text-emerald-400 font-mono">DIGITAL PRODUCTS</span>
+      <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight mt-1">Katalog Produk & Solusi Digital Mandiri</h2>
+      <p class="text-xs sm:text-sm text-slate-400 mt-1">Infrastruktur perangkat lunak, buku panduan eksekutif, dan paket pengembangan bisnis.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      
+      <!-- PRODUCT 1: ERP FORWARDING -->
+      <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition flex flex-col justify-between space-y-4">
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-800">ERP Software</span>
+            <span class="text-xs text-slate-500">gaeks.com</span>
           </div>
-          <a href="https://wa.me/6285608561745?text=Halo%20Admin%20GAEKS%2C%20saya%20tertarik%20konsultasi%20implementasi%20ERP%20dan%20Business%20Process" target="_blank" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-300 font-bold text-xs transition text-center">
-            Konsultasi via WhatsApp &rarr;
-          </a>
+          <h3 class="text-base font-bold text-white">ERP Forwarding</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Sistem ERP berbasis cloud untuk pengelolaan bisnis freight forwarding, kepatuhan pabean (PIB/PEB), kontainer, dan inventaris gudang.
+          </p>
         </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- AUTH MODAL -->
-  <div id="auth-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 sm:p-7 shadow-2xl space-y-5">
-      <div class="flex items-start justify-between">
-        <div>
-          <h3 class="font-extrabold text-lg text-white">Masuk / Daftar Akun</h3>
-          <p class="text-xs text-slate-400 mt-0.5">Daftar gratis untuk mulai membuat resume ATS berstandar internasional.</p>
-        </div>
-        <button onclick="closeAuthModal()" class="text-slate-400 hover:text-white text-xl font-bold">&times;</button>
+        <a href="https://erp.gaeks.com" target="_blank" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition text-center block">
+          Akses erp.gaeks.com &rarr;
+        </a>
       </div>
 
-      <button onclick="loginGoogle()" class="w-full py-2.5 px-4 bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs rounded-xl flex items-center justify-center gap-2.5 transition shadow-md">
-        <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
-        <span>Lanjutkan dengan Google (1-Klik)</span>
-      </button>
-
-      <div class="flex items-center gap-2 text-slate-600 text-xs">
-        <hr class="flex-grow border-slate-800" /><span>atau dengan Email</span><hr class="flex-grow border-slate-800" />
+      <!-- PRODUCT 2: E-BOOK DIGITAL -->
+      <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition flex flex-col justify-between space-y-4">
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-950 text-purple-300 border border-purple-800">E-Book Store</span>
+            <span class="text-xs text-slate-500">Mulai Rp 79k</span>
+          </div>
+          <h3 class="text-base font-bold text-white">Buku Digital Bisnis</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Koleksi panduan operasional: <em>Mastering Freight Forwarding</em>, <em>Startup Logistics Blueprint</em>, dan <em>Panduan Lolos HRD</em>.
+          </p>
+        </div>
+        <a href="https://wa.me/6285608561745?text=Halo%20Admin%20GAEKS%2C%20saya%20ingin%20membeli%20koleksi%20E-Book%20Bisnis%20dan%20Logistik" target="_blank" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition text-center block">
+          Beli & Unduh E-Book &rarr;
+        </a>
       </div>
 
-      <form onsubmit="handleEmailSubmit(event)" class="space-y-3">
-        <div>
-          <label class="block text-[11px] text-slate-400 mb-1">Nama Lengkap</label>
-          <input type="text" id="auth-name" placeholder="Alexander Pratama" class="w-full px-3 py-2 text-xs bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
+      <!-- PRODUCT 3: WEBSITE BUILDER -->
+      <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition flex flex-col justify-between space-y-4">
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-950 text-blue-300 border border-blue-800">Pricelist Web</span>
+            <span class="text-xs text-slate-500">Mulai Rp 750k</span>
+          </div>
+          <h3 class="text-base font-bold text-white">Website Builder</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Paket pembuatan Landing Page konversi tinggi, web portofolio personal, hingga aplikasi web kustom dengan backend terintegrasi.
+          </p>
         </div>
-        <div>
-          <label class="block text-[11px] text-slate-400 mb-1">Alamat Email</label>
-          <input type="email" id="auth-email" required placeholder="nama@email.com" class="w-full px-3 py-2 text-xs bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
-        </div>
-        <div>
-          <label class="block text-[11px] text-slate-400 mb-1">Kata Sandi</label>
-          <input type="password" id="auth-pass" required placeholder="••••••••" class="w-full px-3 py-2 text-xs bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
-        </div>
-        <button type="submit" class="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl transition shadow-lg shadow-blue-500/20">
-          Daftar / Masuk Sekarang
-        </button>
-      </form>
-
-      <div class="p-3 bg-slate-950 rounded-xl border border-slate-800/80 space-y-1.5">
-        <span class="text-[10px] text-slate-400 font-bold block">Akses Pengujian Cepat (Admin & VIP):</span>
-        <div class="flex flex-wrap gap-1">
-          <button type="button" onclick="quickLogin('gaeks.group@gmail.com', 'GAEKS Admin')" class="px-2 py-0.5 rounded text-[10px] bg-amber-950/80 text-amber-300 border border-amber-800 hover:bg-amber-900 transition">👑 gaeks.group@gmail.com (Admin)</button>
-          <button type="button" onclick="quickLogin('triawan25@gmail.com', 'Deny Triawan')" class="px-2 py-0.5 rounded text-[10px] bg-blue-950/80 text-blue-300 border border-blue-800 hover:bg-blue-900 transition">⭐ triawan25@gmail.com (VIP)</button>
-          <button type="button" onclick="quickLogin('ranesath@gmail.com', 'Ranesath')" class="px-2 py-0.5 rounded text-[10px] bg-blue-950/80 text-blue-300 border border-blue-800 hover:bg-blue-900 transition">⭐ ranesath@gmail.com (VIP)</button>
-        </div>
+        <a href="https://wa.me/6285608561745?text=Halo%20Admin%20GAEKS%2C%20saya%20tertarik%20dengan%20layanan%20Website%20Builder%20dan%20Development" target="_blank" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition text-center block">
+          Pesan Pembuatan Web &rarr;
+        </a>
       </div>
+
+      <!-- PRODUCT 4: SMM MARKETING -->
+      <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition flex flex-col justify-between space-y-4">
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800">Growth Marketing</span>
+            <span class="text-xs text-slate-500">smm.gaeks.com</span>
+          </div>
+          <h3 class="text-base font-bold text-white">Portal SMM</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Solusi otomatisasi Social Media Marketing untuk memperluas jangkauan brand, engagement akun bisnis, dan kampanye digital bertarget.
+          </p>
+        </div>
+        <a href="https://smm.gaeks.com" target="_blank" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition text-center block">
+          Buka Portal SMM &rarr;
+        </a>
+      </div>
+
     </div>
-  </div>
+  </section>
 
-  <!-- ADMIN USERS MODAL -->
-  <div id="admin-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm">
-    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
-      <div class="flex items-start justify-between pb-3 border-b border-slate-800">
-        <div>
-          <h3 class="font-extrabold text-lg text-white flex items-center gap-2">
-            <span>👑 Panel Admin: Daftar Pengguna Terdaftar</span>
-            <span id="admin-user-count" class="px-2 py-0.5 text-xs rounded-full bg-blue-950 text-blue-300 border border-blue-800">0 User</span>
-          </h3>
-          <p class="text-xs text-slate-400">Seluruh akun yang mendaftar atau masuk tercatat di database ini.</p>
-        </div>
-        <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white text-xl font-bold">&times;</button>
-      </div>
-
-      <input type="text" id="admin-search-user" oninput="filterAdminUsers(this.value)" placeholder="🔍 Cari email atau nama pengguna..." class="w-full px-3 py-1.5 text-xs bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
-
-      <div class="overflow-y-auto flex-grow border border-slate-800 rounded-xl bg-slate-950/60">
-        <table class="w-full text-left text-xs">
-          <thead class="bg-slate-900 text-slate-400 text-[11px] sticky top-0 border-b border-slate-800">
-            <tr>
-              <th class="p-2.5">Nama & Email</th>
-              <th class="p-2.5">Metode</th>
-              <th class="p-2.5">Tgl Daftar</th>
-              <th class="p-2.5">Status Paket</th>
-              <th class="p-2.5 text-right">Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="admin-user-table-body" class="divide-y divide-slate-800/80 text-slate-300"></tbody>
-        </table>
-      </div>
-
-      <div class="pt-2 flex justify-between items-center text-xs text-slate-500">
-        <span>Data tersimpan di Database Sistem.</span>
-        <button onclick="exportUsersJson()" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded font-semibold text-[11px] transition">
-          Ekspor Data (JSON)
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <footer class="border-t border-slate-900 bg-slate-950 py-8 text-center text-xs text-slate-500">
-    <p>&copy; 2026 GAEKS DIGITAL PRODUCT. All rights reserved.</p>
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800 bg-slate-950 py-12 text-center text-xs text-slate-500 space-y-2 mt-auto">
+    <p>&copy; 2026 GAEKS DIGITAL PRODUCTS. All rights reserved.</p>
+    <p class="text-[11px]">Infrastruktur Subdomain: gdp.gaeks.com | erp.gaeks.com | smm.gaeks.com</p>
   </footer>
 
   <script>
@@ -277,84 +329,6 @@
       }
     }
 
-    function openAdminModal() {
-      renderAdminUsersTable();
-      const m = document.getElementById('admin-modal');
-      if (m) m.classList.remove('hidden');
-    }
-
-    function closeAdminModal() {
-      const m = document.getElementById('admin-modal');
-      if (m) m.classList.add('hidden');
-    }
-
-    function renderAdminUsersTable(searchKeyword = '') {
-      const users = GaeksAuth.getUsersDb();
-      const tbody = document.getElementById('admin-user-table-body');
-      if (!tbody) return;
-      tbody.innerHTML = '';
-
-      let filtered = users;
-      if (searchKeyword.trim()) {
-        const kw = searchKeyword.toLowerCase();
-        filtered = users.filter(u => u.email.toLowerCase().includes(kw) || (u.name && u.name.toLowerCase().includes(kw)));
-      }
-
-      const countEl = document.getElementById('admin-user-count');
-      if (countEl) countEl.innerText = `${filtered.length} Pengguna`;
-
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500 italic">Tidak ada pengguna.</td></tr>`;
-        return;
-      }
-
-      filtered.forEach(u => {
-        const regDate = new Date(u.registeredAt || Date.now()).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-        const isPro = (u.plan === 'PRO' || u.plan === 'PRO_VIP');
-
-        tbody.innerHTML += `
-          <tr class="hover:bg-slate-900/60 transition">
-            <td class="p-2.5">
-              <div class="font-bold text-white">${u.name || 'User'}</div>
-              <div class="text-[11px] text-slate-400 font-mono">${u.email}</div>
-            </td>
-            <td class="p-2.5 uppercase font-medium text-[10px] text-slate-400">${u.provider || 'email'}</td>
-            <td class="p-2.5 text-slate-400">${regDate}</td>
-            <td class="p-2.5">
-              <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isPro ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-slate-900 text-slate-400 border border-slate-800'}">
-                ${u.plan || 'FREE'}
-              </span>
-            </td>
-            <td class="p-2.5 text-right">
-              <button onclick="togglePlan('${u.email}')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-[10px] font-semibold transition">
-                ${isPro ? 'Ubah ke Free' : 'Jadikan PRO'}
-              </button>
-            </td>
-          </tr>
-        `;
-      });
-    }
-
-    function togglePlan(email) {
-      GaeksAuth.toggleUserPlan(email);
-      renderAdminUsersTable();
-    }
-
-    function filterAdminUsers(val) {
-      renderAdminUsersTable(val);
-    }
-
-    function exportUsersJson() {
-      const data = JSON.stringify(GaeksAuth.getUsersDb(), null, 2);
-      const blob = new Blob([data], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `gaeks_users_export_${Date.now()}.json`;
-      a.click();
-    }
-
-    // Jalankan segera dan tangani Back-Forward Cache (pageshow)
     updateNavbar();
     window.addEventListener('DOMContentLoaded', updateNavbar);
     window.addEventListener('load', updateNavbar);

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <script>
+    (function() {
+      var raw = null;
+      try { raw = localStorage.getItem('gaeks_user_session_v3'); } catch(e) {}
+      if (!raw) {
+        try {
+          var m = document.cookie.match(/gaeks_session_v3=([^;]+)/);
+          if (m) raw = decodeURIComponent(m[1]);
+        } catch(e) {}
+      }
+      if (!raw) {
+        window.location.replace('login.html?redirect=presentation.html');
+      }
+    })();
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GAEKS Presentation Maker | Executive Pitch Deck Studio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="auth.js?v=20260914_06"></script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .slide-canvas { aspect-ratio: 16 / 9; }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white !important; color: black !important; padding: 0 !important; }
+      .slide-canvas { page-break-after: always; width: 100% !important; border: none !important; box-shadow: none !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
+
+  <!-- TOP NAVBAR -->
+  <header class="no-print border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="index.html" class="flex items-center space-x-2">
+          <span class="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-extrabold text-white text-xs">G</span>
+          <span class="font-extrabold text-sm sm:text-base tracking-tight text-white">GAEKS PRESENTATION</span>
+        </a>
+        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800 flex items-center gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          Trial 3 Hari Aktif
+        </span>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <button onclick="window.print()" class="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+          <span>Export Slide PDF</span>
+        </button>
+        <a href="index.html" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-semibold transition">
+          &larr; Beranda
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex-grow grid grid-cols-1 lg:grid-cols-12 gap-6">
+    
+    <!-- LEFT SIDEBAR: SLIDE OUTLINE -->
+    <div class="no-print lg:col-span-4 bg-slate-900/70 border border-slate-800 rounded-2xl p-5 space-y-4 h-fit">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800">
+        <div>
+          <h2 class="text-sm font-bold text-white">Daftar Slide Pitch Deck</h2>
+          <p class="text-[11px] text-slate-400">Pilih slide untuk mengedit konten</p>
+        </div>
+        <button onclick="addNewSlide()" class="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-bold transition">
+          + Slide Baru
+        </button>
+      </div>
+
+      <div id="slide-thumb-list" class="space-y-2 max-h-[520px] overflow-y-auto pr-1">
+      </div>
+    </div>
+
+    <!-- RIGHT MAIN: SLIDE CANVAS & CONTENT EDITOR -->
+    <div class="lg:col-span-8 space-y-6">
+      
+      <!-- 16:9 SLIDE PREVIEW CANVAS -->
+      <div id="slide-viewport" class="slide-canvas w-full bg-gradient-to-br from-slate-900 via-slate-900 to-blue-950/60 rounded-2xl border-2 border-slate-700 shadow-2xl p-8 sm:p-12 flex flex-col justify-between relative overflow-hidden transition-all duration-300">
+        <div class="flex justify-between items-start">
+          <div class="space-y-1">
+            <span id="canvas-slide-tag" class="text-[11px] font-extrabold uppercase tracking-widest text-blue-400 font-mono">PITCH DECK</span>
+            <h1 id="canvas-slide-title" class="text-2xl sm:text-4xl font-black text-white tracking-tight">Judul Presentasi Eksekutif</h1>
+          </div>
+          <span class="w-8 h-8 rounded-lg bg-blue-600/30 border border-blue-500/40 text-blue-300 text-xs font-bold flex items-center justify-center">G</span>
+        </div>
+
+        <div id="canvas-slide-content" class="py-6 text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
+          Deskripsi masalah mendasar dan peluang pasar strategis yang ingin diselesaikan oleh ekosistem bisnis ini.
+        </div>
+
+        <div class="pt-4 border-t border-slate-800/80 flex justify-between items-center text-xs text-slate-500">
+          <span id="canvas-slide-footer">GAEKS GROUP &bull; Confidential Pitch</span>
+          <span id="canvas-slide-number" class="font-mono">Slide 1 / 1</span>
+        </div>
+      </div>
+
+      <!-- INLINE SLIDE EDITOR CONTROLS -->
+      <div class="no-print bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Editor Konten Slide Aktif</h3>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Tag Kategori Slide</label>
+            <input type="text" id="edit-slide-tag" oninput="updateActiveSlide()" class="w-full px-3 py-2 text-xs bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Pilihan Tema Visual</label>
+            <select id="edit-slide-theme" onchange="changeSlideTheme(this.value)" class="w-full px-3 py-2 text-xs bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none">
+              <option value="theme-navy">Obsidian Navy (Standar Eksekutif)</option>
+              <option value="theme-emerald">Emerald Growth (Fintech & Supply Chain)</option>
+              <option value="theme-purple">Silicon Venture (Startup AI & Digital)</option>
+              <option value="theme-minimal">Monochrome Slate (Minimalis VC)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-400 mb-1">Judul Slide</label>
+          <input type="text" id="edit-slide-title" oninput="updateActiveSlide()" class="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white font-bold focus:border-blue-500 focus:outline-none" />
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-400 mb-1">Poin & Uraian Narasi Slide</label>
+          <textarea id="edit-slide-desc" rows="4" oninput="updateActiveSlide()" class="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none"></textarea>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    let slides = [
+      { tag: "PROBLEM & OPPORTUNITY", title: "Fragmentasi Logistik & Regulasi Ekspor-Impor", desc: "Tingginya biaya operasional dan rumitnya kepatuhan bea cukai (PIB/PEB) menghambat efisiensi bisnis. Dibutuhkan ekosistem digital terpadu untuk merampingkan seluruh rantai pasok.", theme: "theme-navy" },
+      { tag: "SOLUTION", title: "GAEKS Digital Ecosystem", desc: "Integrasi menyeluruh antara Freight Forwarding Internasional, software ERP terpusat (erp.gaeks.com), dan otomasi media pemasaran digital.", theme: "theme-emerald" },
+      { tag: "MARKET SIZE (TAM / SAM / SOM)", title: "Potensi Pasar Logistik Indonesia Rp 1.400T", desc: "Pertumbuhan ekspor-impor dan manufaktur menuntut digitalisasi rantai pasok yang cepat, transparan, dan akurat tanpa keterlambatan dokumen.", theme: "theme-purple" },
+      { tag: "BUSINESS MODEL", title: "Monetisasi Berkelanjutan & Ekosistem Layanan", desc: "Revenue stream berasal dari freight margin, subscription SaaS ERP bulanan, layanan custom website korporat, dan kursus e-book eksekutif.", theme: "theme-navy" }
+    ];
+
+    let activeIndex = 0;
+
+    function renderSlideOutline() {
+      const container = document.getElementById('slide-thumb-list');
+      container.innerHTML = '';
+
+      slides.forEach((s, idx) => {
+        const isActive = (idx === activeIndex);
+        container.innerHTML += `
+          <div onclick="selectSlide(${idx})" class="p-3 rounded-xl border transition cursor-pointer flex justify-between items-center ${isActive ? 'bg-blue-950/60 border-blue-500 text-white shadow' : 'bg-slate-950/40 border-slate-800 hover:border-slate-700 text-slate-400'}">
+            <div class="truncate max-w-[200px]">
+              <div class="text-[9px] uppercase font-mono font-bold text-blue-400">${s.tag}</div>
+              <div class="text-xs font-bold truncate">${idx + 1}. ${s.title}</div>
+            </div>
+            ${slides.length > 1 ? `<button onclick="deleteSlide(event, ${idx})" class="text-rose-400 hover:text-rose-300 text-xs px-1">&times;</button>` : ''}
+          </div>
+        `;
+      });
+
+      populateEditor();
+      renderActiveCanvas();
+    }
+
+    function selectSlide(idx) {
+      activeIndex = idx;
+      renderSlideOutline();
+    }
+
+    function addNewSlide() {
+      slides.push({
+        tag: "NEW SLIDE",
+        title: "Slide Judul Baru " + (slides.length + 1),
+        desc: "Tambahkan poin narasi bisnis atau metrik pertumbuhan Anda di sini.",
+        theme: "theme-navy"
+      });
+      activeIndex = slides.length - 1;
+      renderSlideOutline();
+    }
+
+    function deleteSlide(e, idx) {
+      e.stopPropagation();
+      if (slides.length <= 1) return;
+      slides.splice(idx, 1);
+      if (activeIndex >= slides.length) activeIndex = slides.length - 1;
+      renderSlideOutline();
+    }
+
+    function populateEditor() {
+      const current = slides[activeIndex];
+      document.getElementById('edit-slide-tag').value = current.tag;
+      document.getElementById('edit-slide-title').value = current.title;
+      document.getElementById('edit-slide-desc').value = current.desc;
+      document.getElementById('edit-slide-theme').value = current.theme || 'theme-navy';
+    }
+
+    function updateActiveSlide() {
+      const current = slides[activeIndex];
+      current.tag = document.getElementById('edit-slide-tag').value.toUpperCase();
+      current.title = document.getElementById('edit-slide-title').value;
+      current.desc = document.getElementById('edit-slide-desc').value;
+      renderActiveCanvas();
+      
+      const thumb = document.querySelectorAll('#slide-thumb-list > div')[activeIndex];
+      if (thumb) {
+        thumb.querySelector('.text-\\[9px\\]').innerText = current.tag;
+        thumb.querySelector('.text-xs').innerText = `${activeIndex + 1}. ${current.title}`;
+      }
+    }
+
+    function changeSlideTheme(themeName) {
+      slides[activeIndex].theme = themeName;
+      renderActiveCanvas();
+    }
+
+    function renderActiveCanvas() {
+      const s = slides[activeIndex];
+      const viewport = document.getElementById('slide-viewport');
+
+      document.getElementById('canvas-slide-tag').innerText = s.tag;
+      document.getElementById('canvas-slide-title').innerText = s.title;
+      document.getElementById('canvas-slide-content').innerText = s.desc;
+      document.getElementById('canvas-slide-number').innerText = `Slide ${activeIndex + 1} / ${slides.length}`;
+
+      if (s.theme === 'theme-emerald') {
+        viewport.className = "slide-canvas w-full bg-gradient-to-br from-slate-950 via-emerald-950/50 to-slate-900 rounded-2xl border-2 border-emerald-700/80 shadow-2xl p-8 sm:p-12 flex flex-col justify-between relative overflow-hidden transition-all duration-300";
+      } else if (s.theme === 'theme-purple') {
+        viewport.className = "slide-canvas w-full bg-gradient-to-br from-slate-950 via-indigo-950/60 to-purple-950/40 rounded-2xl border-2 border-indigo-700/80 shadow-2xl p-8 sm:p-12 flex flex-col justify-between relative overflow-hidden transition-all duration-300";
+      } else if (s.theme === 'theme-minimal') {
+        viewport.className = "slide-canvas w-full bg-slate-900 rounded-2xl border-2 border-slate-700 shadow-2xl p-8 sm:p-12 flex flex-col justify-between relative overflow-hidden transition-all duration-300";
+      } else {
+        viewport.className = "slide-canvas w-full bg-gradient-to-br from-slate-900 via-slate-900 to-blue-950/60 rounded-2xl border-2 border-slate-700 shadow-2xl p-8 sm:p-12 flex flex-col justify-between relative overflow-hidden transition-all duration-300";
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderSlideOutline();
+    });
+  </script>
+</body>
+</html>
