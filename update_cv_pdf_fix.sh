@@ -1,0 +1,1593 @@
+#!/bin/bash
+set -e
+
+echo "=== Memperbarui cv.html: Anti-Cut PDF Print, HRD Nested Hierarchy & Full UI Translation ==="
+
+cat << 'HTML_CV' > cv.html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GAEKS ATS CV Studio | Executive Resume Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .cv-font { font-family: 'Inter', sans-serif; }
+
+    /* VARIAN ARSITEKTUR TEMA */
+    .style-apex {
+      --accent: #1e3a8a;
+      --accent-soft: #eff6ff;
+      --accent-border: #bfdbfe;
+    }
+    .style-swiss {
+      --accent: #0f172a;
+      --accent-soft: #f8fafc;
+      --accent-border: #cbd5e1;
+    }
+    .style-silicon {
+      --accent: #047857;
+      --accent-soft: #f0fdf4;
+      --accent-border: #bbf7d0;
+    }
+    .style-prestige {
+      --accent: #881337;
+      --accent-soft: #fff1f2;
+      --accent-border: #fecdd3;
+    }
+
+    .accent-color { color: var(--accent) !important; }
+    .accent-bg { background-color: var(--accent) !important; }
+    .accent-border-color { border-color: var(--accent) !important; }
+    .accent-bg-soft { background-color: var(--accent-soft) !important; }
+    
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #090d16; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+
+    /* ================= CSS CETAK A4 ANTI-TERPOTONG (PAGE-BREAK RULES) ================= */
+    @media print {
+      body * { visibility: hidden !important; }
+      #cv-preview-sheet, #cv-preview-sheet * { visibility: visible !important; }
+      
+      #cv-preview-sheet {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 10mm 14mm !important;
+        box-shadow: none !important;
+        border: none !important;
+        background: #ffffff !important;
+        color: #1e293b !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      /* MENCEGAH JUDUL KATEGORI MENGGANTUNG SENDIRIAN DI BAWAH HALAMAN */
+      .section-category-header {
+        break-after: avoid !important;
+        page-break-after: avoid !important;
+      }
+
+      /* MENCEGAH ELEMEN PEKERJAAN & PENDIDIKAN TERPOTONG DI TENGAH-TENGAH */
+      .exp-nested-card, .edu-nested-card, .skill-nested-card, .accomplishment-box {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+
+      .no-print { display: none !important; }
+      a { text-decoration: none !important; color: inherit !important; }
+
+      @page {
+        size: A4 portrait;
+        margin: 8mm 0mm;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white style-apex" id="main-body">
+
+  <!-- NAVBAR UTAMA -->
+  <header class="no-print sticky top-0 z-50 w-full backdrop-blur-md bg-slate-950/90 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="index.html" class="text-xs sm:text-sm font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 py-1 px-2 rounded-lg hover:bg-slate-900 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+          <span id="ui-nav-home">Beranda</span>
+        </a>
+        <span class="text-slate-700">|</span>
+        <div class="flex items-center space-x-2">
+          <span class="font-extrabold text-base sm:text-lg bg-gradient-to-r from-blue-400 to-indigo-300 bg-clip-text text-transparent">
+            GAEKS ATS Studio
+          </span>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">
+            HRD Edition
+          </span>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <button id="nav-btn-dashboard" onclick="showDashboardView()" class="hidden px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 transition">
+          <span id="ui-btn-cv-list">Daftar CV</span>
+        </button>
+        <button id="nav-btn-print" onclick="window.print()" class="hidden px-3.5 py-1.5 text-xs font-bold rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition shadow-sm flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+          <span id="ui-btn-download-pdf">Download PDF</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= VIEW 1: DASHBOARD LIST ================= -->
+  <section id="view-dashboard" class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex-grow">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 border-b border-slate-800 gap-4">
+      <div>
+        <h1 id="ui-dash-title" class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Manajemen Resume & CV Profesional</h1>
+        <p id="ui-dash-subtitle" class="text-xs sm:text-sm text-slate-400 mt-1">Hierarki visual terstandarisasi untuk mempermudah HRD menganalisis profil dan kualifikasi Anda.</p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <button onclick="loadSampleReferenceCV()" class="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 text-xs font-bold hover:bg-slate-800 transition">
+          <span id="ui-btn-load-sample">+ Muat Sampel CV Deny Triawan</span>
+        </button>
+        <button onclick="createNewBlankCV()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-500/20 flex items-center space-x-1.5 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          <span id="ui-btn-create-blank">+ Buat CV Baru (Kosong)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- TABS ACTIVE VS TRASH -->
+    <div class="flex items-center space-x-2 border-b border-slate-800 mb-6">
+      <button onclick="switchDashboardTab('active')" id="tab-dash-active" class="px-4 py-2 text-xs sm:text-sm font-bold border-b-2 border-blue-500 text-blue-400 transition flex items-center gap-2">
+        <span id="ui-tab-all-active">Semua CV Aktif</span>
+        <span id="badge-active-count" class="px-1.5 py-0.2 rounded-full text-[10px] bg-blue-950 text-blue-300 border border-blue-800">0</span>
+      </button>
+      <button onclick="switchDashboardTab('trash')" id="tab-dash-trash" class="px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-300 transition flex items-center gap-2">
+        <span id="ui-tab-trash">Tempat Sampah</span>
+        <span id="badge-trash-count" class="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-900 text-slate-400 border border-slate-800">0</span>
+      </button>
+    </div>
+
+    <div id="trash-notice" class="hidden mb-6 p-3.5 bg-amber-950/40 border border-amber-800/60 rounded-xl text-xs text-amber-300 flex items-center gap-2">
+      <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      <span id="ui-trash-notice-text">Dokumen di tempat sampah tersimpan selama <strong>3 hari</strong> sebelum dihapus permanen oleh sistem.</span>
+    </div>
+
+    <div id="cv-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </section>
+
+  <!-- ================= VIEW 2: CV EDITOR STUDIO ================= -->
+  <section id="view-editor" class="hidden max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 flex-grow">
+    
+    <!-- SUBBAR TOOLBAR -->
+    <div class="no-print flex flex-col md:flex-row md:items-center justify-between pb-4 mb-5 border-b border-slate-800 gap-4">
+      <div class="flex items-center space-x-3">
+        <button onclick="showDashboardView()" class="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-xs flex items-center gap-1">
+          &larr; <span id="ui-btn-back-dashboard">Daftar CV</span>
+        </button>
+        <div>
+          <input type="text" id="current-cv-title" onchange="updateCvTitle(this.value)" class="text-sm sm:text-base font-bold text-white bg-transparent border-b border-dashed border-slate-700 hover:border-blue-500 focus:border-blue-500 focus:outline-none px-1 py-0.5" value="CV Tanpa Judul" />
+          <div class="flex items-center space-x-2 text-[11px] text-slate-400 mt-0.5">
+            <span id="save-indicator" class="text-emerald-400 flex items-center gap-1 font-medium">✓ Tersimpan Otomatis</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- KONTROL FITUR -->
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- UNDO/REDO -->
+        <div class="flex items-center bg-slate-900 p-1 rounded-lg border border-slate-800 space-x-1">
+          <button onclick="undo()" id="btn-undo" title="Undo (Ctrl+Z)" disabled class="px-2 py-1 rounded text-xs text-slate-500 disabled:opacity-40 hover:text-white transition">↶ Undo</button>
+          <button onclick="redo()" id="btn-redo" title="Redo (Ctrl+Y)" disabled class="px-2 py-1 rounded text-xs text-slate-500 disabled:opacity-40 hover:text-white transition">↷ Redo</button>
+        </div>
+
+        <!-- DUAL LANGUAGE -->
+        <div class="bg-slate-900 p-1 rounded-lg border border-slate-800 flex items-center text-xs font-bold">
+          <button onclick="setLanguage('id')" id="btn-lang-id" class="px-2.5 py-1 rounded bg-blue-600 text-white transition">ID 🇮🇩</button>
+          <button onclick="setLanguage('en')" id="btn-lang-en" class="px-2.5 py-1 rounded text-slate-400 hover:text-white transition">EN 🇬🇧</button>
+        </div>
+
+        <!-- PILIHAN ARSITEKTUR TEMA -->
+        <div class="flex items-center space-x-1 bg-slate-900 p-1 rounded-lg border border-slate-800 text-xs font-semibold">
+          <button onclick="setThemeLayout('apex')" id="btn-layout-apex" class="px-2.5 py-1 rounded bg-blue-950 text-blue-300 border border-blue-600">Apex Executive</button>
+          <button onclick="setThemeLayout('swiss')" id="btn-layout-swiss" class="px-2.5 py-1 rounded text-slate-400 hover:text-white">Swiss Minimal</button>
+          <button onclick="setThemeLayout('silicon')" id="btn-layout-silicon" class="px-2.5 py-1 rounded text-slate-400 hover:text-white">Silicon Modern</button>
+          <button onclick="setThemeLayout('prestige')" id="btn-layout-prestige" class="px-2.5 py-1 rounded text-slate-400 hover:text-white">Prestige</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORKSPACE 2 KOLOM -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- KOLOM FORMULIR (5 KOLOM) DENGAN STICKY/FROZEN TAB HEADER -->
+      <div class="no-print lg:col-span-5 bg-slate-900/95 rounded-2xl border border-slate-800 p-4 sm:p-5 max-h-[85vh] overflow-y-auto relative shadow-xl">
+        
+        <!-- FROZEN / STICKY TAB BAR -->
+        <div class="sticky -top-4 -mx-4 -mt-4 p-4 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 z-30 flex space-x-1 overflow-x-auto shadow-sm">
+          <button onclick="switchFormTab('profile')" id="ftab-btn-profile" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 text-white whitespace-nowrap transition">Profil & Kontak</button>
+          <button onclick="switchFormTab('experience')" id="ftab-btn-experience" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap transition">Pengalaman</button>
+          <button onclick="switchFormTab('education')" id="ftab-btn-education" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap transition">Pendidikan</button>
+          <button onclick="switchFormTab('skills')" id="ftab-btn-skills" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap transition">Keahlian (Kategori)</button>
+          <button onclick="switchFormTab('extras')" id="ftab-btn-extras" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap transition">Sertifikasi & Ekstra</button>
+        </div>
+
+        <div class="pt-2">
+          <!-- FORM 1: PROFIL & KONTAK -->
+          <div id="ftab-content-profile" class="space-y-3">
+            <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+              <span id="lbl-f-profile-title" class="text-xs font-bold uppercase text-blue-400">Data Personal & Kontak</span>
+              <label class="flex items-center space-x-1.5 text-xs text-slate-300 cursor-pointer">
+                <input type="checkbox" id="input-toggle-photo" onchange="togglePhoto()" class="rounded bg-slate-950 border-slate-700 text-blue-600 focus:ring-0" />
+                <span id="lbl-f-toggle-photo">Gunakan Pas Foto</span>
+              </label>
+            </div>
+
+            <div id="photo-box-input" class="hidden p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center gap-3">
+              <img id="thumb-photo" class="w-12 h-12 rounded-lg object-cover border border-slate-700" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80" alt="Preview" />
+              <div class="text-xs flex-grow">
+                <span id="lbl-f-upload-photo" class="block text-slate-300 font-medium mb-1">Unggah Foto Formal</span>
+                <input type="file" id="input-photo-file" accept="image/*" onchange="uploadPhoto(event)" class="text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-blue-950 file:text-blue-300 cursor-pointer" />
+              </div>
+            </div>
+
+            <div>
+              <label id="lbl-f-name" class="block text-[11px] text-slate-400 mb-1">Nama Lengkap & Gelar</label>
+              <input type="text" id="input-name" oninput="handleInputChange()" placeholder="contoh: Deny Triawan, S.Kom" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
+            </div>
+            <div>
+              <label id="lbl-f-job-title" class="block text-[11px] text-slate-400 mb-1">Target Posisi / Profesi</label>
+              <input type="text" id="input-title" oninput="handleInputChange()" placeholder="contoh: Supply Chain Manager / ERP Solution Architect" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label id="lbl-f-email" class="block text-[11px] text-slate-400 mb-1">Email</label>
+                <input type="email" id="input-email" oninput="handleInputChange()" placeholder="nama@email.com" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
+              </div>
+              <div>
+                <label id="lbl-f-phone" class="block text-[11px] text-slate-400 mb-1">No. WhatsApp / Telepon</label>
+                <input type="text" id="input-phone" oninput="handleInputChange()" placeholder="+62 8xx" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label id="lbl-f-loc" class="block text-[11px] text-slate-400 mb-1">Domisili / Kota</label>
+                <input type="text" id="input-location" oninput="handleInputChange()" placeholder="Semarang, Indonesia" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
+              </div>
+              <div>
+                <label id="lbl-f-linkedin" class="block text-[11px] text-slate-400 mb-1">LinkedIn Profile</label>
+                <input type="text" id="input-linkedin" oninput="handleInputChange()" placeholder="username atau url" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
+              </div>
+            </div>
+            <div>
+              <label id="lbl-f-portfolio" class="block text-[11px] text-slate-400 mb-1">Portfolio / Website</label>
+              <input type="text" id="input-portfolio" oninput="handleInputChange()" placeholder="domainanda.com" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
+            </div>
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <label id="lbl-f-summary" class="text-[11px] text-slate-400">Ringkasan Profesional (Summary)</label>
+                <button onclick="aiTranslateField('input-summary')" type="button" class="text-[10px] text-blue-400 hover:text-blue-300 font-semibold flex items-center gap-1">
+                  <span>✨ Format ke English</span>
+                </button>
+              </div>
+              <textarea id="input-summary" rows="4" oninput="handleInputChange()" placeholder="Rangkum keahlian eksekutif, rekam jejak, dan nilai tambah Anda..." class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none"></textarea>
+            </div>
+          </div>
+
+          <!-- FORM 2: PENGALAMAN -->
+          <div id="ftab-content-experience" class="hidden space-y-3">
+            <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+              <span id="lbl-f-exp-title" class="text-xs font-bold uppercase text-blue-400">Riwayat Pengalaman Kerja</span>
+              <button onclick="addExperience()" class="text-xs px-2.5 py-1 bg-blue-950 text-blue-300 hover:bg-blue-900 rounded-lg border border-blue-800 transition">
+                <span id="lbl-btn-add-exp">+ Tambah Pengalaman</span>
+              </button>
+            </div>
+            <div id="experience-list" class="space-y-4"></div>
+          </div>
+
+          <!-- FORM 3: PENDIDIKAN -->
+          <div id="ftab-content-education" class="hidden space-y-3">
+            <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+              <span id="lbl-f-edu-title" class="text-xs font-bold uppercase text-blue-400">Pendidikan Formal</span>
+              <button onclick="addEducation()" class="text-xs px-2.5 py-1 bg-blue-950 text-blue-300 hover:bg-blue-900 rounded-lg border border-blue-800 transition">
+                <span id="lbl-btn-add-edu">+ Tambah Gelar</span>
+              </button>
+            </div>
+            <div id="education-list" class="space-y-3.5"></div>
+          </div>
+
+          <!-- FORM 4: KEAHLIAN MULTI-KATEGORI -->
+          <div id="ftab-content-skills" class="hidden space-y-4">
+            <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+              <div>
+                <span id="lbl-f-skill-group-title" class="text-xs font-bold uppercase text-blue-400">Kelompok Keahlian</span>
+                <p id="lbl-f-skill-group-desc" class="text-[11px] text-slate-400">Kategori keahlian terstruktur untuk mempermudah identifikasi kualifikasi.</p>
+              </div>
+              <button onclick="addSkillGroup()" class="text-xs px-2.5 py-1 bg-blue-950 text-blue-300 hover:bg-blue-900 rounded-lg border border-blue-800 transition">
+                <span id="lbl-btn-add-skill-group">+ Tambah Kelompok Keahlian</span>
+              </button>
+            </div>
+            <div id="skill-groups-container" class="space-y-3.5"></div>
+          </div>
+
+          <!-- FORM 5: SERTIFIKASI & EKSTRA -->
+          <div id="ftab-content-extras" class="hidden space-y-4">
+            <div class="pb-2 border-b border-slate-800">
+              <span id="lbl-f-extra-title" class="text-xs font-bold uppercase text-blue-400">Sertifikasi & Kualifikasi Tambahan</span>
+            </div>
+            <div>
+              <label id="lbl-f-cert" class="block text-[11px] text-slate-400 mb-1">Sertifikasi & Lisensi Resmi (Tiap baris 1 sertifikasi)</label>
+              <textarea id="input-certifications" rows="3" oninput="handleInputChange()" placeholder="Nama Sertifikasi — Lembaga Penerbit" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none"></textarea>
+            </div>
+            <div>
+              <label id="lbl-f-lang" class="block text-[11px] text-slate-400 mb-1">Kemampuan Bahasa (Pisahkan koma)</label>
+              <input type="text" id="input-languages" oninput="handleInputChange()" placeholder="Bahasa Indonesia (Native), English (C1 Proficient)" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
+            </div>
+            <div>
+              <label id="lbl-f-pub" class="block text-[11px] text-slate-400 mb-1">Publikasi Ilmiah / Portofolio Ekstra</label>
+              <textarea id="input-publications" rows="2" oninput="handleInputChange()" placeholder="Publikasi riset atau link portofolio..." class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none"></textarea>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PRATINJAU LEMBAR A4 ATS DENGAN HIERARKI & NESTING JELAS (7 KOLOM) -->
+      <div class="lg:col-span-7 flex flex-col items-center">
+        
+        <div class="no-print w-full flex justify-between items-center mb-2 px-2 text-xs text-slate-400">
+          <div class="flex items-center space-x-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span class="font-bold text-slate-300">Format Lembar A4 ATS</span>
+            <span id="label-active-lang" class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-blue-950 text-blue-300 border border-blue-800">Bahasa Indonesia</span>
+            <span id="label-active-layout" class="text-[10px] text-slate-400 font-semibold">Apex Executive</span>
+          </div>
+          <button onclick="window.print()" class="font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1">
+            <span id="ui-btn-sheet-download">Download PDF</span> &rarr;
+          </button>
+        </div>
+
+        <!-- LEMBAR A4 RESUME -->
+        <div id="cv-preview-sheet" class="cv-font w-full max-w-[780px] bg-white text-slate-800 shadow-2xl rounded-sm p-8 sm:p-12 min-h-[1050px] border border-slate-200">
+          <div id="sheet-render-root"></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="no-print border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
+    <p>&copy; 2026 GAEKS DIGITAL PRODUCT. Standard ATS Resume Engine.</p>
+  </footer>
+
+  <!-- SCRIPT LOGIKA UTAMA -->
+  <script>
+    let activeLayout = 'apex';
+    let currentLang = 'id';
+
+    // DICTIONARY LENGKAP: MELIPUTI SELURUH FITUR UI/UX & DOKUMEN
+    const i18n = {
+      id: {
+        navHome: "Beranda",
+        btnCvList: "Daftar CV",
+        btnDownloadPdf: "Download PDF",
+        dashTitle: "Manajemen Resume & CV Profesional",
+        dashSubtitle: "Hierarki visual terstandarisasi untuk mempermudah HRD menganalisis profil dan kualifikasi Anda.",
+        btnLoadSample: "+ Muat Sampel CV Deny Triawan",
+        btnCreateBlank: "+ Buat CV Baru (Kosong)",
+        tabAllActive: "Semua CV Aktif",
+        tabTrash: "Tempat Sampah",
+        trashNoticeText: "Dokumen di tempat sampah tersimpan selama <strong>3 hari</strong> sebelum dihapus permanen oleh sistem.",
+        btnBackDashboard: "Daftar CV",
+        autoSaved: "✓ Tersimpan Otomatis",
+        btnSheetDownload: "Download PDF",
+        
+        tabProfile: "Profil & Kontak",
+        tabExperience: "Pengalaman",
+        tabEducation: "Pendidikan",
+        tabSkills: "Keahlian (Kategori)",
+        tabExtras: "Sertifikasi & Ekstra",
+        
+        lblProfileTitle: "Data Personal & Kontak",
+        lblTogglePhoto: "Gunakan Pas Foto",
+        lblUploadPhoto: "Unggah Foto Formal",
+        lblName: "Nama Lengkap & Gelar",
+        lblJobTitle: "Target Posisi / Profesi",
+        lblEmail: "Email",
+        lblPhone: "No. WhatsApp / Telepon",
+        lblLoc: "Domisili / Kota",
+        lblLinkedin: "LinkedIn Profile",
+        lblPortfolio: "Portfolio / Website",
+        lblSummary: "Ringkasan Profesional (Summary)",
+        lblExpTitle: "Riwayat Pengalaman Kerja",
+        btnAddExp: "+ Tambah Pengalaman",
+        lblEduTitle: "Pendidikan Formal",
+        btnAddEdu: "+ Tambah Gelar",
+        lblSkillGroupTitle: "Kelompok Keahlian",
+        lblSkillGroupDesc: "Kategori keahlian terstruktur untuk mempermudah identifikasi kualifikasi.",
+        btnAddSkillGroup: "+ Tambah Kelompok Keahlian",
+        lblExtraTitle: "Sertifikasi & Kualifikasi Tambahan",
+        lblCert: "Sertifikasi & Lisensi Resmi (Tiap baris 1 sertifikasi)",
+        lblLang: "Kemampuan Bahasa (Pisahkan koma)",
+        lblPub: "Publikasi Ilmiah / Portofolio Ekstra",
+
+        sheetSummary: "RINGKASAN EKSEKUTIF",
+        sheetExperience: "PENGALAMAN KERJA & REKAM JEJAK",
+        sheetEducation: "PENDIDIKAN FORMAL",
+        sheetSkills: "KEAHLIAN & PENGUASAAN TEKNOLOGI",
+        sheetCertifications: "SERTIFIKASI & LISENSI RESMI",
+        sheetLanguages: "KEMAMPUAN BAHASA",
+        sheetPublications: "PUBLIKASI & RISET",
+        majorAccomplishment: "Pencapaian Strategis (Key Impact):",
+        badgeLabel: "Bahasa Indonesia",
+        present: "Sekarang",
+        emptyExperience: "Belum ada pengalaman kerja yang ditambahkan.",
+        emptyEducation: "Belum ada riwayat pendidikan yang ditambahkan.",
+        emptySkills: "Belum ada kelompok keahlian yang ditambahkan."
+      },
+      en: {
+        navHome: "Home",
+        btnCvList: "CV Dashboard",
+        btnDownloadPdf: "Export PDF",
+        dashTitle: "Professional Resume & CV Manager",
+        dashSubtitle: "Standardized visual hierarchy engineered for HRD recruiters and ATS parsing engines.",
+        btnLoadSample: "+ Load Sample: Deny Triawan CV",
+        btnCreateBlank: "+ Create New Resume (Blank)",
+        tabAllActive: "All Active Resumes",
+        tabTrash: "Trash Bin",
+        trashNoticeText: "Deleted resumes remain in the trash for <strong>3 days</strong> before being permanently purged.",
+        btnBackDashboard: "Resume List",
+        autoSaved: "✓ Auto-saved",
+        btnSheetDownload: "Download PDF",
+
+        tabProfile: "Profile & Contact",
+        tabExperience: "Experience",
+        tabEducation: "Education",
+        tabSkills: "Skills & Categories",
+        tabExtras: "Certifications & Extras",
+
+        lblProfileTitle: "Personal Details & Contact",
+        lblTogglePhoto: "Include Formal Photo",
+        lblUploadPhoto: "Upload Formal Photo",
+        lblName: "Full Name & Degree",
+        lblJobTitle: "Target Position / Executive Role",
+        lblEmail: "Email Address",
+        lblPhone: "Phone / WhatsApp",
+        lblLoc: "City & Country",
+        lblLinkedin: "LinkedIn Profile",
+        lblPortfolio: "Portfolio / Website",
+        lblSummary: "Executive Summary",
+        lblExpTitle: "Career Track Record",
+        btnAddExp: "+ Add Position",
+        lblEduTitle: "Academic Background",
+        btnAddEdu: "+ Add Degree",
+        lblSkillGroupTitle: "Skill Categorization",
+        lblSkillGroupDesc: "Structured skill groupings for rapid recruiter qualification scanning.",
+        btnAddSkillGroup: "+ Add Skill Category",
+        lblExtraTitle: "Certifications & Additional Qualifications",
+        lblCert: "Official Certifications & Licenses (1 per line)",
+        lblLang: "Languages (Comma separated)",
+        lblPub: "Scientific Publications & Research",
+
+        sheetSummary: "EXECUTIVE SUMMARY",
+        sheetExperience: "PROFESSIONAL EXPERIENCE & TRACK RECORD",
+        sheetEducation: "EDUCATION & ACADEMIC CREDENTIALS",
+        sheetSkills: "CORE COMPETENCIES & TECHNOLOGIES",
+        sheetCertifications: "LICENSES & CERTIFICATIONS",
+        sheetLanguages: "LANGUAGES",
+        sheetPublications: "PUBLICATIONS & RESEARCH",
+        majorAccomplishment: "Key Strategic Impact:",
+        badgeLabel: "English (Translated)",
+        present: "Present",
+        emptyExperience: "No work experience added yet.",
+        emptyEducation: "No education credentials added yet.",
+        emptySkills: "No skill categories added yet."
+      }
+    };
+
+    const advancedTranslationDict = [
+      { id: /\bSekarang\b/gi, en: "Present" },
+      { id: /\bSaat Ini\b/gi, en: "Present" },
+      { id: /\bJanuari\b/gi, en: "January" },
+      { id: /\bFebruari\b/gi, en: "February" },
+      { id: /\bMaret\b/gi, en: "March" },
+      { id: /\bMei\b/gi, en: "May" },
+      { id: /\bJuni\b/gi, en: "June" },
+      { id: /\bJuli\b/gi, en: "July" },
+      { id: /\bAgustus\b/gi, en: "August" },
+      { id: /\bOktober\b/gi, en: "October" },
+      { id: /\bDesember\b/gi, en: "December" },
+      { id: /\bMemimpin\b/gi, en: "Spearheaded and directed" },
+      { id: /\bMengembangkan\b/gi, en: "Developed and structured" },
+      { id: /\bMeningkatkan\b/gi, en: "Optimized and increased" },
+      { id: /\bMengurangi\b/gi, en: "Streamlined and reduced" },
+      { id: /\bMengelola\b/gi, en: "Orchestrated and managed" },
+      { id: /\bMenegosiasikan\b/gi, en: "Negotiated" },
+      { id: /\bMengkoordinasikan\b/gi, en: "Coordinated" },
+      { id: /\bMengawasi\b/gi, en: "Supervised and ensured compliance for" },
+      { id: /\bMenerapkan\b/gi, en: "Implemented" },
+      { id: /\bMembangun\b/gi, en: "Architected and deployed" },
+      { id: /\bMerancang\b/gi, en: "Designed and engineered" },
+      { id: /\bSarjana Teknik Industri\b/gi, en: "Bachelor of Industrial Engineering" },
+      { id: /\bSarjana Komputer\b/gi, en: "Bachelor of Computer Science" },
+      { id: /\bUniversitas Indonesia\b/gi, en: "University of Indonesia" },
+      { id: /\bUniversitas\b/gi, en: "University" },
+      { id: /\bKepabeanan\b/gi, en: "Customs Clearance" },
+      { id: /\bekspor-impor\b/gi, en: "export and import" },
+      { id: /\bkargo\b/gi, en: "cargo" },
+      { id: /\brantai pasok\b/gi, en: "supply chain" },
+      { id: /\barmada\b/gi, en: "fleet" },
+      { id: /\bpergudangan\b/gi, en: "warehousing" }
+    ];
+
+    function applyTranslation(text) {
+      if (!text || currentLang === 'id') return text;
+      let res = text;
+      advancedTranslationDict.forEach(dict => {
+        res = res.replace(dict.id, dict.en);
+      });
+      return res;
+    }
+
+    function formatEmailLink(email) {
+      if (!email) return '';
+      return `<a href="mailto:${email}" class="text-slate-600 hover:text-blue-600 hover:underline transition">${email}</a>`;
+    }
+
+    function formatPhoneLink(phone) {
+      if (!phone) return '';
+      const cleanNumber = phone.replace(/[^0-9]/g, '');
+      const waLink = cleanNumber.startsWith('0') ? '62' + cleanNumber.slice(1) : cleanNumber;
+      return `<a href="https://wa.me/${waLink}" target="_blank" class="text-slate-600 hover:text-emerald-600 hover:underline transition">${phone}</a>`;
+    }
+
+    function formatLinkedInLink(raw) {
+      if (!raw) return '';
+      const url = raw.startsWith('http') ? raw : `https://linkedin.com/in/${raw.replace(/^@/, '')}`;
+      const display = raw.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//, '');
+      return `<a href="${url}" target="_blank" class="text-slate-600 hover:text-blue-700 hover:underline transition font-medium">linkedin.com/in/${display}</a>`;
+    }
+
+    function formatPortfolioLink(raw) {
+      if (!raw) return '';
+      const url = raw.startsWith('http') ? raw : `https://${raw}`;
+      const display = raw.replace(/^https?:\/\//, '');
+      return `<a href="${url}" target="_blank" class="text-slate-600 hover:text-indigo-600 hover:underline transition font-medium">${display}</a>`;
+    }
+
+    let cvList = [];
+    let currentCvId = null;
+    let currentDashboardTab = 'active';
+    let historyStack = [];
+    let historyIndex = -1;
+    const STORAGE_KEY = 'gaeks_cv_master_list_v8';
+
+    function createBlankCvObject(title = "CV Baru Tanpa Judul") {
+      return {
+        id: 'cv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+        title: title,
+        updatedAt: Date.now(),
+        deletedAt: null,
+        data: {
+          name: "",
+          title: "",
+          email: "",
+          phone: "",
+          location: "",
+          linkedin: "",
+          portfolio: "",
+          summary: "",
+          skillGroups: [
+            { category: currentLang === 'en' ? 'Technical & Core Skills' : 'Keahlian Teknis & Inti', skills: "" }
+          ],
+          certifications: "",
+          languages: "",
+          publications: "",
+          isPhotoEnabled: false,
+          layout: 'apex',
+          experiences: [],
+          educations: []
+        }
+      };
+    }
+
+    function getDenyTriawanSampleData() {
+      return {
+        id: 'cv_sample_deny_triawan',
+        title: "Contoh CV: Deny Triawan (Supply Chain & Operations)",
+        updatedAt: Date.now(),
+        deletedAt: null,
+        data: {
+          name: "Deny Triawan",
+          title: "Supply Chain Manager / Logistics Operations Manager / ERP Solution Architect",
+          email: "triawan25@gmail.com",
+          phone: "+62 856-0856-1745",
+          location: "Semarang, Indonesia",
+          linkedin: "triawan25",
+          portfolio: "gaeks.com",
+          summary: "Profesional eksekutif dengan pengalaman komprehensif dalam Manajemen Rantai Pasok (Supply Chain), Operasional Logistik, Kepabeanan Internasional, dan Arsitektur Solusi ERP (Odoo & Cloud ERP). Memiliki rekam jejak sukses dalam memimpin proyek pengadaan & impor strategis 100 bus Transjakarta, mengaudit kepatuhan PIB/PEB/Manifest/BL, serta merampingkan sistem inventaris pergudangan berbasis ISO 31000.",
+          skillGroups: [
+            {
+              category: "Logistik & Supply Chain",
+              skills: "Supply Chain Management, Freight Forwarding, Customs Clearance (PIB, PEB, Manifest, BL, COO), Multimodal Logistics, Inventory Optimization (ISO 31000)"
+            },
+            {
+              category: "ERP & Arsitektur Solusi",
+              skills: "Odoo ERP Implementation, ESB ERP, Business Process Mapping (IBM/COBIT), PostgreSQL, Python, Linux Server, REST API"
+            },
+            {
+              category: "Data & Analisis Bisnis",
+              skills: "SAP Analytics Cloud, Power BI, Google Data Studio, Advanced Excel, KPI & SLA Governance"
+            }
+          ],
+          certifications: "Database Design and Programming with SQL — Oracle Academy (Expert / Mastery)\nMicrosoft Office Desktop Training — Microsoft Partner Program",
+          languages: "Bahasa Indonesia (Native), English (C1 Proficient - TOEFL IBT/PBT)",
+          publications: "Publikasi Ilmiah IEEE: Increased information retrieval capabilities on e-commerce websites using scraping techniques (SIET 2017)",
+          isPhotoEnabled: true,
+          layout: 'apex',
+          experiences: [
+            {
+              role: "Head of Operations",
+              company: "PT. Milenial Solusi Internusa",
+              period: "May 2024 - Present",
+              location: "South Tangerang, Banten",
+              desc: "Memimpin perancangan alur kerja menyeluruh untuk divisi CS, Dokumentasi, dan Sourcing, serta mengawal implementasi penuh Odoo ERP untuk merampingkan proses antardepartemen.\nMengawasi pembuatan dan audit dokumen logistik internasional krusial (PIB, PEB, Manifest, Bill of Lading, dan COO) untuk menjamin kepatuhan regulasi 100%.\nMenetapkan strategi biaya pengiriman, perbandingan harga vendor, serta negosiasi tarif dengan agen internasional.\nMenerapkan format KPI resmi di seluruh sub-divisi operasional dan merancang mitigasi risiko kendala harian.",
+              accomplishment: "Memimpin proyek impor strategis berisiko tinggi untuk 100 unit bus Transjakarta secara end-to-end, mulai dari negosiasi kapal hingga penyusunan perjanjian agensi. Berhasil mendigitalisasi alur kerja menggunakan Odoo ERP dan standarisasi KPI departemen operasional."
+            },
+            {
+              role: "Head Of Operations",
+              company: "PT Mangkok Besar Cuan",
+              period: "May 2022 - June 2023",
+              location: "South Jakarta, DKI Jakarta",
+              desc: "Mengembangkan workflow, job description, dan pemetaan proses untuk seluruh departemen agar selaras dengan budaya perusahaan.\nMerancang rencana pelatihan bulanan untuk manajemen dan staf operasional lapangan.\nMenerapkan praktik manajemen inventaris terstruktur (ISO 31000), mengoptimalkan penataan stok dan proses pengajuan barang.\nMengintegrasikan sistem cloud ERP, berhasil memigrasikan data BOM dan database produk.",
+              accomplishment: "Menyelesaikan implementasi sistem ERP Cloud menyeluruh mencakup pemetaan alur kerja, migrasi data POS, pemesanan digital, dan optimasi alur fisik dengan pelaporan digital."
+            },
+            {
+              role: "Customer Service & Shipping Specialist",
+              company: "Surya Cemerlang Logistic",
+              period: "Jan 2022 - May 2022",
+              location: "West Jakarta",
+              desc: "Koordinasi Internasional: Menjalin komunikasi intensif dengan agen luar negeri dan pelanggan lokal untuk mengatur jadwal pengapalan tepat waktu.\nDokumentasi Logistik: Menerbitkan Shipping Instruction (SI), menyusun draf Bill of Lading (BL), dan memeriksa dokumen kepatuhan (Manifest, PIB, PEB).\nPenataan Domestik: Memesan armada vendor trucking domestik dan memastikan koordinasi pengiriman akhir aman ke tangan klien.",
+              accomplishment: "Berhasil menjaga kepatuhan tanpa kendala pada seluruh dokumen perdagangan internasional (Manifest, PIB, PEB, BL) di tengah volume pengiriman kargo yang padat."
+            },
+            {
+              role: "Head Of Research And Development",
+              company: "Nusaputera",
+              period: "June 2019 - Feb 2022",
+              location: "Semarang, Central Java",
+              desc: "Membuat Business Process Mapping dan worksheet departemen menggunakan IBM project management tools.\nMerancang tata kelola teknologi informasi berbasis framework COBIT.\nMenganalisis data kebutuhan institusi dan menyusun perencanaan alur data untuk Education ERP.\nMembangun sistem infrastruktur jaringan terintegrasi, menerapkan keamanan tree queue, dan mengelola perangkat jaringan Ubiquiti serta MikroTik.",
+              accomplishment: "Mengimplementasikan sistem jaringan aman terintegrasi untuk proyek ERP pendidikan dengan proteksi anti-DDoS dan optimasi bandwidth portal MikroTik & Ubiquiti."
+            }
+          ],
+          educations: [
+            {
+              degree: "Master Of Information System (42 SKS Selesai)",
+              school: "Diponegoro University",
+              period: "Sept 2017 - Jan 2020",
+              details: "Semarang, Jawa Tengah • Proyek: Node JS & TCP/IP pada Lingkungan Linux Enterprise"
+            },
+            {
+              degree: "Bachelor Of Computer Science (S.Kom)",
+              school: "Universitas Teknologi Digital Indonesia (STMIK Akakom)",
+              period: "Sept 2012 - Aug 2016",
+              details: "IPK 3.38 • Peneliti Makalah Terbaik IEEE: Peningkatan Temu Balik Informasi pada Website E-Commerce Menggunakan Teknik Scraping (SIET 2017)"
+            }
+          ]
+        }
+      };
+    }
+
+    function loadCvList() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        try { cvList = JSON.parse(raw); } catch(e) { cvList = []; }
+      }
+      if (!cvList || cvList.length === 0) {
+        cvList = [getDenyTriawanSampleData()];
+        saveCvList();
+      }
+      autoPurgeTrash();
+    }
+
+    function saveCvList() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cvList));
+      updateDashboardCounts();
+    }
+
+    function autoPurgeTrash() {
+      const now = Date.now();
+      const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+      let changed = false;
+      cvList = cvList.filter(cv => {
+        if (cv.deletedAt && (now - cv.deletedAt > THREE_DAYS_MS)) {
+          changed = true;
+          return false;
+        }
+        return true;
+      });
+      if (changed) saveCvList();
+    }
+
+    function updateDashboardCounts() {
+      document.getElementById('badge-active-count').innerText = cvList.filter(c => !c.deletedAt).length;
+      document.getElementById('badge-trash-count').innerText = cvList.filter(c => c.deletedAt).length;
+    }
+
+    function showDashboardView() {
+      document.getElementById('view-dashboard').classList.remove('hidden');
+      document.getElementById('view-editor').classList.add('hidden');
+      document.getElementById('nav-btn-dashboard').classList.add('hidden');
+      document.getElementById('nav-btn-print').classList.add('hidden');
+      renderDashboardGrid();
+    }
+
+    function switchDashboardTab(tab) {
+      currentDashboardTab = tab;
+      const tabActive = document.getElementById('tab-dash-active');
+      const tabTrash = document.getElementById('tab-dash-trash');
+      const trashNotice = document.getElementById('trash-notice');
+
+      if (tab === 'trash') {
+        tabTrash.className = "px-4 py-2 text-xs sm:text-sm font-bold border-b-2 border-amber-500 text-amber-400 transition flex items-center gap-2";
+        tabActive.className = "px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-300 transition flex items-center gap-2";
+        trashNotice.classList.remove('hidden');
+      } else {
+        tabActive.className = "px-4 py-2 text-xs sm:text-sm font-bold border-b-2 border-blue-500 text-blue-400 transition flex items-center gap-2";
+        tabTrash.className = "px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-300 transition flex items-center gap-2";
+        trashNotice.classList.add('hidden');
+      }
+      renderDashboardGrid();
+    }
+
+    function renderDashboardGrid() {
+      const container = document.getElementById('cv-grid-container');
+      container.innerHTML = '';
+      const items = cvList.filter(c => currentDashboardTab === 'trash' ? c.deletedAt : !c.deletedAt);
+
+      if (items.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-12 text-center text-slate-500 text-sm">
+            ${currentDashboardTab === 'trash' ? (currentLang === 'en' ? 'Trash bin is empty.' : 'Tempat sampah kosong.') : (currentLang === 'en' ? 'No resumes created yet. Click "+ Create New Resume (Blank)" above.' : 'Belum ada CV yang dibuat. Klik "+ Buat CV Baru (Kosong)" di atas.')}
+          </div>
+        `;
+        return;
+      }
+
+      const now = Date.now();
+      const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+      items.forEach(cv => {
+        const d = cv.data;
+        let trashMeta = '';
+        if (cv.deletedAt) {
+          const daysLeft = Math.max(0, 3 - Math.floor((now - cv.deletedAt) / ONE_DAY_MS));
+          trashMeta = `<span class="text-[11px] text-amber-400 font-medium">${currentLang === 'en' ? daysLeft + ' days left in trash' : 'Sisa ' + daysLeft + ' hari lagi di sampah'}</span>`;
+        }
+
+        container.innerHTML += `
+          <div class="p-5 bg-slate-900/90 rounded-2xl border border-slate-800 hover:border-slate-700 transition flex flex-col justify-between shadow-lg">
+            <div>
+              <div class="flex items-start justify-between gap-2 mb-2">
+                <h3 class="font-bold text-white text-base truncate">${cv.title || 'CV Tanpa Judul'}</h3>
+                <span class="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">ATS Pro</span>
+              </div>
+              <p class="text-xs text-slate-400 font-medium line-clamp-2">${d.title || (currentLang === 'en' ? 'Position Not Set' : 'Belum Mengisi Posisi')}</p>
+              <div class="mt-4 pt-3 border-t border-slate-800/80 text-[11px] text-slate-500 space-y-1">
+                <div>${currentLang === 'en' ? 'Updated: ' : 'Diperbarui: '} ${new Date(cv.updatedAt).toLocaleDateString(currentLang === 'en' ? 'en-US' : 'id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
+                ${trashMeta}
+              </div>
+            </div>
+
+            <div class="mt-5 pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
+              ${currentDashboardTab === 'active' ? `
+                <button onclick="openEditor('${cv.id}')" class="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition">
+                  ${currentLang === 'en' ? 'Open & Edit' : 'Buka & Edit'}
+                </button>
+                <div class="flex items-center space-x-1">
+                  <button onclick="duplicateCV('${cv.id}')" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition">
+                    ${currentLang === 'en' ? 'Duplicate' : 'Duplikat'}
+                  </button>
+                  <button onclick="moveToTrash('${cv.id}')" class="p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-900/50 text-xs transition">
+                    ${currentLang === 'en' ? 'Delete' : 'Hapus'}
+                  </button>
+                </div>
+              ` : `
+                <button onclick="restoreFromTrash('${cv.id}')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition">
+                  ${currentLang === 'en' ? 'Restore' : 'Pulihkan'}
+                </button>
+                <button onclick="deletePermanent('${cv.id}')" class="px-3 py-1.5 rounded-lg bg-rose-900/60 hover:bg-rose-800 text-white text-xs font-semibold transition">
+                  ${currentLang === 'en' ? 'Delete Permanently' : 'Hapus Permanen'}
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function createNewBlankCV() {
+      const newCv = createBlankCvObject((currentLang === 'en' ? 'New Resume ' : 'CV Baru ') + (cvList.length + 1));
+      cvList.unshift(newCv);
+      saveCvList();
+      openEditor(newCv.id);
+    }
+
+    function loadSampleReferenceCV() {
+      const sample = getDenyTriawanSampleData();
+      sample.id = 'cv_' + Date.now();
+      cvList.unshift(sample);
+      saveCvList();
+      renderDashboardGrid();
+      alert(currentLang === 'en' ? "Sample Deny Triawan CV successfully added to your dashboard!" : "Sampel CV Deny Triawan berhasil dimuat ke daftar!");
+    }
+
+    function duplicateCV(id) {
+      const src = cvList.find(c => c.id === id);
+      if (!src) return;
+      const clone = JSON.parse(JSON.stringify(src));
+      clone.id = 'cv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+      clone.title = src.title + (currentLang === 'en' ? " (Copy)" : " (Salinan)");
+      clone.updatedAt = Date.now();
+      clone.deletedAt = null;
+      cvList.unshift(clone);
+      saveCvList();
+      renderDashboardGrid();
+    }
+
+    function moveToTrash(id) {
+      const t = cvList.find(c => c.id === id);
+      if (t) { t.deletedAt = Date.now(); saveCvList(); renderDashboardGrid(); }
+    }
+
+    function restoreFromTrash(id) {
+      const t = cvList.find(c => c.id === id);
+      if (t) { t.deletedAt = null; saveCvList(); renderDashboardGrid(); }
+    }
+
+    function deletePermanent(id) {
+      const confirmMsg = currentLang === 'en' ? "Are you sure you want to permanently delete this resume?" : "Hapus CV ini secara permanen?";
+      if (!confirm(confirmMsg)) return;
+      cvList = cvList.filter(c => c.id !== id);
+      saveCvList();
+      renderDashboardGrid();
+    }
+
+    // 2. EDITOR
+    function openEditor(id) {
+      currentCvId = id;
+      const cv = cvList.find(c => c.id === id);
+      if (!cv) return;
+
+      document.getElementById('view-dashboard').classList.add('hidden');
+      document.getElementById('view-editor').classList.remove('hidden');
+      document.getElementById('nav-btn-dashboard').classList.remove('hidden');
+      document.getElementById('nav-btn-print').classList.remove('hidden');
+
+      document.getElementById('current-cv-title').value = cv.title;
+      loadFormData(cv.data);
+
+      historyStack = [JSON.stringify(cv.data)];
+      historyIndex = 0;
+      updateUndoRedoButtons();
+
+      renderCV();
+    }
+
+    function updateCvTitle(title) {
+      const cv = cvList.find(c => c.id === currentCvId);
+      if (cv) { cv.title = title; cv.updatedAt = Date.now(); saveCvList(); }
+    }
+
+    function loadFormData(d) {
+      document.getElementById('input-name').value = d.name || '';
+      document.getElementById('input-title').value = d.title || '';
+      document.getElementById('input-email').value = d.email || '';
+      document.getElementById('input-phone').value = d.phone || '';
+      document.getElementById('input-location').value = d.location || '';
+      document.getElementById('input-linkedin').value = d.linkedin || '';
+      document.getElementById('input-portfolio').value = d.portfolio || '';
+      document.getElementById('input-summary').value = d.summary || '';
+      document.getElementById('input-certifications').value = d.certifications || '';
+      document.getElementById('input-languages').value = d.languages || '';
+      document.getElementById('input-publications').value = d.publications || '';
+      document.getElementById('input-toggle-photo').checked = !!d.isPhotoEnabled;
+      
+      togglePhoto();
+      renderFormLists(d.experiences || [], d.educations || []);
+      renderSkillGroups(d.skillGroups || []);
+      setThemeLayout(d.layout || 'apex');
+    }
+
+    function extractFormData() {
+      const exps = [];
+      document.querySelectorAll('.exp-item').forEach(el => {
+        exps.push({
+          role: el.querySelector('.exp-role').value,
+          company: el.querySelector('.exp-company').value,
+          period: el.querySelector('.exp-period').value,
+          location: el.querySelector('.exp-loc').value,
+          desc: el.querySelector('.exp-desc').value,
+          accomplishment: el.querySelector('.exp-acc') ? el.querySelector('.exp-acc').value : ''
+        });
+      });
+
+      const edus = [];
+      document.querySelectorAll('.edu-item').forEach(el => {
+        edus.push({
+          degree: el.querySelector('.edu-deg').value,
+          school: el.querySelector('.edu-school').value,
+          period: el.querySelector('.edu-period').value,
+          details: el.querySelector('.edu-det').value
+        });
+      });
+
+      const skills = [];
+      document.querySelectorAll('.skill-group-item').forEach(el => {
+        skills.push({
+          category: el.querySelector('.sg-category').value,
+          skills: el.querySelector('.sg-skills').value
+        });
+      });
+
+      return {
+        name: document.getElementById('input-name').value,
+        title: document.getElementById('input-title').value,
+        email: document.getElementById('input-email').value,
+        phone: document.getElementById('input-phone').value,
+        location: document.getElementById('input-location').value,
+        linkedin: document.getElementById('input-linkedin').value,
+        portfolio: document.getElementById('input-portfolio').value,
+        summary: document.getElementById('input-summary').value,
+        skillGroups: skills,
+        certifications: document.getElementById('input-certifications').value,
+        languages: document.getElementById('input-languages').value,
+        publications: document.getElementById('input-publications').value,
+        isPhotoEnabled: document.getElementById('input-toggle-photo').checked,
+        layout: activeLayout,
+        experiences: exps,
+        educations: edus
+      };
+    }
+
+    function handleInputChange() {
+      const data = extractFormData();
+      const cv = cvList.find(c => c.id === currentCvId);
+      if (cv) {
+        cv.data = data;
+        cv.updatedAt = Date.now();
+        saveCvList();
+      }
+
+      const currentJson = JSON.stringify(data);
+      if (historyStack[historyIndex] !== currentJson) {
+        historyStack = historyStack.slice(0, historyIndex + 1);
+        historyStack.push(currentJson);
+        if (historyStack.length > 30) historyStack.shift();
+        historyIndex = historyStack.length - 1;
+        updateUndoRedoButtons();
+      }
+
+      renderCV();
+    }
+
+    function undo() {
+      if (historyIndex > 0) {
+        historyIndex--;
+        const data = JSON.parse(historyStack[historyIndex]);
+        loadFormData(data);
+        const cv = cvList.find(c => c.id === currentCvId);
+        if (cv) { cv.data = data; cv.updatedAt = Date.now(); saveCvList(); }
+        updateUndoRedoButtons();
+        renderCV();
+      }
+    }
+
+    function redo() {
+      if (historyIndex < historyStack.length - 1) {
+        historyIndex++;
+        const data = JSON.parse(historyStack[historyIndex]);
+        loadFormData(data);
+        const cv = cvList.find(c => c.id === currentCvId);
+        if (cv) { cv.data = data; cv.updatedAt = Date.now(); saveCvList(); }
+        updateUndoRedoButtons();
+        renderCV();
+      }
+    }
+
+    function updateUndoRedoButtons() {
+      document.getElementById('btn-undo').disabled = (historyIndex <= 0);
+      document.getElementById('btn-redo').disabled = (historyIndex >= historyStack.length - 1);
+    }
+
+    // DYNAMIC SKILL GROUPS
+    function addSkillGroup(group = { category: 'Keahlian Teknis & Inti', skills: '' }) {
+      const container = document.getElementById('skill-groups-container');
+      const div = document.createElement('div');
+      div.className = "skill-group-item p-3.5 bg-slate-950 rounded-xl border border-slate-800 relative space-y-2";
+      
+      div.innerHTML = `
+        <button onclick="this.parentElement.remove(); handleInputChange();" class="absolute top-2.5 right-2.5 text-xs text-rose-400 hover:text-rose-300">✕ ${currentLang === 'en' ? 'Delete' : 'Hapus'}</button>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Select Category' : 'Pilih Kategori Keahlian'}</label>
+            <select onchange="handleSkillCategoryDropdown(this)" class="w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none">
+              <option value="Keahlian Teknis & Inti">${currentLang === 'en' ? 'Technical & Core Skills' : 'Keahlian Teknis & Inti'}</option>
+              <option value="Tools, ERP & Software">${currentLang === 'en' ? 'Tools, ERP & Software' : 'Tools, ERP & Software'}</option>
+              <option value="Manajemen & Kepemimpinan">${currentLang === 'en' ? 'Management & Leadership' : 'Manajemen & Kepemimpinan'}</option>
+              <option value="Rantai Pasok & Operasional">${currentLang === 'en' ? 'Supply Chain & Operations' : 'Rantai Pasok & Operasional'}</option>
+              <option value="Keuangan & Analisis Bisnis">${currentLang === 'en' ? 'Finance & Business Analytics' : 'Keuangan & Analisis Bisnis'}</option>
+              <option value="Metodologi & Standar Mutu">${currentLang === 'en' ? 'Methodologies & Standards' : 'Metodologi & Standar Mutu'}</option>
+              <option value="Kemampuan Bahasa">${currentLang === 'en' ? 'Languages' : 'Kemampuan Bahasa'}</option>
+              <option value="custom">-- ${currentLang === 'en' ? 'Custom / Type Your Own' : 'Kustom / Tulis Sendiri'} --</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Category Label' : 'Label Kategori'}</label>
+            <input type="text" value="${group.category}" oninput="handleInputChange()" class="sg-category w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Skills List (Comma separated)' : 'Daftar Keahlian (Pisahkan dengan tanda koma)'}</label>
+          <textarea rows="2" oninput="handleInputChange()" placeholder="mis: Odoo ERP, Python, Supply Chain, Strategic Sourcing..." class="sg-skills w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none">${group.skills}</textarea>
+        </div>
+      `;
+      container.appendChild(div);
+
+      div.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      handleInputChange();
+    }
+
+    function handleSkillCategoryDropdown(select) {
+      const customInput = select.parentElement.parentElement.querySelector('.sg-category');
+      if (select.value === 'custom') {
+        customInput.value = '';
+        customInput.placeholder = currentLang === 'en' ? 'Type custom category name...' : 'Ketik nama kategori kustom...';
+        customInput.focus();
+      } else {
+        customInput.value = select.value;
+      }
+      handleInputChange();
+    }
+
+    function renderSkillGroups(groups) {
+      document.getElementById('skill-groups-container').innerHTML = '';
+      if (!groups || groups.length === 0) {
+        addSkillGroup({ category: currentLang === 'en' ? 'Technical & Core Skills' : 'Keahlian Teknis & Inti', skills: '' });
+      } else {
+        groups.forEach(g => addSkillGroup(g));
+      }
+    }
+
+    // AUTO ANCHOR EXPERIENCES
+    function addExperience(item = { role: '', company: '', period: '', location: '', desc: '', accomplishment: '' }) {
+      const list = document.getElementById('experience-list');
+      const div = document.createElement('div');
+      div.className = "exp-item p-3.5 bg-slate-950 rounded-xl border border-slate-800 relative space-y-2.5 transition-all duration-300";
+      div.innerHTML = `
+        <button onclick="this.parentElement.remove(); handleInputChange();" class="absolute top-2.5 right-2.5 text-xs text-rose-400 hover:text-rose-300">✕ ${currentLang === 'en' ? 'Delete' : 'Hapus'}</button>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Job Title / Role' : 'Jabatan / Role'}</label>
+            <input type="text" placeholder="${currentLang === 'en' ? 'e.g. Head of Operations' : 'Jabatan'}" value="${item.role}" oninput="handleInputChange()" class="exp-role w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Company / Organization' : 'Perusahaan / Institusi'}</label>
+            <input type="text" placeholder="${currentLang === 'en' ? 'e.g. PT. Global Logistics' : 'Perusahaan'}" value="${item.company}" oninput="handleInputChange()" class="exp-company w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Working Period' : 'Periode Kerja'}</label>
+            <input type="text" value="${item.period}" oninput="handleInputChange()" placeholder="mis: May 2024 - Present" class="exp-period w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Location / City' : 'Lokasi / Kota'}</label>
+            <input type="text" value="${item.location}" oninput="handleInputChange()" placeholder="mis: Jakarta, Indonesia" class="exp-loc w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+        </div>
+        <div>
+          <div class="flex justify-between items-center mb-0.5">
+            <label class="text-[10px] text-slate-400">${currentLang === 'en' ? 'Key Responsibilities & Bullets' : 'Poin Deskripsi Pencapaian'}</label>
+            <button type="button" onclick="translateItemDesc(this)" class="text-[10px] text-blue-400 hover:text-blue-300 font-semibold">✨ Format ke English</button>
+          </div>
+          <textarea rows="3" placeholder="${currentLang === 'en' ? 'Use enter for each bullet point...' : 'Gunakan baris baru untuk tiap poin pencapaian...'}" oninput="handleInputChange()" class="exp-desc w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none">${item.desc}</textarea>
+        </div>
+        <div>
+          <label class="block text-[10px] text-amber-400 font-semibold mb-0.5">${currentLang === 'en' ? 'Major Accomplishment / Key Impact' : 'Pencapaian Utama (Key Impact / Major Accomplishment)'}</label>
+          <textarea rows="2" placeholder="${currentLang === 'en' ? 'Major projects, metric achievements...' : 'Proyek penting atau angka pencapaian strategis...'}" oninput="handleInputChange()" class="exp-acc w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none">${item.accomplishment || ''}</textarea>
+        </div>
+      `;
+      list.appendChild(div);
+
+      div.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      div.classList.add('ring-2', 'ring-blue-500');
+      setTimeout(() => {
+        div.classList.remove('ring-2', 'ring-blue-500');
+        const roleInput = div.querySelector('.exp-role');
+        if (roleInput) roleInput.focus();
+      }, 300);
+
+      handleInputChange();
+    }
+
+    function addEducation(item = { degree: '', school: '', period: '', details: '' }) {
+      const list = document.getElementById('education-list');
+      const div = document.createElement('div');
+      div.className = "edu-item p-3.5 bg-slate-950 rounded-xl border border-slate-800 relative space-y-2.5 transition-all duration-300";
+      div.innerHTML = `
+        <button onclick="this.parentElement.remove(); handleInputChange();" class="absolute top-2.5 right-2.5 text-xs text-rose-400 hover:text-rose-300">✕ ${currentLang === 'en' ? 'Delete' : 'Hapus'}</button>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Degree / Major' : 'Gelar / Jurusan'}</label>
+            <input type="text" placeholder="${currentLang === 'en' ? 'Bachelor of Computer Science' : 'Gelar'}" value="${item.degree}" oninput="handleInputChange()" class="edu-deg w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'University / Institution' : 'Institusi / Kampus'}</label>
+            <input type="text" placeholder="${currentLang === 'en' ? 'University Name' : 'Kampus'}" value="${item.school}" oninput="handleInputChange()" class="edu-school w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Year / Period' : 'Tahun / Periode'}</label>
+            <input type="text" placeholder="${currentLang === 'en' ? 'e.g. 2018 - 2022' : 'Tahun'}" value="${item.period}" oninput="handleInputChange()" class="edu-period w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'GPA / Honors' : 'IPK / Prestasi'}</label>
+            <input type="text" placeholder="${currentLang === 'en' ? 'e.g. GPA 3.84 / Cum Laude' : 'IPK'}" value="${item.details}" oninput="handleInputChange()" class="edu-det w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+        </div>
+      `;
+      list.appendChild(div);
+
+      div.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      div.classList.add('ring-2', 'ring-blue-500');
+      setTimeout(() => {
+        div.classList.remove('ring-2', 'ring-blue-500');
+        const degInput = div.querySelector('.edu-deg');
+        if (degInput) degInput.focus();
+      }, 300);
+
+      handleInputChange();
+    }
+
+    function renderFormLists(exps, edus) {
+      document.getElementById('experience-list').innerHTML = '';
+      exps.forEach(exp => addExperience(exp));
+      document.getElementById('education-list').innerHTML = '';
+      edus.forEach(edu => addEducation(edu));
+    }
+
+    function translateItemDesc(btn) {
+      const ta = btn.closest('div').parentElement.querySelector('textarea');
+      if (ta && ta.value.trim()) {
+        ta.value = applyTranslation(ta.value);
+        handleInputChange();
+      }
+    }
+
+    function aiTranslateField(fieldId) {
+      const el = document.getElementById(fieldId);
+      if (el && el.value.trim()) {
+        el.value = applyTranslation(el.value);
+        handleInputChange();
+      }
+    }
+
+    function switchFormTab(tab) {
+      ['profile', 'experience', 'education', 'skills', 'extras'].forEach(t => {
+        const content = document.getElementById(`ftab-content-${t}`);
+        const btn = document.getElementById(`ftab-btn-${t}`);
+        if (t === tab) {
+          content.classList.remove('hidden');
+          btn.className = "px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 text-white whitespace-nowrap transition";
+        } else {
+          content.classList.add('hidden');
+          btn.className = "px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap transition";
+        }
+      });
+    }
+
+    function setThemeLayout(name) {
+      activeLayout = name;
+      const body = document.getElementById('main-body');
+      body.className = body.className.replace(/style-\w+/g, '') + ' style-' + name;
+
+      const labels = {
+        apex: "Apex Executive",
+        swiss: "Swiss Minimal",
+        silicon: "Silicon Modern",
+        prestige: "Prestige"
+      };
+      document.getElementById('label-active-layout').innerText = labels[name] || name;
+
+      ['apex', 'swiss', 'silicon', 'prestige'].forEach(t => {
+        const btn = document.getElementById('btn-layout-' + t);
+        if (btn) {
+          btn.className = (t === name)
+            ? "px-2.5 py-1 rounded bg-blue-950 text-blue-300 border border-blue-600 font-bold"
+            : "px-2.5 py-1 rounded text-slate-400 hover:text-white";
+        }
+      });
+
+      renderCV();
+    }
+
+    // FULL I18N UPDATER: MENGUBAH SEMUA LABEL UI & LEMBAR DOKUMEN
+    function setLanguage(lang) {
+      currentLang = lang;
+      const btnId = document.getElementById('btn-lang-id');
+      const btnEn = document.getElementById('btn-lang-en');
+
+      if (lang === 'en') {
+        btnEn.className = "px-2.5 py-1 rounded bg-blue-600 text-white transition";
+        btnId.className = "px-2.5 py-1 rounded text-slate-400 hover:text-white transition";
+      } else {
+        btnId.className = "px-2.5 py-1 rounded bg-blue-600 text-white transition";
+        btnEn.className = "px-2.5 py-1 rounded text-slate-400 hover:text-white transition";
+      }
+
+      const dict = i18n[lang];
+
+      // Update Navbar & Dashboard UI
+      document.getElementById('ui-nav-home').innerText = dict.navHome;
+      document.getElementById('ui-btn-cv-list').innerText = dict.btnCvList;
+      document.getElementById('ui-btn-download-pdf').innerText = dict.btnDownloadPdf;
+      document.getElementById('ui-dash-title').innerText = dict.dashTitle;
+      document.getElementById('ui-dash-subtitle').innerText = dict.dashSubtitle;
+      document.getElementById('ui-btn-load-sample').innerText = dict.btnLoadSample;
+      document.getElementById('ui-btn-create-blank').innerText = dict.btnCreateBlank;
+      document.getElementById('ui-tab-all-active').innerText = dict.tabAllActive;
+      document.getElementById('ui-tab-trash').innerText = dict.tabTrash;
+      document.getElementById('ui-trash-notice-text').innerHTML = dict.trashNoticeText;
+      document.getElementById('ui-btn-back-dashboard').innerText = dict.btnBackDashboard;
+      document.getElementById('save-indicator').innerText = dict.autoSaved;
+      document.getElementById('ui-btn-sheet-download').innerText = dict.btnSheetDownload;
+
+      // Update Form Tabs
+      document.getElementById('ftab-btn-profile').innerText = dict.tabProfile;
+      document.getElementById('ftab-btn-experience').innerText = dict.tabExperience;
+      document.getElementById('ftab-btn-education').innerText = dict.tabEducation;
+      document.getElementById('ftab-btn-skills').innerText = dict.tabSkills;
+      document.getElementById('ftab-btn-extras').innerText = dict.tabExtras;
+
+      // Update Form Labels
+      document.getElementById('lbl-f-profile-title').innerText = dict.lblProfileTitle;
+      document.getElementById('lbl-f-toggle-photo').innerText = dict.lblTogglePhoto;
+      document.getElementById('lbl-f-upload-photo').innerText = dict.lblUploadPhoto;
+      document.getElementById('lbl-f-name').innerText = dict.lblName;
+      document.getElementById('lbl-f-job-title').innerText = dict.lblJobTitle;
+      document.getElementById('lbl-f-email').innerText = dict.lblEmail;
+      document.getElementById('lbl-f-phone').innerText = dict.lblPhone;
+      document.getElementById('lbl-f-loc').innerText = dict.lblLoc;
+      document.getElementById('lbl-f-linkedin').innerText = dict.lblLinkedin;
+      document.getElementById('lbl-f-portfolio').innerText = dict.lblPortfolio;
+      document.getElementById('lbl-f-summary').innerText = dict.lblSummary;
+      document.getElementById('lbl-f-exp-title').innerText = dict.lblExpTitle;
+      document.getElementById('lbl-btn-add-exp').innerText = dict.btnAddExp;
+      document.getElementById('lbl-f-edu-title').innerText = dict.lblEduTitle;
+      document.getElementById('lbl-btn-add-edu').innerText = dict.btnAddEdu;
+      document.getElementById('lbl-f-skill-group-title').innerText = dict.lblSkillGroupTitle;
+      document.getElementById('lbl-f-skill-group-desc').innerText = dict.lblSkillGroupDesc;
+      document.getElementById('lbl-btn-add-skill-group').innerText = dict.btnAddSkillGroup;
+      document.getElementById('lbl-f-extra-title').innerText = dict.lblExtraTitle;
+      document.getElementById('lbl-f-cert').innerText = dict.lblCert;
+      document.getElementById('lbl-f-lang').innerText = dict.lblLang;
+      document.getElementById('lbl-f-pub').innerText = dict.lblPub;
+
+      document.getElementById('label-active-lang').innerText = dict.badgeLabel;
+
+      renderDashboardGrid();
+      renderCV();
+    }
+
+    function togglePhoto() {
+      const enabled = document.getElementById('input-toggle-photo').checked;
+      document.getElementById('photo-box-input').classList.toggle('hidden', !enabled);
+      renderCV();
+    }
+
+    let photoData = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80";
+    function uploadPhoto(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        photoData = evt.target.result;
+        document.getElementById('thumb-photo').src = photoData;
+        renderCV();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function highlightNumbers(text) {
+      if (!text) return '';
+      return text.replace(/(\b\d+(\.\d+)?%\b|\b(Rp|USD|\$)\s?[\d.,]+(\s?(juta|miliar|k|m))?|\b\d+x\b|\b\d{2,}\b|\b100\sTransjakarta\sbuses\b|\b100\sbus\sTransjakarta\b)/gi, '<strong class="font-bold text-slate-950">$1</strong>');
+    }
+
+    // RENDER SHEET UTAMA: DENGAN HIERARKI KATEGORI & NESTING KELAS HRD
+    function renderCV() {
+      const root = document.getElementById('sheet-render-root');
+      const lbl = i18n[currentLang];
+
+      const name = document.getElementById('input-name').value || (currentLang === 'en' ? 'YOUR FULL NAME' : 'NAMA LENGKAP ANDA');
+      const title = applyTranslation(document.getElementById('input-title').value) || (currentLang === 'en' ? 'Target Position / Executive Title' : 'Target Posisi / Profesi');
+      const email = document.getElementById('input-email').value;
+      const phone = document.getElementById('input-phone').value;
+      const loc = document.getElementById('input-location').value;
+      const linkedin = document.getElementById('input-linkedin').value;
+      const port = document.getElementById('input-portfolio').value;
+      const rawSummary = document.getElementById('input-summary').value;
+      const summary = highlightNumbers(applyTranslation(rawSummary));
+      const hasPhoto = document.getElementById('input-toggle-photo').checked;
+
+      // KONTAK MINIMALIS, BERSIH DENGAN SEPARATOR MODERN (|)
+      const contactItems = [];
+      if (loc) {
+        contactItems.push(`
+          <span class="inline-flex items-center gap-1 text-slate-600">
+            <svg class="w-3 h-3 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            <span>${loc}</span>
+          </span>
+        `);
+      }
+      if (phone) {
+        contactItems.push(`
+          <span class="inline-flex items-center gap-1">
+            <svg class="w-3 h-3 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+            ${formatPhoneLink(phone)}
+          </span>
+        `);
+      }
+      if (email) {
+        contactItems.push(`
+          <span class="inline-flex items-center gap-1">
+            <svg class="w-3 h-3 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            ${formatEmailLink(email)}
+          </span>
+        `);
+      }
+      if (linkedin) {
+        contactItems.push(`
+          <span class="inline-flex items-center gap-1">
+            <span class="font-bold text-[9px] text-slate-500 px-1 py-0.2 rounded bg-slate-100 border border-slate-200">in</span>
+            ${formatLinkedInLink(linkedin)}
+          </span>
+        `);
+      }
+      if (port) {
+        contactItems.push(`
+          <span class="inline-flex items-center gap-1">
+            <svg class="w-3 h-3 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+            ${formatPortfolioLink(port)}
+          </span>
+        `);
+      }
+
+      const separatorHTML = `<span class="text-slate-300 font-light select-none">|</span>`;
+      const contactLine = contactItems.length > 0 
+        ? `<div class="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] text-slate-600 mt-2 font-medium">${contactItems.join(separatorHTML)}</div>`
+        : '';
+
+      // GENERATOR JUDUL KATEGORI (DILENGKAPI BREAK-AFTER: AVOID)
+      function renderCategoryHeader(titleText) {
+        if (activeLayout === 'swiss') {
+          return `
+            <div class="section-category-header border-b-2 border-slate-900 pb-1 mb-3 mt-5">
+              <h2 class="text-[12px] font-black uppercase tracking-widest text-slate-950">${titleText}</h2>
+            </div>
+          `;
+        } else if (activeLayout === 'silicon') {
+          return `
+            <div class="section-category-header flex items-center gap-2 border-b-2 accent-border-color pb-1 mb-3 mt-5">
+              <span class="w-2 h-3.5 accent-bg rounded-sm"></span>
+              <h2 class="text-[12px] font-extrabold uppercase tracking-wider accent-color">${titleText}</h2>
+            </div>
+          `;
+        } else if (activeLayout === 'prestige') {
+          return `
+            <div class="section-category-header border-b border-slate-800 pb-1 mb-3 mt-5 text-center">
+              <h2 class="text-[13px] font-bold font-serif uppercase tracking-widest text-slate-900">${titleText}</h2>
+            </div>
+          `;
+        } else {
+          // APEX EXECUTIVE (DEFAULT)
+          return `
+            <div class="section-category-header flex items-center justify-between border-b-2 accent-border-color pb-1 mb-3 mt-5">
+              <h2 class="text-[12px] font-extrabold uppercase tracking-wider accent-color">${titleText}</h2>
+              <span class="h-1 w-8 accent-bg rounded-full hidden sm:block"></span>
+            </div>
+          `;
+        }
+      }
+
+      // EXPERIENCES NESTED DENGAN BREAK-INSIDE: AVOID (ANTI-TERPOTONG DI PDF)
+      let experiencesHTML = '';
+      const expElements = document.querySelectorAll('.exp-item');
+      if (expElements.length === 0) {
+        experiencesHTML = `<p class="text-[11px] text-slate-400 italic">${lbl.emptyExperience}</p>`;
+      } else {
+        expElements.forEach(el => {
+          const role = applyTranslation(el.querySelector('.exp-role').value);
+          const comp = el.querySelector('.exp-company').value;
+          const per = applyTranslation(el.querySelector('.exp-period').value);
+          const itemLoc = el.querySelector('.exp-loc').value;
+          const desc = el.querySelector('.exp-desc').value;
+          const acc = applyTranslation(el.querySelector('.exp-acc') ? el.querySelector('.exp-acc').value : '');
+
+          const bullets = desc
+            .split('\n')
+            .filter(l => l.trim().length > 0)
+            .map(l => `<li class="ml-4 list-disc">${highlightNumbers(applyTranslation(l.replace(/^[*-]\s*/, '')))}</li>`)
+            .join('');
+
+          const accBox = acc.trim() ? `
+            <div class="accomplishment-box mt-2.5 p-2.5 rounded-lg bg-slate-50 border-l-4 accent-border-color border border-slate-200 text-xs">
+              <span class="font-bold text-slate-950 block text-[11px] mb-0.5">${lbl.majorAccomplishment}</span>
+              <span class="text-slate-800 leading-relaxed text-[11.5px]">${highlightNumbers(acc)}</span>
+            </div>
+          ` : '';
+
+          // STRUKTUR NESTED: Indented pl-3 dengan border panduan kiri & class exp-nested-card
+          experiencesHTML += `
+            <div class="exp-nested-card mb-5 last:mb-2 pl-3 border-l-2 border-slate-200 hover:border-slate-400 transition-colors">
+              <div class="flex flex-wrap justify-between items-baseline gap-1">
+                <div>
+                  <h3 class="text-[13.5px] font-extrabold text-slate-900 tracking-tight">${role || (currentLang === 'en' ? 'Executive Role' : 'Posisi/Jabatan')}</h3>
+                  <div class="text-[12px] font-semibold text-slate-700 mt-0.5 flex items-center gap-1.5">
+                    <span>${comp || (currentLang === 'en' ? 'Organization' : 'Perusahaan')}</span>
+                    ${itemLoc ? `<span class="text-slate-400 font-normal italic text-[11px]">• ${itemLoc}</span>` : ''}
+                  </div>
+                </div>
+                <span class="text-[11px] font-bold text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded tracking-wide">${per}</span>
+              </div>
+              <ul class="text-[12px] leading-relaxed text-slate-700 mt-2 space-y-1">${bullets || '<li>Deskripsi pencapaian kerja...</li>'}</ul>
+              ${accBox}
+            </div>
+          `;
+        });
+      }
+
+      // EDUCATIONS NESTED
+      let educationsHTML = '';
+      const eduElements = document.querySelectorAll('.edu-item');
+      if (eduElements.length === 0) {
+        educationsHTML = `<p class="text-[11px] text-slate-400 italic">${lbl.emptyEducation}</p>`;
+      } else {
+        eduElements.forEach(el => {
+          const deg = applyTranslation(el.querySelector('.edu-deg').value);
+          const school = applyTranslation(el.querySelector('.edu-school').value);
+          const per = applyTranslation(el.querySelector('.edu-period').value);
+          const det = applyTranslation(el.querySelector('.edu-det').value);
+
+          educationsHTML += `
+            <div class="edu-nested-card mb-3 last:mb-1 pl-3 border-l-2 border-slate-200">
+              <div class="flex justify-between items-baseline text-xs">
+                <div>
+                  <strong class="font-bold text-slate-900 text-[12.5px]">${deg || (currentLang === 'en' ? 'Degree / Field of Study' : 'Gelar / Jurusan')}</strong>
+                  <div class="text-slate-700 font-medium text-xs mt-0.5">${school || (currentLang === 'en' ? 'University / Institution' : 'Institusi')}</div>
+                  ${det ? `<div class="text-[11px] text-slate-500 italic mt-0.5">${det}</div>` : ''}
+                </div>
+                <span class="text-slate-600 font-bold text-[11px]">${per}</span>
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      // SKILLS NESTED BERDASARKAN KELOMPOK
+      let skillsGroupHTML = '';
+      document.querySelectorAll('.skill-group-item').forEach(el => {
+        const cat = applyTranslation(el.querySelector('.sg-category').value);
+        const sks = applyTranslation(el.querySelector('.sg-skills').value);
+        if (sks.trim()) {
+          skillsGroupHTML += `
+            <div class="skill-nested-card mb-2 pl-3 border-l-2 border-slate-200 text-xs leading-relaxed">
+              <div class="font-extrabold text-slate-900 text-[11.5px] uppercase tracking-wider mb-0.5">${cat}</div>
+              <div class="text-slate-700 text-xs">${sks}</div>
+            </div>
+          `;
+        }
+      });
+      if (!skillsGroupHTML) {
+        skillsGroupHTML = `<p class="text-[11px] text-slate-400 italic">${lbl.emptySkills}</p>`;
+      }
+
+      // SERTIFIKASI & LAIN-LAIN
+      const certRaw = document.getElementById('input-certifications').value;
+      const certHTML = certRaw.trim() ? certRaw.split('\n').filter(l => l.trim()).map(l => `• ${applyTranslation(l.trim())}`).join('<br>') : '';
+      const langRaw = document.getElementById('input-languages').value;
+      const pubRaw = document.getElementById('input-publications').value;
+
+      // HEADER IDENTITAS
+      let headerHTML = '';
+      if (hasPhoto) {
+        headerHTML = `
+          <div class="pb-4 border-b-2 accent-border-color flex items-center gap-4">
+            <img class="w-20 h-20 sm:w-22 sm:h-22 rounded-xl object-cover border border-slate-300 shadow-sm shrink-0" src="${photoData}" alt="${name}" />
+            <div class="flex-grow">
+              <h1 class="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight accent-color">${name}</h1>
+              <p class="text-xs sm:text-[13px] font-bold text-slate-800 mt-0.5 tracking-wide">${title}</p>
+              ${contactLine}
+            </div>
+          </div>
+        `;
+      } else {
+        headerHTML = `
+          <div class="pb-4 border-b-2 accent-border-color">
+            <h1 class="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight accent-color">${name}</h1>
+            <p class="text-xs sm:text-[13px] font-bold text-slate-800 mt-0.5 tracking-wide">${title}</p>
+            ${contactLine}
+          </div>
+        `;
+      }
+
+      root.innerHTML = `
+        ${headerHTML}
+
+        ${summary.trim() ? `
+          <div class="mt-4">
+            ${renderCategoryHeader(lbl.sheetSummary)}
+            <div class="pl-3 border-l-2 border-slate-200">
+              <p class="text-xs leading-relaxed text-slate-700 text-justify">${summary}</p>
+            </div>
+          </div>
+        ` : ''}
+
+        <div class="mt-4">
+          ${renderCategoryHeader(lbl.sheetExperience)}
+          <div class="space-y-1">${experiencesHTML}</div>
+        </div>
+
+        <div class="mt-4">
+          ${renderCategoryHeader(lbl.sheetEducation)}
+          <div class="space-y-1">${educationsHTML}</div>
+        </div>
+
+        <div class="mt-4">
+          ${renderCategoryHeader(lbl.sheetSkills)}
+          <div class="space-y-2">${skillsGroupHTML}</div>
+        </div>
+
+        ${certHTML ? `
+          <div class="mt-4">
+            ${renderCategoryHeader(lbl.sheetCertifications)}
+            <div class="pl-3 border-l-2 border-slate-200 text-xs leading-relaxed text-slate-700">${certHTML}</div>
+          </div>
+        ` : ''}
+
+        ${(langRaw.trim() || pubRaw.trim()) ? `
+          <div class="mt-4">
+            ${renderCategoryHeader(lbl.sheetLanguages)}
+            <div class="pl-3 border-l-2 border-slate-200 text-xs text-slate-700 space-y-1.5">
+              ${langRaw.trim() ? `<div><strong class="font-bold text-slate-900">${lbl.sheetLanguages}:</strong> ${applyTranslation(langRaw)}</div>` : ''}
+              ${pubRaw.trim() ? `<div><strong class="font-bold text-slate-900">${lbl.sheetPublications}:</strong> ${applyTranslation(pubRaw)}</div>` : ''}
+            </div>
+          </div>
+        ` : ''}
+      `;
+    }
+
+    // INISIALISASI
+    window.onload = function() {
+      loadCvList();
+      showDashboardView();
+      setLanguage('id');
+    };
+  </script>
+</body>
+</html>
+HTML_CV
+
+echo "=== 2. Mem-push pembaruan Anti-Cut PDF Print & Full UI Translation ke GitHub ==="
+git add cv.html
+git commit -m "feat: implement anti-cut print rules with break-inside avoid, distinct HRD category nesting and full UI language translation"
+git push origin main
+
+echo "=== Selesai! Buka https://gdp.gaeks.com/cv.html untuk melihat hasilnya ==="

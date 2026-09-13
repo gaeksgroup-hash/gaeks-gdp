@@ -1,0 +1,1915 @@
+#!/bin/bash
+set -e
+
+echo "=== Memperbarui cv.html dengan Redaksi Standar HRD Global & Pemisah Halus Antar-Pengalaman ==="
+
+cat << 'HTML_CV' > cv.html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GAEKS ATS CV Studio | Executive Resume Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+  
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-cv-body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    .font-prestige { font-family: 'Merriweather', Georgia, serif; }
+
+    /* VARIAN ARSITEKTUR TEMA */
+    .style-prestige {
+      --accent-heading: #0f172a;
+      --accent-rule: #1e293b;
+    }
+    .style-modern-corporate {
+      --accent-heading: #1e3a8a;
+      --accent-rule: #1e3a8a;
+    }
+    .style-pure-ats {
+      --accent-heading: #000000;
+      --accent-rule: #000000;
+    }
+    .style-nordic-slate {
+      --accent-heading: #1e293b;
+      --accent-rule: #64748b;
+    }
+
+    .heading-accent { color: var(--accent-heading) !important; }
+    .rule-border { border-color: var(--accent-rule) !important; }
+
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #090d16; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+
+    /* CSS CETAK A4 ANTI-TERPOTONG */
+    @media print {
+      body * { visibility: hidden !important; }
+      #cv-preview-sheet, #cv-preview-sheet * { visibility: visible !important; }
+      
+      #cv-preview-sheet {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 10mm 14mm !important;
+        box-shadow: none !important;
+        border: none !important;
+        background: #ffffff !important;
+        color: #1e293b !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .cv-section-title {
+        break-after: avoid !important;
+        page-break-after: avoid !important;
+      }
+
+      .cv-entry-block {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+
+      .no-print { display: none !important; }
+      a { text-decoration: none !important; color: inherit !important; }
+
+      @page {
+        size: A4 portrait;
+        margin: 8mm 0mm;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white style-prestige" id="main-body">
+
+  <!-- NAVBAR UTAMA -->
+  <header class="no-print sticky top-0 z-50 w-full backdrop-blur-md bg-slate-950/90 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="index.html" class="text-xs sm:text-sm font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 py-1 px-2 rounded-lg hover:bg-slate-900 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+          <span id="ui-nav-home">Beranda</span>
+        </a>
+        <span class="text-slate-700">|</span>
+        <div class="flex items-center space-x-2">
+          <span class="font-extrabold text-base sm:text-lg bg-gradient-to-r from-blue-400 to-indigo-300 bg-clip-text text-transparent">
+            GAEKS ATS Studio
+          </span>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">
+            Corporate Standard
+          </span>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <button id="nav-btn-dashboard" onclick="showDashboardView()" class="hidden px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 transition">
+          <span id="ui-btn-cv-list">Daftar CV</span>
+        </button>
+        <button id="nav-btn-print" onclick="window.print()" class="hidden px-3.5 py-1.5 text-xs font-bold rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition shadow-sm flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+          <span id="ui-btn-download-pdf">Download PDF</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= VIEW 1: DASHBOARD LIST ================= -->
+  <section id="view-dashboard" class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex-grow">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 border-b border-slate-800 gap-4">
+      <div>
+        <h1 id="ui-dash-title" class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Manajemen Resume & CV Profesional</h1>
+        <p id="ui-dash-subtitle" class="text-xs sm:text-sm text-slate-400 mt-1">Format eksekutif dengan kepadatan informasi optimal, bebas dari elemen visual template AI.</p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <button onclick="loadSampleReferenceCV()" class="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 text-xs font-bold hover:bg-slate-800 transition">
+          <span id="ui-btn-load-sample">+ Muat Sampel CV Deny Triawan</span>
+        </button>
+        <button onclick="createNewBlankCV()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-500/20 flex items-center space-x-1.5 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          <span id="ui-btn-create-blank">+ Buat CV Baru (Kosong)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- TABS ACTIVE VS TRASH -->
+    <div class="flex items-center space-x-2 border-b border-slate-800 mb-6">
+      <button onclick="switchDashboardTab('active')" id="tab-dash-active" class="px-4 py-2 text-xs sm:text-sm font-bold border-b-2 border-blue-500 text-blue-400 transition flex items-center gap-2">
+        <span id="ui-tab-all-active">Semua CV Aktif</span>
+        <span id="badge-active-count" class="px-1.5 py-0.2 rounded-full text-[10px] bg-blue-950 text-blue-300 border border-blue-800">0</span>
+      </button>
+      <button onclick="switchDashboardTab('trash')" id="tab-dash-trash" class="px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-300 transition flex items-center gap-2">
+        <span id="ui-tab-trash">Tempat Sampah</span>
+        <span id="badge-trash-count" class="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-900 text-slate-400 border border-slate-800">0</span>
+      </button>
+    </div>
+
+    <div id="trash-notice" class="hidden mb-6 p-3.5 bg-amber-950/40 border border-amber-800/60 rounded-xl text-xs text-amber-300 flex items-center gap-2">
+      <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      <span id="ui-trash-notice-text">Dokumen di tempat sampah tersimpan selama <strong>3 hari</strong> sebelum dihapus permanen oleh sistem.</span>
+    </div>
+
+    <div id="cv-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </section>
+
+  <!-- ================= VIEW 2: CV EDITOR STUDIO ================= -->
+  <section id="view-editor" class="hidden max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 flex-grow">
+    
+    <!-- SUBBAR TOOLBAR -->
+    <div class="no-print flex flex-col md:flex-row md:items-center justify-between pb-4 mb-5 border-b border-slate-800 gap-4">
+      <div class="flex items-center space-x-3">
+        <button onclick="showDashboardView()" class="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-xs flex items-center gap-1">
+          &larr; <span id="ui-btn-back-dashboard">Daftar CV</span>
+        </button>
+        <div>
+          <input type="text" id="current-cv-title" onchange="updateCvTitle(this.value)" class="text-sm sm:text-base font-bold text-white bg-transparent border-b border-dashed border-slate-700 hover:border-blue-500 focus:border-blue-500 focus:outline-none px-1 py-0.5" value="CV Tanpa Judul" />
+          <div class="flex items-center space-x-2 text-[11px] text-slate-400 mt-0.5">
+            <span id="save-indicator" class="text-emerald-400 flex items-center gap-1 font-medium">✓ Tersimpan Otomatis</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- KONTROL FITUR -->
+      <div class="flex flex-wrap items-center gap-2">
+        <div class="flex items-center bg-slate-900 p-1 rounded-lg border border-slate-800 space-x-1">
+          <button onclick="undo()" id="btn-undo" title="Undo (Ctrl+Z)" disabled class="px-2 py-1 rounded text-xs text-slate-500 disabled:opacity-40 hover:text-white transition">↶ Undo</button>
+          <button onclick="redo()" id="btn-redo" title="Redo (Ctrl+Y)" disabled class="px-2 py-1 rounded text-xs text-slate-500 disabled:opacity-40 hover:text-white transition">↷ Redo</button>
+        </div>
+
+        <div class="bg-slate-900 p-1 rounded-lg border border-slate-800 flex items-center text-xs font-bold">
+          <button onclick="setLanguage('id')" id="btn-lang-id" class="px-2.5 py-1 rounded bg-blue-600 text-white transition">ID 🇮🇩</button>
+          <button onclick="setLanguage('en')" id="btn-lang-en" class="px-2.5 py-1 rounded text-slate-400 hover:text-white transition">EN 🇬🇧</button>
+        </div>
+
+        <!-- 4 TEMA ARSITEKTUR EKSEKUTIF -->
+        <div class="flex items-center space-x-1 bg-slate-900 p-1 rounded-lg border border-slate-800 text-xs font-semibold">
+          <button onclick="setThemeLayout('prestige')" id="btn-layout-prestige" class="px-2.5 py-1 rounded bg-blue-950 text-blue-300 border border-blue-600 font-bold">Prestige Executive</button>
+          <button onclick="setThemeLayout('modern-corporate')" id="btn-layout-modern-corporate" class="px-2.5 py-1 rounded text-slate-400 hover:text-white">Modern Corporate</button>
+          <button onclick="setThemeLayout('pure-ats')" id="btn-layout-pure-ats" class="px-2.5 py-1 rounded text-slate-400 hover:text-white">Pure Classic ATS</button>
+          <button onclick="setThemeLayout('nordic-slate')" id="btn-layout-nordic-slate" class="px-2.5 py-1 rounded text-slate-400 hover:text-white">Nordic Slate</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORKSPACE 2 KOLOM -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- KOLOM FORMULIR DENGAN STICKY TAB (5 KOLOM) -->
+      <div class="no-print lg:col-span-5 bg-slate-900/95 rounded-2xl border border-slate-800 p-4 sm:p-5 max-h-[85vh] overflow-y-auto relative shadow-xl">
+        
+        <!-- FROZEN TAB HEADER -->
+        <div class="sticky -top-4 -mx-4 -mt-4 p-4 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 z-30 flex space-x-1 overflow-x-auto shadow-sm">
+          <button onclick="switchFormTab('profile')" id="ftab-btn-profile" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 text-white whitespace-nowrap transition">Profil & Kontak</button>
+          <button onclick="switchFormTab('experience')" id="ftab-btn-experience" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap transition">Pengalaman</button>
+          <button onclick="switchFormTab('education')" id="ftab-btn-education" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap transition">Pendidikan</button>
+          <button onclick="switchFormTab('skills')" id="ftab-btn-skills" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap transition">Keahlian (Kategori)</button>
+          <button onclick="switchFormTab('extras')" id="ftab-btn-extras" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap transition">Sertifikasi & Ekstra</button>
+        </div>
+
+        <div class="pt-2">
+          <!-- FORM 1: PROFIL & KONTAK -->
+          <div id="ftab-content-profile" class="space-y-3.5">
+            <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+              <span id="lbl-f-profile-title" class="text-xs font-bold uppercase text-blue-400">Data Personal & Kontak</span>
+              <label class="flex items-center space-x-1.5 text-xs text-slate-300 cursor-pointer">
+                <input type="checkbox" id="input-toggle-photo" onchange="togglePhoto()" class="rounded bg-slate-950 border-slate-700 text-blue-600 focus:ring-0" />
+                <span id="lbl-f-toggle-photo">Gunakan Pas Foto Formal</span>
+              </label>
+            </div>
+
+            <div id="photo-box-input" class="hidden p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center gap-3">
+              <img id="thumb-photo" class="w-16 h-20 rounded-md object-cover border border-slate-700" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80" alt="Preview" />
+              <div class="text-xs flex-grow">
+                <span id="lbl-f-upload-photo" class="block text-slate-300 font-medium mb-1">Unggah Pas Foto Formal</span>
+                <input type="file" id="input-photo-file" accept="image/*" onchange="uploadPhoto(event)" class="text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-blue-950 file:text-blue-300 cursor-pointer" />
+                <p class="text-[10px] text-slate-500 mt-1">Rasio 4:5 otomatis diselaraskan secara vertikal simetris dengan tinggi nama dan kontak.</p>
+              </div>
+            </div>
+
+            <div>
+              <label id="lbl-f-name" class="block text-[11px] text-slate-400 mb-1">Nama Lengkap & Gelar</label>
+              <input type="text" id="input-name" oninput="handleInputChange()" placeholder="contoh: Deny Triawan, S.Kom" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
+            </div>
+
+            <!-- MULTIPLE CHOICE TARGET ROLES (520+ PROFESI DENGAN LIVE SEARCH & DRAG/DROP) -->
+            <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2.5">
+              <div class="flex justify-between items-center">
+                <label id="lbl-f-target-roles-title" class="text-[11px] font-bold text-blue-400 uppercase tracking-wider">Target Posisi / Profesi</label>
+                <span id="roles-counter-badge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">0 / 4 Disarankan</span>
+              </div>
+              <p id="lbl-f-target-roles-desc" class="text-[10px] text-slate-400 leading-tight">
+                Riset HRD merekomendasikan <strong>maksimal 3–4 posisi terkait</strong> agar tetap fokus. Gunakan kotak pencarian di bawah untuk mencari dari <strong>520+ profesi</strong> (klik atau drag ke kotak target).
+              </p>
+
+              <!-- SELECTED CHIPS LIST (DROPZONE) -->
+              <div id="selected-roles-chips" ondragover="allowRoleDrop(event)" ondrop="handleRoleDrop(event)" class="flex flex-wrap gap-1.5 min-h-[36px] p-2 bg-slate-900 rounded-lg border border-dashed border-slate-700 transition-colors"></div>
+
+              <!-- INPUT MANUAL -->
+              <div class="flex gap-1.5">
+                <input type="text" id="input-custom-role" onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomRole();}" placeholder="Ketik posisi kustom..." class="flex-grow px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
+                <button type="button" onclick="addCustomRole()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold transition">
+                  + Tambah
+                </button>
+              </div>
+
+              <!-- LIVE SEARCH & BANK DATA PROFESI (520+ ITEMS) -->
+              <div class="pt-1 border-t border-slate-800/80">
+                <div class="space-y-1.5 mb-1.5">
+                  <div class="flex items-center gap-2">
+                    <input type="text" id="role-bank-search" oninput="filterRoleSuggestions(this.value)" placeholder="🔍 Cari dari 520+ profesi (ketik nama profesi)..." class="w-full px-2.5 py-1 text-xs bg-slate-900 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none" />
+                  </div>
+                  <div class="flex items-center justify-between text-[10px] text-slate-400">
+                    <span>Atau filter berdasarkan sektor:</span>
+                    <select id="role-category-filter" onchange="renderRoleSuggestions()" class="bg-slate-900 border border-slate-800 rounded px-2 py-0.5 text-slate-300 focus:outline-none">
+                      <option value="all">Semua Sektor (526 Profesi)</option>
+                      <option value="logistics">Logistik & Supply Chain (60)</option>
+                      <option value="tech_software">IT, Software & Cloud (67)</option>
+                      <option value="data_ai">Data, AI & Analytics (47)</option>
+                      <option value="management">Bisnis & Eksekutif (50)</option>
+                      <option value="finance">Keuangan & Akuntansi (50)</option>
+                      <option value="marketing_sales">Pemasaran & Sales (50)</option>
+                      <option value="engineering_mfg">Teknik & Manufaktur (50)</option>
+                      <option value="design_creative">Desain & Kreatif (32)</option>
+                      <option value="hr_legal">SDM, Talent & Legal (36)</option>
+                      <option value="health_pharma">Kesehatan & Farmasi (30)</option>
+                      <option value="construction_property">Konstruksi & Properti (26)</option>
+                      <option value="hospitality_retail">Hospitality & Retail (24)</option>
+                    </select>
+                  </div>
+                </div>
+                <div id="role-suggestion-chips" class="flex flex-wrap gap-1 max-h-32 overflow-y-auto p-1.5 bg-slate-900/60 rounded-lg border border-slate-800/80"></div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label id="lbl-f-email" class="block text-[11px] text-slate-400 mb-1">Email</label>
+                <input type="email" id="input-email" oninput="handleInputChange()" placeholder="nama@email.com" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
+              </div>
+              <div>
+                <label id="lbl-f-phone" class="block text-[11px] text-slate-400 mb-1">No. WhatsApp / Telepon</label>
+                <input type="text" id="input-phone" oninput="handleInputChange()" placeholder="+62 8xx" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label id="lbl-f-loc" class="block text-[11px] text-slate-400 mb-1">Domisili / Kota</label>
+                <input type="text" id="input-location" oninput="handleInputChange()" placeholder="Semarang, Indonesia" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
+              </div>
+              <div>
+                <label id="lbl-f-linkedin" class="block text-[11px] text-slate-400 mb-1">LinkedIn Profile</label>
+                <input type="text" id="input-linkedin" oninput="handleInputChange()" placeholder="triawan25" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
+              </div>
+            </div>
+            <div>
+              <label id="lbl-f-portfolio" class="block text-[11px] text-slate-400 mb-1">Portfolio / Website</label>
+              <input type="text" id="input-portfolio" oninput="handleInputChange()" placeholder="domainanda.com" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
+            </div>
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <label id="lbl-f-summary" class="text-[11px] text-slate-400">Ringkasan Profesional (Summary)</label>
+                <button onclick="aiTranslateField('input-summary')" type="button" class="text-[10px] text-blue-400 hover:text-blue-300 font-semibold flex items-center gap-1">
+                  <span>✨ Format ke English</span>
+                </button>
+              </div>
+              <textarea id="input-summary" rows="4" oninput="handleInputChange()" placeholder="Tuliskan 3-4 kalimat ringkasan pencapaian dan keahlian Anda..." class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none"></textarea>
+            </div>
+          </div>
+
+          <!-- FORM 2: PENGALAMAN -->
+          <div id="ftab-content-experience" class="hidden space-y-3">
+            <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+              <span id="lbl-f-exp-title" class="text-xs font-bold uppercase text-blue-400">Riwayat Pengalaman Kerja</span>
+              <button onclick="addExperience()" class="text-xs px-2.5 py-1 bg-blue-950 text-blue-300 hover:bg-blue-900 rounded-lg border border-blue-800 transition">
+                <span id="lbl-btn-add-exp">+ Tambah Pengalaman</span>
+              </button>
+            </div>
+            <div id="experience-list" class="space-y-4"></div>
+          </div>
+
+          <!-- FORM 3: PENDIDIKAN -->
+          <div id="ftab-content-education" class="hidden space-y-3">
+            <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+              <span id="lbl-f-edu-title" class="text-xs font-bold uppercase text-blue-400">Pendidikan Formal</span>
+              <button onclick="addEducation()" class="text-xs px-2.5 py-1 bg-blue-950 text-blue-300 hover:bg-blue-900 rounded-lg border border-blue-800 transition">
+                <span id="lbl-btn-add-edu">+ Tambah Gelar</span>
+              </button>
+            </div>
+            <div id="education-list" class="space-y-3.5"></div>
+          </div>
+
+          <!-- FORM 4: KEAHLIAN MULTI-KATEGORI -->
+          <div id="ftab-content-skills" class="hidden space-y-4">
+            <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+              <div>
+                <span id="lbl-f-skill-group-title" class="text-xs font-bold uppercase text-blue-400">Kelompok Keahlian</span>
+                <p id="lbl-f-skill-group-desc" class="text-[11px] text-slate-400">Kategori keahlian terstruktur untuk mempermudah identifikasi kualifikasi.</p>
+              </div>
+              <button onclick="addSkillGroup()" class="text-xs px-2.5 py-1 bg-blue-950 text-blue-300 hover:bg-blue-900 rounded-lg border border-blue-800 transition">
+                <span id="lbl-btn-add-skill-group">+ Tambah Kelompok Keahlian</span>
+              </button>
+            </div>
+            <div id="skill-groups-container" class="space-y-3.5"></div>
+          </div>
+
+          <!-- FORM 5: SERTIFIKASI & EKSTRA -->
+          <div id="ftab-content-extras" class="hidden space-y-4">
+            <div class="pb-2 border-b border-slate-800">
+              <span id="lbl-f-extra-title" class="text-xs font-bold uppercase text-blue-400">Sertifikasi & Kualifikasi Tambahan</span>
+            </div>
+            <div>
+              <label id="lbl-f-cert" class="block text-[11px] text-slate-400 mb-1">Sertifikasi & Lisensi Resmi (Tiap baris 1 sertifikasi)</label>
+              <textarea id="input-certifications" rows="3" oninput="handleInputChange()" placeholder="Nama Sertifikasi — Lembaga Penerbit" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none"></textarea>
+            </div>
+            <div>
+              <label id="lbl-f-lang" class="block text-[11px] text-slate-400 mb-1">Kemampuan Bahasa (Pisahkan koma)</label>
+              <input type="text" id="input-languages" oninput="handleInputChange()" placeholder="Bahasa Indonesia (Native), English (C1 Proficient)" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
+            </div>
+            <div>
+              <label id="lbl-f-pub" class="block text-[11px] text-slate-400 mb-1">Publikasi Ilmiah / Portofolio Ekstra</label>
+              <textarea id="input-publications" rows="2" oninput="handleInputChange()" placeholder="Publikasi riset atau link portofolio..." class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none"></textarea>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PRATINJAU LEMBAR A4 ATS (7 KOLOM) -->
+      <div class="lg:col-span-7 flex flex-col items-center">
+        
+        <div class="no-print w-full flex justify-between items-center mb-2 px-2 text-xs text-slate-400">
+          <div class="flex items-center space-x-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span class="font-bold text-slate-300">Format Lembar A4 ATS</span>
+            <span id="label-active-lang" class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-blue-950 text-blue-300 border border-blue-800">Bahasa Indonesia</span>
+            <span id="label-active-layout" class="text-[10px] text-slate-400 font-semibold">Prestige Executive</span>
+          </div>
+          <button onclick="window.print()" class="font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1">
+            <span id="ui-btn-sheet-download">Download PDF</span> &rarr;
+          </button>
+        </div>
+
+        <!-- LEMBAR A4 RESUME -->
+        <div id="cv-preview-sheet" class="font-cv-body w-full max-w-[780px] bg-white text-slate-800 shadow-2xl rounded-sm p-8 sm:p-11 min-h-[1050px] border border-slate-200">
+          <div id="sheet-render-root"></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="no-print border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
+    <p>&copy; 2026 GAEKS DIGITAL PRODUCT. Standard ATS Resume Engine.</p>
+  </footer>
+
+  <!-- SCRIPT LOGIKA UTAMA -->
+  <script>
+    let activeLayout = 'prestige';
+    let currentLang = 'id';
+
+    // BANK DATA LENGKAP 526+ PROFESI TERVERIFIKASI
+    const professionBank = {
+      logistics: [
+        "Supply Chain Manager", "Logistics Operations Manager", "Export-Import Specialist", "Freight Forwarding Manager",
+        "Customs Clearance Specialist (PPJK)", "Warehouse Operations Manager", "Procurement & Sourcing Lead", "Multimodal Transport Coordinator",
+        "Inventory Control Specialist", "Fleet Operations Manager", "Global Sourcing Director", "Distribution Center Manager",
+        "Logistics Analyst", "Supply Chain Planning Lead", "Demand Planner", "Supply Planner", "Logistics Compliance Officer",
+        "Shipping & Documentation Officer", "Port Operations Coordinator", "Air Freight Specialist", "Ocean Freight Specialist",
+        "Cold Chain Logistics Lead", "Terminal Operations Lead", "Freight Pricing Specialist", "Carrier Relationship Manager",
+        "Customs Brokerage Consultant", "Third-Party Logistics (3PL) Manager", "Reverse Logistics Specialist", "B/L & Manifest Specialist",
+        "Dangerous Goods (DG) Logistics Specialist", "Supply Chain Solutions Architect", "Route Optimization Analyst",
+        "Freight Forwarding Branch Manager", "Hub Operations Manager", "Cross-Docking Coordinator", "Import Purchasing Specialist",
+        "Bonded Zone (Kawasan Berikat) Specialist", "Material Requirements Planner (MRP)", "Strategic Sourcing Manager",
+        "Contract Logistics Specialist", "Yard Operations Manager", "Last Mile Delivery Coordinator", "Dispatch Supervisor",
+        "Chartering & Vessel Broker", "Container Fleet Controller", "Cargo Claims & Insurance Officer", "Bulk Logistics Manager",
+        "Supply Chain Continuous Improvement Lead", "Intermodal Operations Coordinator", "Supply Chain Digital Transformation Lead",
+        "Logistics Engineer", "Logistics Systems Specialist", "Inbound Logistics Coordinator", "Outbound Logistics Lead",
+        "Stevedoring Operations Supervisor", "Freight Account Executive", "Consolidation Hub Manager", "Air Cargo Operations Officer",
+        "Vessel Operations Specialist", "Customs Audit Specialist"
+      ],
+      tech_software: [
+        "Full-Stack Software Engineer", "Frontend Developer", "Backend Developer", "Mobile Application Engineer (iOS/Android)",
+        "DevOps Engineer", "Site Reliability Engineer (SRE)", "Cloud Solutions Architect", "Software Architect",
+        "Systems Architect", "Lead Software Engineer", "Principal Software Engineer", "Embedded Systems Engineer",
+        "Firmware Developer", "API Integration Specialist", "Microservices Architect", "Web Application Developer",
+        "React / Next.js Developer", "Vue.js / Nuxt Developer", "Angular Developer", "Node.js Backend Developer",
+        "Python Developer", "Golang Engineer", "Java Enterprise Developer", "C# / .NET Core Developer",
+        "PHP / Laravel Developer", "Ruby on Rails Developer", "C++ Systems Programmer", "Rust Systems Engineer",
+        "QA Automation Engineer", "Software Test Lead", "SDET (Software Development Engineer in Test)", "Performance Test Engineer",
+        "Technical Lead", "Engineering Manager", "Director of Engineering", "Chief Technology Officer (CTO)",
+        "Chief Information Officer (CIO)", "VP of Engineering", "Head of Technology", "Release Manager",
+        "ERP Solution Architect", "Odoo ERP Implementer", "SAP Technical Consultant", "SAP Functional Consultant",
+        "Oracle ERP Specialist", "Microsoft Dynamics 365 Consultant", "NetSuite ERP Specialist", "Salesforce Developer",
+        "Salesforce Administrator", "Middleware / ESB Integration Specialist", "Cloud Security Engineer",
+        "Platform Engineer", "Kubernetes / Infrastructure Engineer", "Linux Systems Administrator", "Database Systems Engineer",
+        "Mobile Tech Lead (iOS)", "Mobile Tech Lead (Android)", "Flutter Developer", "React Native Developer",
+        "Blockchain Developer", "Smart Contract Auditor", "IoT Solutions Engineer", "Network Architect",
+        "Telecom Systems Engineer", "Information Security Architect", "Penetration Tester / Ethical Hacker", "SOC Analyst Lead"
+      ],
+      data_ai: [
+        "Data Scientist", "Machine Learning Engineer", "AI Research Scientist", "Deep Learning Specialist",
+        "Computer Vision Engineer", "Natural Language Processing (NLP) Engineer", "Generative AI Specialist", "Prompt Engineer",
+        "Big Data Engineer", "Data Warehouse Architect", "Data Modeling Specialist", "Business Intelligence (BI) Analyst",
+        "BI Developer", "Data Visualization Specialist (Power BI / Tableau)", "Analytics Engineer", "Database Administrator (DBA)",
+        "PostgreSQL Database Specialist", "MySQL Database Administrator", "MongoDB / NoSQL Architect", "Quantitative Analyst (Quant)",
+        "Chief Data Officer (CDO)", "Head of Data & AI", "MLOps Engineer", "Data Governance Specialist",
+        "Data Quality Analyst", "Data Pipeline Engineer", "ETL Specialist", "Data Security Specialist",
+        "Statistical Modeling Analyst", "Applied AI Scientist", "AI Ethics & Compliance Officer", "Speech Recognition Engineer",
+        "Recommender Systems Engineer", "Operations Research Analyst", "Predictive Analytics Specialist",
+        "Data Product Manager", "Cloud Data Architect", "Hadoop / Spark Specialist", "Snowflake Architect",
+        "Databricks Specialist", "Financial Data Analyst", "Customer Data Platform Lead", "Marketing Analytics Specialist",
+        "Growth Data Analyst", "Spatial / GIS Data Analyst", "Clinical Data Manager", "Bioinformatics Scientist"
+      ],
+      management: [
+        "Chief Executive Officer (CEO)", "Chief Operating Officer (COO)", "General Manager", "Managing Director",
+        "Head of Operations", "VP of Operations", "Operations Director", "Business Operations Manager",
+        "Project Management Professional (PMP)", "Agile Coach / Scrum Master", "Program Manager", "Portfolio Manager",
+        "Business Transformation Lead", "Change Management Consultant", "Management Consultant", "Strategy Director",
+        "Chief Strategy Officer (CSO)", "Strategic Planning Manager", "Business Development Director", "Commercial Director",
+        "Operational Excellence Lead", "Lean Six Sigma Master Black Belt", "Process Optimization Specialist", "Continuous Improvement Manager",
+        "Risk & Compliance Director", "Enterprise Risk Manager", "Governance, Risk & Compliance (GRC) Lead", "Internal Audit Director",
+        "Head of PMO", "Corporate Strategy Analyst", "Business Architect", "Franchise Operations Manager",
+        "Regional Operations Director", "Country Manager", "Chief Commercial Officer (CCO)", "Strategic Partnership Lead",
+        "Mergers & Acquisitions (M&A) Manager", "Innovation & Venture Lead", "Product Operations Lead", "Service Delivery Director",
+        "Executive Vice President (EVP)", "Senior Vice President (SVP)", "Corporate Affairs Director", "Chief of Staff",
+        "Business Unit Director", "Operations Excellence Consultant", "Organizational Design Lead", "Cross-Functional Project Director",
+        "Turnaround Management Consultant", "Global Expansion Lead"
+      ],
+      finance: [
+        "Chief Financial Officer (CFO)", "Finance Director", "Financial Controller", "Head of Finance & Accounting",
+        "Accounting Manager", "Senior Corporate Accountant", "Tax Manager (Brevet A/B/C)", "International Tax Specialist",
+        "Transfer Pricing Consultant", "Financial Planning & Analysis (FP&A) Manager", "Senior FP&A Analyst", "Budgeting Specialist",
+        "Treasury Manager", "Treasury Analyst", "Corporate Finance Lead", "Investment Banking Associate",
+        "Private Equity Analyst", "Venture Capital Associate", "Financial Modeling Specialist", "Credit Risk Analyst",
+        "Market Risk Manager", "Asset & Liability Management (ALM) Lead", "Senior Internal Auditor", "Forensic Accountant",
+        "Statutory Reporting Manager", "Cost Accountant", "General Ledger Accountant", "Accounts Payable Lead",
+        "Accounts Receivable Manager", "Payroll & Compensation Lead", "Investment Portfolio Manager", "Hedge Fund Analyst",
+        "Equity Research Analyst", "Fixed Income Trader", "Wealth Management Consultant", "Corporate Treasurer",
+        "Underwriter Specialist", "Actuarial Analyst", "Financial Compliance Officer", "Fund Accounting Manager",
+        "Securities Analyst", "Risk Analytics Lead", "Commercial Loan Underwriter", "Financial Crimes Investigator",
+        "Anti-Money Laundering (AML) Officer", "Corporate Valuation Analyst", "Investor Relations Manager", "Billing Operations Lead",
+        "Capital Markets Specialist", "Derivatives Trader"
+      ],
+      marketing_sales: [
+        "Chief Marketing Officer (CMO)", "VP of Marketing", "Marketing Director", "Head of Growth Marketing",
+        "Performance Marketing Lead", "Digital Marketing Strategist", "SEO / SEM Specialist", "Search Engine Optimization Lead",
+        "Content Marketing Manager", "Social Media Strategist", "Brand Manager", "Creative Director",
+        "Public Relations (PR) Director", "Corporate Communications Lead", "Media Relations Manager", "Lifecycle Marketing Specialist",
+        "CRM & Email Marketing Lead", "Community Management Lead", "Event & Experiential Marketing Lead", "Head of Sales",
+        "Sales Director", "VP of Sales", "B2B Enterprise Account Executive", "Key Account Manager (KAM)",
+        "Business Development Representative (BDR)", "Sales Operations Manager", "Revenue Operations (RevOps) Lead", "Customer Success Director",
+        "Customer Experience (CX) Manager", "Channel Sales Director", "Direct Sales Specialist", "Commercial Strategy Lead",
+        "Trade Marketing Manager", "Merchandising Lead", "E-Commerce Director", "Marketplace Operations Manager",
+        "Influencer Marketing Lead", "Affiliate Marketing Manager", "Product Marketing Manager (PMM)", "Copywriting & Brand Voice Lead",
+        "Customer Retention Specialist", "Brand Activation Manager", "Digital Media Buyer", "Advertising Operations Lead",
+        "Demand Generation Manager", "Field Marketing Specialist", "Inbound Sales Representative", "Inside Sales Lead",
+        "Sales Enablement Manager", "Telemarketing Operations Manager"
+      ],
+      engineering_mfg: [
+        "Plant Manager", "Manufacturing Operations Director", "Production Manager", "Factory Manager",
+        "Industrial Engineer", "Mechanical Engineer", "Electrical Engineer", "Automation Engineer",
+        "Mechatronics Engineer", "Robotics Specialist", "SCADA & PLC Programmer", "Maintenance & Reliability Engineer",
+        "Total Productive Maintenance (TPM) Lead", "HVAC Systems Engineer", "Piping & Instrumentation Engineer", "Civil Engineer",
+        "Structural Engineer", "Geotechnical Engineer", "Quality Control (QC) Manager", "Quality Assurance (QA) Director",
+        "Lean Manufacturing Specialist", "Six Sigma Black Belt", "Health, Safety & Environment (HSE) Manager", "Environmental Compliance Officer",
+        "Industrial Safety Engineer", "R&D Engineering Specialist", "Packaging Development Engineer", "Tooling Engineer",
+        "Process Development Engineer", "Chemical Engineer", "Materials Science Specialist", "Petroleum & Gas Engineer",
+        "Renewable Energy Project Lead", "Solar Energy Specialist", "Power Systems Engineer", "Instrumentation Engineer",
+        "Aerospace Systems Engineer", "Automotive Design Specialist", "Assembly Line Supervisor", "Reliability Test Engineer",
+        "Mining Operations Engineer", "Metallurgical Engineer", "Welding Engineering Specialist", "Hydraulics Engineer",
+        "Manufacturing Execution Systems (MES) Lead", "Continuous Flow Specialist", "Facility Engineering Manager", "Energy Auditor",
+        "Water Treatment Engineer", "Corrosion Control Specialist"
+      ],
+      design_creative: [
+        "UI/UX Design Lead", "Product Designer", "Head of Design", "Art Director",
+        "Brand Identity Designer", "Graphic Design Lead", "Visual Designer", "Design Systems Specialist",
+        "User Researcher", "UX Writer / Content Designer", "Motion Graphic Designer", "3D Animator",
+        "3D Generalist", "VFX Artist", "Industrial Product Designer", "Packaging Designer",
+        "Video Editor & Post-Production Lead", "Sound Designer", "Music Producer", "Storyboard Artist",
+        "Fashion & Apparel Designer", "Textile Designer", "Spatial & Exhibition Designer", "Illustrator & Concept Artist",
+        "Creative Production Lead", "Typographer", "Game Designer", "Level Designer",
+        "Audio Engineer", "Videographer & Cinematographer", "Lighting Designer", "Costume Designer"
+      ],
+      hr_legal: [
+        "Chief Human Resources Officer (CHRO)", "VP of People & Culture", "Head of Human Resources", "HR Business Partner (HRBP)",
+        "Talent Acquisition Director", "Senior Technical Recruiter", "Executive Search Consultant", "Employer Branding Lead",
+        "Compensation & Benefits (C&B) Manager", "People Operations Lead", "Organization Development (OD) Specialist", "Employee Relations Lead",
+        "Industrial Relations Specialist", "Learning & Development (L&D) Manager", "Corporate Training Specialist", "HR Information System (HRIS) Lead",
+        "General Counsel", "Corporate Legal Director", "Senior Corporate Lawyer", "Commercial Contract Specialist",
+        "Intellectual Property (IP) Attorney", "Regulatory Affairs Counsel", "Litigation Specialist", "Compliance Director",
+        "Data Privacy & Protection Officer (DPO)", "Company Secretary", "Labor Law Consultant", "Legal Operations Manager",
+        "Talent Sourcing Specialist", "Onboarding Experience Coordinator", "Diversity, Equity & Inclusion (DEI) Lead", "Employee Engagement Specialist",
+        "Corporate Governance Officer", "Arbitration & Dispute Specialist", "Paralegal Supervisor", "Ethics & Integrity Officer"
+      ],
+      health_pharma: [
+        "Hospital Administrator", "Medical Director", "Clinical Operations Manager", "Healthcare Quality Specialist",
+        "Chief Medical Officer (CMO)", "Public Health Specialist", "Epidemiologist", "Clinical Research Associate (CRA)",
+        "Principal Medical Researcher", "Regulatory Affairs Pharmacist", "Clinical Pharmacist", "Pharmacovigilance Officer",
+        "Biomedical Engineer", "Medical Device Product Lead", "Health Informatics Specialist", "Healthcare Data Analyst",
+        "Senior Nursing Director", "Occupational Health Specialist", "Diagnostic Laboratory Lead", "Nutrition & Dietetics Director",
+        "Medical Science Liaison (MSL)", "Clinical Trial Project Manager", "Pharmacy Operations Lead", "Medical Affairs Manager",
+        "Radiology Operations Lead", "Physical Therapy Director", "Healthcare Risk Manager", "Infection Control Coordinator",
+        "Biotechnology Research Lead", "Toxicology Specialist"
+      ],
+      construction_property: [
+        "Project Director (Construction)", "Construction Project Manager", "Site Operations Manager", "Quantity Surveyor (QS) Lead",
+        "Commercial Real Estate Director", "Property & Asset Manager", "Facility Operations Manager", "Architectural Lead",
+        "Urban Planning Specialist", "Interior Architecture Director", "MEP Engineering Coordinator", "BIM (Building Information Modeling) Manager",
+        "Building Inspection Specialist", "Real Estate Development Lead", "Landscape Architect", "Township Infrastructure Lead",
+        "Civil Infrastructure Lead", "Land Acquisition Specialist", "Leasing Operations Manager", "Tenant Relations Lead",
+        "Construction Safety Specialist", "Highway & Bridge Engineer", "Geotechnical Surveyor", "Acoustic Consultant",
+        "Facade Engineering Specialist", "Real Estate Valuation Lead"
+      ],
+      hospitality_retail: [
+        "Hotel General Manager", "Director of Food & Beverage (F&B)", "Executive Chef", "Hospitality Operations Lead",
+        "Front Office Operations Director", "Retail Operations Director", "Store General Manager", "Visual Merchandising Director",
+        "Retail Buyer / Category Manager", "Luxury Brand Boutique Manager", "Franchise Development Lead", "Restaurant Operations Specialist",
+        "Sommelier & Beverage Director", "Banquet Operations Manager", "Guest Relations Director", "Hotel Revenue Manager",
+        "Retail Loss Prevention Lead", "Inventory Merchandising Analyst", "Culinary Operations Director", "Spa & Wellness Director",
+        "Tourism & Destination Manager", "Cruise Operations Lead", "Catering Sales Director", "Brand Ambassador Lead"
+      ]
+    };
+
+    // REDAKSI RESMI STANDAR HRD GLOBAL & ATS UNIVERSAL
+    const i18n = {
+      id: {
+        navHome: "Beranda",
+        btnCvList: "Daftar CV",
+        btnDownloadPdf: "Download PDF",
+        dashTitle: "Manajemen Resume & CV Profesional",
+        dashSubtitle: "Format eksekutif dengan kepadatan informasi optimal, bebas dari elemen visual template AI.",
+        btnLoadSample: "+ Muat Sampel CV Deny Triawan",
+        btnCreateBlank: "+ Buat CV Baru (Kosong)",
+        tabAllActive: "Semua CV Aktif",
+        tabTrash: "Tempat Sampah",
+        trashNoticeText: "Dokumen di tempat sampah tersimpan selama <strong>3 hari</strong> sebelum dihapus permanen oleh sistem.",
+        btnBackDashboard: "Daftar CV",
+        autoSaved: "✓ Tersimpan Otomatis",
+        btnSheetDownload: "Download PDF",
+        
+        tabProfile: "Profil & Kontak",
+        tabExperience: "Pengalaman",
+        tabEducation: "Pendidikan",
+        tabSkills: "Keahlian (Kategori)",
+        tabExtras: "Sertifikasi & Ekstra",
+        
+        lblProfileTitle: "Data Personal & Kontak",
+        lblTogglePhoto: "Gunakan Pas Foto Formal",
+        lblUploadPhoto: "Unggah Pas Foto Formal",
+        lblName: "Nama Lengkap & Gelar",
+        lblTargetRolesTitle: "Target Posisi / Profesi",
+        lblTargetRolesDesc: "Riset HRD merekomendasikan maksimal 3–4 posisi terkait agar tetap fokus. Gunakan pencarian untuk memilih dari 520+ profesi (klik atau drag ke kotak target).",
+        lblEmail: "Email",
+        lblPhone: "No. WhatsApp / Telepon",
+        lblLoc: "Domisili / Kota",
+        lblLinkedin: "LinkedIn Profile",
+        lblPortfolio: "Portfolio / Website",
+        lblSummary: "Ringkasan Profesional (Summary)",
+        lblExpTitle: "Riwayat Pengalaman Kerja",
+        btnAddExp: "+ Tambah Pengalaman",
+        lblEduTitle: "Pendidikan Formal",
+        btnAddEdu: "+ Tambah Gelar",
+        lblSkillGroupTitle: "Kelompok Keahlian",
+        lblSkillGroupDesc: "Kategori keahlian terstruktur untuk mempermudah identifikasi kualifikasi.",
+        btnAddSkillGroup: "+ Tambah Kelompok Keahlian",
+        lblExtraTitle: "Sertifikasi & Kualifikasi Tambahan",
+        lblCert: "Sertifikasi & Lisensi Resmi (Tiap baris 1 sertifikasi)",
+        lblLang: "Kemampuan Bahasa (Pisahkan koma)",
+        lblPub: "Publikasi Ilmiah / Portofolio Ekstra",
+
+        // REDAKSI RESMI DOKUMEN (BAKU & MATANG)
+        sheetSummary: "PROFIL PROFESIONAL",
+        sheetExperience: "PENGALAMAN PROFESIONAL",
+        sheetEducation: "PENDIDIKAN",
+        sheetSkills: "KEAHLIAN & KOMPETENSI",
+        sheetCertifications: "SERTIFIKASI & LISENSI",
+        sheetLanguages: "KEMAMPUAN BAHASA",
+        sheetPublications: "PUBLIKASI & RISET",
+        majorAccomplishmentLabel: "Pencapaian Kunci:",
+        badgeLabel: "Bahasa Indonesia",
+        present: "Sekarang",
+        emptyExperience: "Belum ada pengalaman kerja yang ditambahkan.",
+        emptyEducation: "Belum ada riwayat pendidikan yang ditambahkan.",
+        emptySkills: "Belum ada kelompok keahlian yang ditambahkan."
+      },
+      en: {
+        navHome: "Home",
+        btnCvList: "CV Dashboard",
+        btnDownloadPdf: "Export PDF",
+        dashTitle: "Professional Resume & CV Manager",
+        dashSubtitle: "Executive density layout engineered for maximum page space utilization and true ATS readability.",
+        btnLoadSample: "+ Load Sample: Deny Triawan CV",
+        btnCreateBlank: "+ Create New Resume (Blank)",
+        tabAllActive: "All Active Resumes",
+        tabTrash: "Trash Bin",
+        trashNoticeText: "Deleted resumes remain in the trash for <strong>3 days</strong> before being permanently purged.",
+        btnBackDashboard: "Resume List",
+        autoSaved: "✓ Auto-saved",
+        btnSheetDownload: "Download PDF",
+
+        tabProfile: "Profile & Contact",
+        tabExperience: "Experience",
+        tabEducation: "Education",
+        tabSkills: "Skills & Categories",
+        tabExtras: "Certifications & Extras",
+
+        lblProfileTitle: "Personal Details & Contact",
+        lblTogglePhoto: "Include Formal Photo",
+        lblUploadPhoto: "Upload Formal Photo",
+        lblName: "Full Name & Degree",
+        lblTargetRolesTitle: "Target Positions / Roles",
+        lblTargetRolesDesc: "HR research recommends 3–4 related titles maximum to maintain clear focus. Search from 520+ titles (click or drag & drop into the target box).",
+        lblEmail: "Email Address",
+        lblPhone: "Phone / WhatsApp",
+        lblLoc: "City & Country",
+        lblLinkedin: "LinkedIn Profile",
+        lblPortfolio: "Portfolio / Website",
+        lblSummary: "Executive Summary",
+        lblExpTitle: "Career Track Record",
+        btnAddExp: "+ Add Position",
+        lblEduTitle: "Academic Background",
+        btnAddEdu: "+ Add Degree",
+        lblSkillGroupTitle: "Skill Categorization",
+        lblSkillGroupDesc: "Structured skill groupings for rapid recruiter qualification scanning.",
+        btnAddSkillGroup: "+ Add Skill Category",
+        lblExtraTitle: "Certifications & Additional Qualifications",
+        lblCert: "Official Certifications & Licenses (1 per line)",
+        lblLang: "Languages (Comma separated)",
+        lblPub: "Scientific Publications & Research",
+
+        // GLOBAL ATS STANDARD HEADINGS
+        sheetSummary: "PROFESSIONAL SUMMARY",
+        sheetExperience: "PROFESSIONAL EXPERIENCE",
+        sheetEducation: "EDUCATION",
+        sheetSkills: "CORE COMPETENCIES",
+        sheetCertifications: "CERTIFICATIONS & LICENSES",
+        sheetLanguages: "LANGUAGES",
+        sheetPublications: "PUBLICATIONS & RESEARCH",
+        majorAccomplishmentLabel: "Key Impact:",
+        badgeLabel: "English (Translated)",
+        present: "Present",
+        emptyExperience: "No work experience added yet.",
+        emptyEducation: "No education credentials added yet.",
+        emptySkills: "No skill categories added yet."
+      }
+    };
+
+    const advancedTranslationDict = [
+      { id: /\bSekarang\b/gi, en: "Present" },
+      { id: /\bSaat Ini\b/gi, en: "Present" },
+      { id: /\bJanuari\b/gi, en: "January" },
+      { id: /\bFebruari\b/gi, en: "February" },
+      { id: /\bMaret\b/gi, en: "March" },
+      { id: /\bMei\b/gi, en: "May" },
+      { id: /\bJuni\b/gi, en: "June" },
+      { id: /\bJuli\b/gi, en: "July" },
+      { id: /\bAgustus\b/gi, en: "August" },
+      { id: /\bOktober\b/gi, en: "October" },
+      { id: /\bDesember\b/gi, en: "December" },
+      { id: /\bMemimpin\b/gi, en: "Spearheaded" },
+      { id: /\bMengembangkan\b/gi, en: "Developed" },
+      { id: /\bMeningkatkan\b/gi, en: "Optimized" },
+      { id: /\bMengurangi\b/gi, en: "Streamlined" },
+      { id: /\bMengelola\b/gi, en: "Managed" },
+      { id: /\bMenegosiasikan\b/gi, en: "Negotiated" },
+      { id: /\bMengkoordinasikan\b/gi, en: "Coordinated" },
+      { id: /\bMengawasi\b/gi, en: "Supervised" },
+      { id: /\bMenerapkan\b/gi, en: "Implemented" },
+      { id: /\bMembangun\b/gi, en: "Architected" },
+      { id: /\bMerancang\b/gi, en: "Engineered" },
+      { id: /\bSarjana Teknik Industri\b/gi, en: "Bachelor of Industrial Engineering" },
+      { id: /\bSarjana Komputer\b/gi, en: "Bachelor of Computer Science" },
+      { id: /\bUniversitas Indonesia\b/gi, en: "University of Indonesia" },
+      { id: /\bUniversitas\b/gi, en: "University" },
+      { id: /\bKepabeanan\b/gi, en: "Customs Clearance" },
+      { id: /\bekspor-impor\b/gi, en: "export-import" },
+      { id: /\bkargo\b/gi, en: "cargo" },
+      { id: /\brantai pasok\b/gi, en: "supply chain" },
+      { id: /\barmada\b/gi, en: "fleet" },
+      { id: /\bpergudangan\b/gi, en: "warehousing" }
+    ];
+
+    function applyTranslation(text) {
+      if (!text || currentLang === 'id') return text;
+      let res = text;
+      advancedTranslationDict.forEach(dict => {
+        res = res.replace(dict.id, dict.en);
+      });
+      return res;
+    }
+
+    function formatEmailLink(email) {
+      if (!email) return '';
+      return `<a href="mailto:${email}" class="text-slate-700 hover:text-blue-600 hover:underline transition">${email}</a>`;
+    }
+
+    function formatPhoneLink(phone) {
+      if (!phone) return '';
+      const cleanNumber = phone.replace(/[^0-9]/g, '');
+      const waLink = cleanNumber.startsWith('0') ? '62' + cleanNumber.slice(1) : cleanNumber;
+      return `<a href="https://wa.me/${waLink}" target="_blank" class="text-slate-700 hover:text-emerald-600 hover:underline transition">${phone}</a>`;
+    }
+
+    function formatLinkedInLink(raw) {
+      if (!raw) return '';
+      const url = raw.startsWith('http') ? raw : `https://linkedin.com/in/${raw.replace(/^@/, '')}`;
+      const display = raw.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//, '');
+      return `<a href="${url}" target="_blank" class="text-slate-700 hover:text-blue-700 hover:underline transition font-medium">linkedin.com/in/${display}</a>`;
+    }
+
+    function formatPortfolioLink(raw) {
+      if (!raw) return '';
+      const url = raw.startsWith('http') ? raw : `https://${raw}`;
+      const display = raw.replace(/^https?:\/\//, '');
+      return `<a href="${url}" target="_blank" class="text-slate-700 hover:text-indigo-600 hover:underline transition font-medium">${display}</a>`;
+    }
+
+    let cvList = [];
+    let currentCvId = null;
+    let currentDashboardTab = 'active';
+    let historyStack = [];
+    let historyIndex = -1;
+    let currentTargetRoles = [];
+    const MAX_TARGET_ROLES = 4;
+    const STORAGE_KEY = 'gaeks_cv_master_list_v14';
+
+    function getAllProfessions() {
+      const all = [];
+      Object.values(professionBank).forEach(arr => {
+        arr.forEach(p => {
+          if (!all.includes(p)) all.push(p);
+        });
+      });
+      return all;
+    }
+
+    function renderRoleSuggestions() {
+      const cat = document.getElementById('role-category-filter').value;
+      const searchVal = document.getElementById('role-bank-search').value.toLowerCase().trim();
+      const container = document.getElementById('role-suggestion-chips');
+      container.innerHTML = '';
+
+      let list = [];
+      if (cat === 'all') {
+        list = getAllProfessions();
+      } else {
+        list = professionBank[cat] || [];
+      }
+
+      if (searchVal) {
+        list = list.filter(r => r.toLowerCase().includes(searchVal));
+      }
+
+      if (list.length === 0) {
+        container.innerHTML = `<span class="text-[11px] text-slate-500 italic p-1">Tidak ada profesi yang cocok dengan "${searchVal}". Gunakan kolom input manual di atas untuk menambahkan.</span>`;
+        return;
+      }
+
+      list.forEach(role => {
+        const btn = document.createElement('div');
+        btn.draggable = true;
+        btn.ondragstart = (e) => handleRoleDragStart(e, role);
+        btn.className = "px-2 py-0.5 rounded text-[10.5px] bg-slate-900 hover:bg-blue-600 text-slate-300 hover:text-white border border-slate-700 transition cursor-grab active:cursor-grabbing select-none";
+        btn.innerText = "+ " + role;
+        btn.onclick = () => addTargetRole(role);
+        container.appendChild(btn);
+      });
+    }
+
+    function filterRoleSuggestions(keyword) {
+      renderRoleSuggestions();
+    }
+
+    function handleRoleDragStart(e, roleName) {
+      e.dataTransfer.setData("text/plain", roleName);
+      e.dataTransfer.effectAllowed = "copy";
+    }
+
+    function allowRoleDrop(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "copy";
+      document.getElementById('selected-roles-chips').classList.add('border-blue-500', 'bg-blue-950/20');
+    }
+
+    function handleRoleDrop(e) {
+      e.preventDefault();
+      document.getElementById('selected-roles-chips').classList.remove('border-blue-500', 'bg-blue-950/20');
+      const role = e.dataTransfer.getData("text/plain");
+      if (role) {
+        addTargetRole(role);
+      }
+    }
+
+    function addTargetRole(roleText) {
+      const trimmed = roleText.trim();
+      if (!trimmed) return;
+      if (currentTargetRoles.includes(trimmed)) return;
+      if (currentTargetRoles.length >= MAX_TARGET_ROLES) {
+        alert(currentLang === 'en' 
+          ? "Maximum 4 target roles recommended for optimal HRD executive focus." 
+          : "Maksimal 4 target posisi disarankan agar fokus eksekutif Anda tetap kuat di mata HRD.");
+        return;
+      }
+      currentTargetRoles.push(trimmed);
+      renderSelectedRoleChips();
+      handleInputChange();
+    }
+
+    function removeTargetRole(index) {
+      currentTargetRoles.splice(index, 1);
+      renderSelectedRoleChips();
+      handleInputChange();
+    }
+
+    function addCustomRole() {
+      const input = document.getElementById('input-custom-role');
+      if (input.value.trim()) {
+        addTargetRole(input.value);
+        input.value = '';
+      }
+    }
+
+    function renderSelectedRoleChips() {
+      const container = document.getElementById('selected-roles-chips');
+      container.innerHTML = '';
+
+      if (currentTargetRoles.length === 0) {
+        container.innerHTML = `<span class="text-[11px] text-slate-500 italic p-1">${currentLang === 'en' ? 'Click suggestions or drag & drop roles here...' : 'Klik saran atau seret (drag & drop) profesi ke sini...'}</span>`;
+      } else {
+        currentTargetRoles.forEach((r, idx) => {
+          container.innerHTML += `
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-blue-950 text-blue-200 border border-blue-800 text-[11px] font-medium shadow-sm">
+              <span>${r}</span>
+              <button type="button" onclick="removeTargetRole(${idx})" class="text-blue-400 hover:text-rose-400 font-bold ml-1">✕</button>
+            </span>
+          `;
+        });
+      }
+
+      document.getElementById('roles-counter-badge').innerText = `${currentTargetRoles.length} / ${MAX_TARGET_ROLES} Disarankan`;
+    }
+
+    function getRoleSeparatorForTheme() {
+      if (activeLayout === 'prestige') {
+        return `<span class="text-slate-400 font-normal mx-2 select-none">•</span>`;
+      } else if (activeLayout === 'modern-corporate') {
+        return `<span class="text-slate-400 font-normal mx-2 select-none">/</span>`;
+      } else if (activeLayout === 'pure-ats') {
+        return `<span class="text-slate-400 font-normal mx-2 select-none">|</span>`;
+      } else {
+        return `<span class="text-slate-400 font-normal mx-2 select-none">—</span>`;
+      }
+    }
+
+    function createBlankCvObject(title = "CV Baru Tanpa Judul") {
+      return {
+        id: 'cv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+        title: title,
+        updatedAt: Date.now(),
+        deletedAt: null,
+        data: {
+          name: "",
+          targetRoles: [],
+          email: "",
+          phone: "",
+          location: "",
+          linkedin: "",
+          portfolio: "",
+          summary: "",
+          skillGroups: [
+            { category: currentLang === 'en' ? 'Core Competencies' : 'Keahlian Teknis & Inti', skills: "" }
+          ],
+          certifications: "",
+          languages: "",
+          publications: "",
+          isPhotoEnabled: false,
+          layout: 'prestige',
+          experiences: [],
+          educations: []
+        }
+      };
+    }
+
+    function getDenyTriawanSampleData() {
+      return {
+        id: 'cv_sample_deny_triawan',
+        title: "Contoh CV: Deny Triawan (Supply Chain & Operations)",
+        updatedAt: Date.now(),
+        deletedAt: null,
+        data: {
+          name: "Deny Triawan",
+          targetRoles: [
+            "Supply Chain Manager",
+            "Logistics Operations Manager",
+            "ERP Solution Architect",
+            "Export-Import Specialist"
+          ],
+          email: "triawan25@gmail.com",
+          phone: "+62 856-0856-1745",
+          location: "Semarang, Indonesia",
+          linkedin: "triawan25",
+          portfolio: "gaeks.com",
+          summary: "Executive professional with comprehensive expertise in Supply Chain Management, International Logistics, Export-Import Customs Compliance, and ERP Solution Architecture (Odoo & Cloud ERP). Demonstrated track record of leading high-stakes import logistics for 100 Transjakarta buses, ensuring 100% regulatory compliance across PIB/PEB/Manifest/BL, and optimizing warehouse inventory workflows aligned with ISO 31000.",
+          skillGroups: [
+            {
+              category: "Supply Chain & Logistics",
+              skills: "Supply Chain Management, Freight Forwarding, Customs Clearance (PIB, PEB, Manifest, BL, COO), Multimodal Transport, Inventory Optimization (ISO 31000)"
+            },
+            {
+              category: "ERP & Systems Architecture",
+              skills: "Odoo ERP Deployment, ESB ERP, Business Process Mapping (IBM/COBIT), PostgreSQL, Python, Linux Server, RESTful APIs"
+            },
+            {
+              category: "Data & Business Analytics",
+              skills: "SAP Analytics Cloud, Power BI, Google Data Studio, Advanced Financial Modeling, KPI & SLA Governance"
+            }
+          ],
+          certifications: "Database Design and Programming with SQL — Oracle Academy (Expert / Mastery)\nMicrosoft Office Desktop Training — Microsoft Partner Program",
+          languages: "Bahasa Indonesia (Native), English (C1 Proficient - TOEFL IBT/PBT)",
+          publications: "IEEE SIET Publication: Increased information retrieval capabilities on e-commerce websites using scraping techniques (2017)",
+          isPhotoEnabled: true,
+          layout: 'prestige',
+          experiences: [
+            {
+              role: "Head of Operations",
+              company: "PT. Milenial Solusi Internusa",
+              period: "May 2024 - Present",
+              location: "South Tangerang, Banten",
+              desc: "Directed end-to-end operational workflows across Customer Service, Documentation, and Sourcing teams, supporting comprehensive Odoo ERP implementation to streamline interdepartmental operations.\nOversaw strict compliance and validation for critical international shipping documentation including PIB, PEB, Manifest, Bill of Lading (BL), and Certificate of Origin (COO).\nEngineered cost mitigation strategies, vendor tariff comparisons, and contract negotiations with international shipping agents.\nRolled out formal departmental KPI frameworks and risk mitigation protocols to eliminate daily fulfillment bottlenecks.",
+              accomplishment: "Led high-stakes end-to-end import project for 100 Transjakarta buses, successfully coordinating vessel chartering, agency agreements, and customs clearance while deploying Odoo ERP to digitize operational processes."
+            },
+            {
+              role: "Head Of Operations",
+              company: "PT Mangkok Besar Cuan",
+              period: "May 2022 - June 2023",
+              location: "South Jakarta, DKI Jakarta",
+              desc: "Engineered comprehensive workflows, job descriptions, and cross-functional process maps aligning operational execution with corporate objectives.\nExecuted continuous monthly management training curricula for multi-tier branch supervisors and outsourced operational staff.\nImplemented ISO 31000 inventory management practices, optimizing stock shelving turnover and supply requisition cycles.\nIntegrated cloud ERP infrastructure, successfully migrating Bill of Materials (BOM) datasets and operational inventory catalogs.",
+              accomplishment: "Completed full-scale ERP Cloud deployment including POS data migration, digital procurement ordering, and automated operational reporting."
+            },
+            {
+              role: "Customer Service & Shipping Specialist",
+              company: "Surya Cemerlang Logistic",
+              period: "Jan 2022 - May 2022",
+              location: "West Jakarta",
+              desc: "Managed daily coordination with global overseas agents and commercial accounts to schedule multimodal cargo shipments.\nDrafted and audited key shipping instruments including Shipping Instructions (SI), Bill of Lading (BL), and customs compliance filings (Manifest, PIB, PEB).\nCoordinated domestic inland trucking partners to guarantee timely end-to-end cargo delivery to consignees.",
+              accomplishment: "Maintained 100% compliance across all international shipping documentation (PIB/PEB/BL) during peak logistics volume periods with zero regulatory penalties."
+            },
+            {
+              role: "Head Of Research And Development",
+              company: "Nusaputera",
+              period: "June 2019 - Feb 2022",
+              location: "Semarang, Central Java",
+              desc: "Architected institutional Business Process Mapping and department operational worksheets utilizing IBM project management tools.\nDesigned IT governance policies based on COBIT framework and engineered software requirements for Education ERP.\nDeployed integrated campus networking infrastructure utilizing Ubiquiti and MikroTik hardware with DDoS protection and tree-queue bandwidth management.",
+              accomplishment: "Implemented secure and scalable institutional network infrastructure for ERP rollout with real-time DDoS mitigation and optimized bandwidth allocation."
+            }
+          ],
+          educations: [
+            {
+              degree: "Master Of Information System (42 Credits Completed)",
+              school: "Diponegoro University",
+              period: "Sept 2017 - Jan 2020",
+              details: "Semarang, Central Java • Research Focus: Node.js & TCP/IP Architecture on Enterprise Linux"
+            },
+            {
+              degree: "Bachelor Of Computer Science (S.Kom)",
+              school: "Universitas Teknologi Digital Indonesia (STMIK Akakom)",
+              period: "Sept 2012 - Aug 2016",
+              details: "GPA 3.38 • Best Research Paper Award IEEE SIET 2017: Web Information Retrieval via Advanced Scraping"
+            }
+          ]
+        }
+      };
+    }
+
+    function loadCvList() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        try { cvList = JSON.parse(raw); } catch(e) { cvList = []; }
+      }
+      if (!cvList || cvList.length === 0) {
+        cvList = [getDenyTriawanSampleData()];
+        saveCvList();
+      }
+      autoPurgeTrash();
+    }
+
+    function saveCvList() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cvList));
+      updateDashboardCounts();
+    }
+
+    function autoPurgeTrash() {
+      const now = Date.now();
+      const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+      let changed = false;
+      cvList = cvList.filter(cv => {
+        if (cv.deletedAt && (now - cv.deletedAt > THREE_DAYS_MS)) {
+          changed = true;
+          return false;
+        }
+        return true;
+      });
+      if (changed) saveCvList();
+    }
+
+    function updateDashboardCounts() {
+      document.getElementById('badge-active-count').innerText = cvList.filter(c => !c.deletedAt).length;
+      document.getElementById('badge-trash-count').innerText = cvList.filter(c => c.deletedAt).length;
+    }
+
+    function showDashboardView() {
+      document.getElementById('view-dashboard').classList.remove('hidden');
+      document.getElementById('view-editor').classList.add('hidden');
+      document.getElementById('nav-btn-dashboard').classList.add('hidden');
+      document.getElementById('nav-btn-print').classList.add('hidden');
+      renderDashboardGrid();
+    }
+
+    function switchDashboardTab(tab) {
+      currentDashboardTab = tab;
+      const tabActive = document.getElementById('tab-dash-active');
+      const tabTrash = document.getElementById('tab-dash-trash');
+      const trashNotice = document.getElementById('trash-notice');
+
+      if (tab === 'trash') {
+        tabTrash.className = "px-4 py-2 text-xs sm:text-sm font-bold border-b-2 border-amber-500 text-amber-400 transition flex items-center gap-2";
+        tabActive.className = "px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-300 transition flex items-center gap-2";
+        trashNotice.classList.remove('hidden');
+      } else {
+        tabActive.className = "px-4 py-2 text-xs sm:text-sm font-bold border-b-2 border-blue-500 text-blue-400 transition flex items-center gap-2";
+        tabTrash.className = "px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-300 transition flex items-center gap-2";
+        trashNotice.classList.add('hidden');
+      }
+      renderDashboardGrid();
+    }
+
+    function renderDashboardGrid() {
+      const container = document.getElementById('cv-grid-container');
+      container.innerHTML = '';
+      const items = cvList.filter(c => currentDashboardTab === 'trash' ? c.deletedAt : !c.deletedAt);
+
+      if (items.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-12 text-center text-slate-500 text-sm">
+            ${currentDashboardTab === 'trash' ? (currentLang === 'en' ? 'Trash bin is empty.' : 'Tempat sampah kosong.') : (currentLang === 'en' ? 'No resumes created yet. Click "+ Create New Resume (Blank)" above.' : 'Belum ada CV yang dibuat. Klik "+ Buat CV Baru (Kosong)" di atas.')}
+          </div>
+        `;
+        return;
+      }
+
+      const now = Date.now();
+      const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+      items.forEach(cv => {
+        const d = cv.data;
+        let trashMeta = '';
+        if (cv.deletedAt) {
+          const daysLeft = Math.max(0, 3 - Math.floor((now - cv.deletedAt) / ONE_DAY_MS));
+          trashMeta = `<span class="text-[11px] text-amber-400 font-medium">${currentLang === 'en' ? daysLeft + ' days left in trash' : 'Sisa ' + daysLeft + ' hari lagi di sampah'}</span>`;
+        }
+
+        const rolesDisplay = (d.targetRoles && d.targetRoles.length > 0) 
+          ? d.targetRoles.join(' • ') 
+          : (d.title || (currentLang === 'en' ? 'Position Not Set' : 'Belum Mengisi Posisi'));
+
+        container.innerHTML += `
+          <div class="p-5 bg-slate-900/90 rounded-2xl border border-slate-800 hover:border-slate-700 transition flex flex-col justify-between shadow-lg">
+            <div>
+              <div class="flex items-start justify-between gap-2 mb-2">
+                <h3 class="font-bold text-white text-base truncate">${cv.title || 'CV Tanpa Judul'}</h3>
+                <span class="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">Prestige</span>
+              </div>
+              <p class="text-xs text-slate-400 font-medium line-clamp-2">${rolesDisplay}</p>
+              <div class="mt-4 pt-3 border-t border-slate-800/80 text-[11px] text-slate-500 space-y-1">
+                <div>${currentLang === 'en' ? 'Updated: ' : 'Diperbarui: '} ${new Date(cv.updatedAt).toLocaleDateString(currentLang === 'en' ? 'en-US' : 'id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
+                ${trashMeta}
+              </div>
+            </div>
+
+            <div class="mt-5 pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
+              ${currentDashboardTab === 'active' ? `
+                <button onclick="openEditor('${cv.id}')" class="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition">
+                  ${currentLang === 'en' ? 'Open & Edit' : 'Buka & Edit'}
+                </button>
+                <div class="flex items-center space-x-1">
+                  <button onclick="duplicateCV('${cv.id}')" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition">
+                    ${currentLang === 'en' ? 'Duplicate' : 'Duplikat'}
+                  </button>
+                  <button onclick="moveToTrash('${cv.id}')" class="p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-900/50 text-xs transition">
+                    ${currentLang === 'en' ? 'Delete' : 'Hapus'}
+                  </button>
+                </div>
+              ` : `
+                <button onclick="restoreFromTrash('${cv.id}')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition">
+                  ${currentLang === 'en' ? 'Restore' : 'Pulihkan'}
+                </button>
+                <button onclick="deletePermanent('${cv.id}')" class="px-3 py-1.5 rounded-lg bg-rose-900/60 hover:bg-rose-800 text-white text-xs font-semibold transition">
+                  ${currentLang === 'en' ? 'Delete Permanently' : 'Hapus Permanen'}
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function createNewBlankCV() {
+      const newCv = createBlankCvObject((currentLang === 'en' ? 'New Resume ' : 'CV Baru ') + (cvList.length + 1));
+      cvList.unshift(newCv);
+      saveCvList();
+      openEditor(newCv.id);
+    }
+
+    function loadSampleReferenceCV() {
+      const sample = getDenyTriawanSampleData();
+      sample.id = 'cv_' + Date.now();
+      cvList.unshift(sample);
+      saveCvList();
+      renderDashboardGrid();
+      alert(currentLang === 'en' ? "Sample Deny Triawan CV successfully added to your dashboard!" : "Sampel CV Deny Triawan berhasil dimuat ke daftar!");
+    }
+
+    function duplicateCV(id) {
+      const src = cvList.find(c => c.id === id);
+      if (!src) return;
+      const clone = JSON.parse(JSON.stringify(src));
+      clone.id = 'cv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+      clone.title = src.title + (currentLang === 'en' ? " (Copy)" : " (Salinan)");
+      clone.updatedAt = Date.now();
+      clone.deletedAt = null;
+      cvList.unshift(clone);
+      saveCvList();
+      renderDashboardGrid();
+    }
+
+    function moveToTrash(id) {
+      const t = cvList.find(c => c.id === id);
+      if (t) { t.deletedAt = Date.now(); saveCvList(); renderDashboardGrid(); }
+    }
+
+    function restoreFromTrash(id) {
+      const t = cvList.find(c => c.id === id);
+      if (t) { t.deletedAt = null; saveCvList(); renderDashboardGrid(); }
+    }
+
+    function deletePermanent(id) {
+      const confirmMsg = currentLang === 'en' ? "Are you sure you want to permanently delete this resume?" : "Hapus CV ini secara permanen?";
+      if (!confirm(confirmMsg)) return;
+      cvList = cvList.filter(c => c.id !== id);
+      saveCvList();
+      renderDashboardGrid();
+    }
+
+    // 2. EDITOR
+    function openEditor(id) {
+      currentCvId = id;
+      const cv = cvList.find(c => c.id === id);
+      if (!cv) return;
+
+      document.getElementById('view-dashboard').classList.add('hidden');
+      document.getElementById('view-editor').classList.remove('hidden');
+      document.getElementById('nav-btn-dashboard').classList.remove('hidden');
+      document.getElementById('nav-btn-print').classList.remove('hidden');
+
+      document.getElementById('current-cv-title').value = cv.title;
+      loadFormData(cv.data);
+
+      historyStack = [JSON.stringify(cv.data)];
+      historyIndex = 0;
+      updateUndoRedoButtons();
+
+      renderRoleSuggestions();
+      renderCV();
+    }
+
+    function updateCvTitle(title) {
+      const cv = cvList.find(c => c.id === currentCvId);
+      if (cv) { cv.title = title; cv.updatedAt = Date.now(); saveCvList(); }
+    }
+
+    function loadFormData(d) {
+      document.getElementById('input-name').value = d.name || '';
+      
+      if (Array.isArray(d.targetRoles)) {
+        currentTargetRoles = [...d.targetRoles];
+      } else if (d.title) {
+        currentTargetRoles = d.title.split(/[/|•—]/).map(s => s.trim()).filter(Boolean);
+      } else {
+        currentTargetRoles = [];
+      }
+      renderSelectedRoleChips();
+
+      document.getElementById('input-email').value = d.email || '';
+      document.getElementById('input-phone').value = d.phone || '';
+      document.getElementById('input-location').value = d.location || '';
+      document.getElementById('input-linkedin').value = d.linkedin || '';
+      document.getElementById('input-portfolio').value = d.portfolio || '';
+      document.getElementById('input-summary').value = d.summary || '';
+      document.getElementById('input-certifications').value = d.certifications || '';
+      document.getElementById('input-languages').value = d.languages || '';
+      document.getElementById('input-publications').value = d.publications || '';
+      document.getElementById('input-toggle-photo').checked = !!d.isPhotoEnabled;
+      
+      togglePhoto();
+      renderFormLists(d.experiences || [], d.educations || []);
+      renderSkillGroups(d.skillGroups || []);
+      setThemeLayout(d.layout || 'prestige');
+    }
+
+    function extractFormData() {
+      const exps = [];
+      document.querySelectorAll('.exp-item').forEach(el => {
+        exps.push({
+          role: el.querySelector('.exp-role').value,
+          company: el.querySelector('.exp-company').value,
+          period: el.querySelector('.exp-period').value,
+          location: el.querySelector('.exp-loc').value,
+          desc: el.querySelector('.exp-desc').value,
+          accomplishment: el.querySelector('.exp-acc') ? el.querySelector('.exp-acc').value : ''
+        });
+      });
+
+      const edus = [];
+      document.querySelectorAll('.edu-item').forEach(el => {
+        edus.push({
+          degree: el.querySelector('.edu-deg').value,
+          school: el.querySelector('.edu-school').value,
+          period: el.querySelector('.edu-period').value,
+          details: el.querySelector('.edu-det').value
+        });
+      });
+
+      const skills = [];
+      document.querySelectorAll('.skill-group-item').forEach(el => {
+        skills.push({
+          category: el.querySelector('.sg-category').value,
+          skills: el.querySelector('.sg-skills').value
+        });
+      });
+
+      return {
+        name: document.getElementById('input-name').value,
+        targetRoles: currentTargetRoles,
+        title: currentTargetRoles.join(' / '),
+        email: document.getElementById('input-email').value,
+        phone: document.getElementById('input-phone').value,
+        location: document.getElementById('input-location').value,
+        linkedin: document.getElementById('input-linkedin').value,
+        portfolio: document.getElementById('input-portfolio').value,
+        summary: document.getElementById('input-summary').value,
+        skillGroups: skills,
+        certifications: document.getElementById('input-certifications').value,
+        languages: document.getElementById('input-languages').value,
+        publications: document.getElementById('input-publications').value,
+        isPhotoEnabled: document.getElementById('input-toggle-photo').checked,
+        layout: activeLayout,
+        experiences: exps,
+        educations: edus
+      };
+    }
+
+    function handleInputChange() {
+      const data = extractFormData();
+      const cv = cvList.find(c => c.id === currentCvId);
+      if (cv) {
+        cv.data = data;
+        cv.updatedAt = Date.now();
+        saveCvList();
+      }
+
+      const currentJson = JSON.stringify(data);
+      if (historyStack[historyIndex] !== currentJson) {
+        historyStack = historyStack.slice(0, historyIndex + 1);
+        historyStack.push(currentJson);
+        if (historyStack.length > 30) historyStack.shift();
+        historyIndex = historyStack.length - 1;
+        updateUndoRedoButtons();
+      }
+
+      renderCV();
+    }
+
+    function undo() {
+      if (historyIndex > 0) {
+        historyIndex--;
+        const data = JSON.parse(historyStack[historyIndex]);
+        loadFormData(data);
+        const cv = cvList.find(c => c.id === currentCvId);
+        if (cv) { cv.data = data; cv.updatedAt = Date.now(); saveCvList(); }
+        updateUndoRedoButtons();
+        renderCV();
+      }
+    }
+
+    function redo() {
+      if (historyIndex < historyStack.length - 1) {
+        historyIndex++;
+        const data = JSON.parse(historyStack[historyIndex]);
+        loadFormData(data);
+        const cv = cvList.find(c => c.id === currentCvId);
+        if (cv) { cv.data = data; cv.updatedAt = Date.now(); saveCvList(); }
+        updateUndoRedoButtons();
+        renderCV();
+      }
+    }
+
+    function updateUndoRedoButtons() {
+      document.getElementById('btn-undo').disabled = (historyIndex <= 0);
+      document.getElementById('btn-redo').disabled = (historyIndex >= historyStack.length - 1);
+    }
+
+    // DYNAMIC SKILL GROUPS
+    function addSkillGroup(group = { category: 'Keahlian Teknis & Inti', skills: '' }) {
+      const container = document.getElementById('skill-groups-container');
+      const div = document.createElement('div');
+      div.className = "skill-group-item p-3.5 bg-slate-950 rounded-xl border border-slate-800 relative space-y-2";
+      
+      div.innerHTML = `
+        <button onclick="this.parentElement.remove(); handleInputChange();" class="absolute top-2.5 right-2.5 text-xs text-rose-400 hover:text-rose-300">✕ ${currentLang === 'en' ? 'Delete' : 'Hapus'}</button>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Select Category' : 'Pilih Kategori Keahlian'}</label>
+            <select onchange="handleSkillCategoryDropdown(this)" class="w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none">
+              <option value="Keahlian Teknis & Inti">${currentLang === 'en' ? 'Technical & Core Competencies' : 'Keahlian Teknis & Inti'}</option>
+              <option value="Tools, ERP & Software">${currentLang === 'en' ? 'Tools, ERP & Software' : 'Tools, ERP & Software'}</option>
+              <option value="Manajemen & Kepemimpinan">${currentLang === 'en' ? 'Management & Leadership' : 'Manajemen & Kepemimpinan'}</option>
+              <option value="Rantai Pasok & Operasional">${currentLang === 'en' ? 'Supply Chain & Operations' : 'Rantai Pasok & Operasional'}</option>
+              <option value="Keuangan & Analisis Bisnis">${currentLang === 'en' ? 'Finance & Business Analytics' : 'Keuangan & Analisis Bisnis'}</option>
+              <option value="Metodologi & Standar Mutu">${currentLang === 'en' ? 'Methodologies & Standards' : 'Metodologi & Standar Mutu'}</option>
+              <option value="Kemampuan Bahasa">${currentLang === 'en' ? 'Languages' : 'Kemampuan Bahasa'}</option>
+              <option value="custom">-- ${currentLang === 'en' ? 'Custom / Type Your Own' : 'Kustom / Tulis Sendiri'} --</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Category Label' : 'Label Kategori'}</label>
+            <input type="text" value="${group.category}" oninput="handleInputChange()" class="sg-category w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Skills List (Comma separated)' : 'Daftar Keahlian (Pisahkan dengan tanda koma)'}</label>
+          <textarea rows="2" oninput="handleInputChange()" placeholder="mis: Odoo ERP, Python, Supply Chain, Strategic Sourcing..." class="sg-skills w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none">${group.skills}</textarea>
+        </div>
+      `;
+      container.appendChild(div);
+
+      div.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      handleInputChange();
+    }
+
+    function handleSkillCategoryDropdown(select) {
+      const customInput = select.parentElement.parentElement.querySelector('.sg-category');
+      if (select.value === 'custom') {
+        customInput.value = '';
+        customInput.placeholder = currentLang === 'en' ? 'Type custom category name...' : 'Ketik nama kategori kustom...';
+        customInput.focus();
+      } else {
+        customInput.value = select.value;
+      }
+      handleInputChange();
+    }
+
+    function renderSkillGroups(groups) {
+      document.getElementById('skill-groups-container').innerHTML = '';
+      if (!groups || groups.length === 0) {
+        addSkillGroup({ category: currentLang === 'en' ? 'Technical & Core Competencies' : 'Keahlian Teknis & Inti', skills: '' });
+      } else {
+        groups.forEach(g => addSkillGroup(g));
+      }
+    }
+
+    function addExperience(item = { role: '', company: '', period: '', location: '', desc: '', accomplishment: '' }) {
+      const list = document.getElementById('experience-list');
+      const div = document.createElement('div');
+      div.className = "exp-item p-3.5 bg-slate-950 rounded-xl border border-slate-800 relative space-y-2.5 transition-all duration-300";
+      div.innerHTML = `
+        <button onclick="this.parentElement.remove(); handleInputChange();" class="absolute top-2.5 right-2.5 text-xs text-rose-400 hover:text-rose-300">✕ ${currentLang === 'en' ? 'Delete' : 'Hapus'}</button>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Job Title / Role' : 'Jabatan / Role'}</label>
+            <input type="text" placeholder="${currentLang === 'en' ? 'e.g. Head of Operations' : 'Jabatan'}" value="${item.role}" oninput="handleInputChange()" class="exp-role w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Company / Organization' : 'Perusahaan / Institusi'}</label>
+            <input type="text" placeholder="${currentLang === 'en' ? 'e.g. PT. Global Logistics' : 'Perusahaan'}" value="${item.company}" oninput="handleInputChange()" class="exp-company w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Working Period' : 'Periode Kerja'}</label>
+            <input type="text" value="${item.period}" oninput="handleInputChange()" placeholder="mis: May 2024 - Present" class="exp-period w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Location / City' : 'Lokasi / Kota'}</label>
+            <input type="text" value="${item.location}" oninput="handleInputChange()" placeholder="mis: Jakarta, Indonesia" class="exp-loc w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+        </div>
+        <div>
+          <div class="flex justify-between items-center mb-0.5">
+            <label class="text-[10px] text-slate-400">${currentLang === 'en' ? 'Bullet Points' : 'Poin Deskripsi Pencapaian'}</label>
+            <button type="button" onclick="translateItemDesc(this)" class="text-[10px] text-blue-400 hover:text-blue-300 font-semibold">✨ Format ke English</button>
+          </div>
+          <textarea rows="3" placeholder="${currentLang === 'en' ? 'Start bullets with strong action verbs...' : 'Gunakan baris baru untuk tiap poin pencapaian...'}" oninput="handleInputChange()" class="exp-desc w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none">${item.desc}</textarea>
+        </div>
+        <div>
+          <label class="block text-[10px] text-amber-400 font-semibold mb-0.5">${currentLang === 'en' ? 'Key Impact Statement' : 'Pencapaian Utama (Diformat Sebagai Pernyataan Tebal Eksekutif)'}</label>
+          <textarea rows="2" placeholder="${currentLang === 'en' ? 'Significant result or project impact...' : 'Proyek penting atau angka pencapaian strategis...'}" oninput="handleInputChange()" class="exp-acc w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none">${item.accomplishment || ''}</textarea>
+        </div>
+      `;
+      list.appendChild(div);
+
+      div.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      div.classList.add('ring-2', 'ring-blue-500');
+      setTimeout(() => {
+        div.classList.remove('ring-2', 'ring-blue-500');
+        const roleInput = div.querySelector('.exp-role');
+        if (roleInput) roleInput.focus();
+      }, 300);
+
+      handleInputChange();
+    }
+
+    function addEducation(item = { degree: '', school: '', period: '', details: '' }) {
+      const list = document.getElementById('education-list');
+      const div = document.createElement('div');
+      div.className = "edu-item p-3.5 bg-slate-950 rounded-xl border border-slate-800 relative space-y-2.5 transition-all duration-300";
+      div.innerHTML = `
+        <button onclick="this.parentElement.remove(); handleInputChange();" class="absolute top-2.5 right-2.5 text-xs text-rose-400 hover:text-rose-300">✕ ${currentLang === 'en' ? 'Delete' : 'Hapus'}</button>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Degree / Major' : 'Gelar / Jurusan'}</label>
+            <input type="text" placeholder="${currentLang === 'en' ? 'Bachelor of Computer Science' : 'Gelar'}" value="${item.degree}" oninput="handleInputChange()" class="edu-deg w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'University / Institution' : 'Institusi / Kampus'}</label>
+            <input type="text" placeholder="${currentLang === 'en' ? 'University Name' : 'Kampus'}" value="${item.school}" oninput="handleInputChange()" class="edu-school w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Year / Period' : 'Tahun / Periode'}</label>
+            <input type="text" placeholder="${currentLang === 'en' ? 'e.g. 2018 - 2022' : 'Tahun'}" value="${item.period}" oninput="handleInputChange()" class="edu-period w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'GPA / Honors' : 'IPK / Prestasi'}</label>
+            <input type="text" placeholder="${currentLang === 'en' ? 'e.g. GPA 3.84 / Cum Laude' : 'IPK'}" value="${item.details}" oninput="handleInputChange()" class="edu-det w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+        </div>
+      `;
+      list.appendChild(div);
+
+      div.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      div.classList.add('ring-2', 'ring-blue-500');
+      setTimeout(() => {
+        div.classList.remove('ring-2', 'ring-blue-500');
+        const degInput = div.querySelector('.edu-deg');
+        if (degInput) degInput.focus();
+      }, 300);
+
+      handleInputChange();
+    }
+
+    function renderFormLists(exps, edus) {
+      document.getElementById('experience-list').innerHTML = '';
+      exps.forEach(exp => addExperience(exp));
+      document.getElementById('education-list').innerHTML = '';
+      edus.forEach(edu => addEducation(edu));
+    }
+
+    function translateItemDesc(btn) {
+      const ta = btn.closest('div').parentElement.querySelector('textarea');
+      if (ta && ta.value.trim()) {
+        ta.value = applyTranslation(ta.value);
+        handleInputChange();
+      }
+    }
+
+    function aiTranslateField(fieldId) {
+      const el = document.getElementById(fieldId);
+      if (el && el.value.trim()) {
+        el.value = applyTranslation(el.value);
+        handleInputChange();
+      }
+    }
+
+    function switchFormTab(tab) {
+      ['profile', 'experience', 'education', 'skills', 'extras'].forEach(t => {
+        const content = document.getElementById(`ftab-content-${t}`);
+        const btn = document.getElementById(`ftab-btn-${t}`);
+        if (t === tab) {
+          content.classList.remove('hidden');
+          btn.className = "px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 text-white whitespace-nowrap transition";
+        } else {
+          content.classList.add('hidden');
+          btn.className = "px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap transition";
+        }
+      });
+    }
+
+    function setThemeLayout(name) {
+      activeLayout = name;
+      const body = document.getElementById('main-body');
+      body.className = body.className.replace(/style-\w+/g, '') + ' style-' + name;
+
+      const labels = {
+        prestige: "Prestige Executive",
+        "modern-corporate": "Modern Corporate",
+        "pure-ats": "Pure Classic ATS",
+        "nordic-slate": "Nordic Slate"
+      };
+      document.getElementById('label-active-layout').innerText = labels[name] || name;
+
+      ['prestige', 'modern-corporate', 'pure-ats', 'nordic-slate'].forEach(t => {
+        const btn = document.getElementById('btn-layout-' + t);
+        if (btn) {
+          btn.className = (t === name)
+            ? "px-2.5 py-1 rounded bg-blue-950 text-blue-300 border border-blue-600 font-bold"
+            : "px-2.5 py-1 rounded text-slate-400 hover:text-white";
+        }
+      });
+
+      renderCV();
+    }
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const btnId = document.getElementById('btn-lang-id');
+      const btnEn = document.getElementById('btn-lang-en');
+
+      if (lang === 'en') {
+        btnEn.className = "px-2.5 py-1 rounded bg-blue-600 text-white transition";
+        btnId.className = "px-2.5 py-1 rounded text-slate-400 hover:text-white transition";
+      } else {
+        btnId.className = "px-2.5 py-1 rounded bg-blue-600 text-white transition";
+        btnEn.className = "px-2.5 py-1 rounded text-slate-400 hover:text-white transition";
+      }
+
+      const dict = i18n[lang];
+
+      document.getElementById('ui-nav-home').innerText = dict.navHome;
+      document.getElementById('ui-btn-cv-list').innerText = dict.btnCvList;
+      document.getElementById('ui-btn-download-pdf').innerText = dict.btnDownloadPdf;
+      document.getElementById('ui-dash-title').innerText = dict.dashTitle;
+      document.getElementById('ui-dash-subtitle').innerText = dict.dashSubtitle;
+      document.getElementById('ui-btn-load-sample').innerText = dict.btnLoadSample;
+      document.getElementById('ui-btn-create-blank').innerText = dict.btnCreateBlank;
+      document.getElementById('ui-tab-all-active').innerText = dict.tabAllActive;
+      document.getElementById('ui-tab-trash').innerText = dict.tabTrash;
+      document.getElementById('ui-trash-notice-text').innerHTML = dict.trashNoticeText;
+      document.getElementById('ui-btn-back-dashboard').innerText = dict.btnBackDashboard;
+      document.getElementById('save-indicator').innerText = dict.autoSaved;
+      document.getElementById('ui-btn-sheet-download').innerText = dict.btnSheetDownload;
+
+      document.getElementById('ftab-btn-profile').innerText = dict.tabProfile;
+      document.getElementById('ftab-btn-experience').innerText = dict.tabExperience;
+      document.getElementById('ftab-btn-education').innerText = dict.tabEducation;
+      document.getElementById('ftab-btn-skills').innerText = dict.tabSkills;
+      document.getElementById('ftab-btn-extras').innerText = dict.tabExtras;
+
+      document.getElementById('lbl-f-profile-title').innerText = dict.lblProfileTitle;
+      document.getElementById('lbl-f-toggle-photo').innerText = dict.lblTogglePhoto;
+      document.getElementById('lbl-f-upload-photo').innerText = dict.lblUploadPhoto;
+      document.getElementById('lbl-f-name').innerText = dict.lblName;
+      document.getElementById('lbl-f-target-roles-title').innerText = dict.lblTargetRolesTitle;
+      document.getElementById('lbl-f-target-roles-desc').innerHTML = dict.lblTargetRolesDesc;
+      document.getElementById('lbl-f-email').innerText = dict.lblEmail;
+      document.getElementById('lbl-f-phone').innerText = dict.lblPhone;
+      document.getElementById('lbl-f-loc').innerText = dict.lblLoc;
+      document.getElementById('lbl-f-linkedin').innerText = dict.lblLinkedin;
+      document.getElementById('lbl-f-portfolio').innerText = dict.lblPortfolio;
+      document.getElementById('lbl-f-summary').innerText = dict.lblSummary;
+      document.getElementById('lbl-f-exp-title').innerText = dict.lblExpTitle;
+      document.getElementById('lbl-btn-add-exp').innerText = dict.btnAddExp;
+      document.getElementById('lbl-f-edu-title').innerText = dict.lblEduTitle;
+      document.getElementById('lbl-btn-add-edu').innerText = dict.btnAddEdu;
+      document.getElementById('lbl-f-skill-group-title').innerText = dict.lblSkillGroupTitle;
+      document.getElementById('lbl-f-skill-group-desc').innerText = dict.lblSkillGroupDesc;
+      document.getElementById('lbl-btn-add-skill-group').innerText = dict.btnAddSkillGroup;
+      document.getElementById('lbl-f-extra-title').innerText = dict.lblExtraTitle;
+      document.getElementById('lbl-f-cert').innerText = dict.lblCert;
+      document.getElementById('lbl-f-lang').innerText = dict.lblLang;
+      document.getElementById('lbl-f-pub').innerText = dict.lblPub;
+
+      document.getElementById('label-active-lang').innerText = dict.badgeLabel;
+
+      renderDashboardGrid();
+      renderCV();
+    }
+
+    function togglePhoto() {
+      const enabled = document.getElementById('input-toggle-photo').checked;
+      document.getElementById('photo-box-input').classList.toggle('hidden', !enabled);
+      renderCV();
+    }
+
+    let photoData = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80";
+    function uploadPhoto(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        photoData = evt.target.result;
+        document.getElementById('thumb-photo').src = photoData;
+        renderCV();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function highlightNumbers(text) {
+      if (!text) return '';
+      return text.replace(/(\b\d+(\.\d+)?%\b|\b(Rp|USD|\$)\s?[\d.,]+(\s?(juta|miliar|k|m))?|\b\d+x\b|\b\d{2,}\b|\b100\sTransjakarta\sbuses\b|\b100\sbus\sTransjakarta\b)/gi, '<strong class="font-semibold text-slate-950">$1</strong>');
+    }
+
+    // RENDER SHEET UTAMA
+    function renderCV() {
+      const root = document.getElementById('sheet-render-root');
+      const lbl = i18n[currentLang];
+
+      const name = document.getElementById('input-name').value || (currentLang === 'en' ? 'YOUR FULL NAME' : 'NAMA LENGKAP ANDA');
+      
+      const sep = getRoleSeparatorForTheme();
+      let rolesString = '';
+      if (currentTargetRoles && currentTargetRoles.length > 0) {
+        rolesString = currentTargetRoles.map(r => applyTranslation(r)).join(sep);
+      } else {
+        rolesString = currentLang === 'en' ? 'Target Position / Professional Roles' : 'Target Posisi / Profesi';
+      }
+
+      const email = document.getElementById('input-email').value;
+      const phone = document.getElementById('input-phone').value;
+      const loc = document.getElementById('input-location').value;
+      const linkedin = document.getElementById('input-linkedin').value;
+      const port = document.getElementById('input-portfolio').value;
+      const rawSummary = document.getElementById('input-summary').value;
+      const summary = highlightNumbers(applyTranslation(rawSummary));
+      const hasPhoto = document.getElementById('input-toggle-photo').checked;
+
+      // KONTAK MINIMALIS BERSIH
+      const contactItems = [];
+      if (loc) contactItems.push(`<span>${loc}</span>`);
+      if (phone) contactItems.push(formatPhoneLink(phone));
+      if (email) contactItems.push(formatEmailLink(email));
+      if (linkedin) contactItems.push(formatLinkedInLink(linkedin));
+      if (port) contactItems.push(formatPortfolioLink(port));
+
+      const contactSeparator = `<span class="text-slate-300 font-normal mx-1 select-none">|</span>`;
+      const contactLine = contactItems.length > 0 
+        ? `<div class="flex flex-wrap items-center justify-center sm:justify-start gap-y-1 text-[11px] text-slate-600 mt-1 font-normal">${contactItems.join(contactSeparator)}</div>`
+        : '';
+
+      // GENERATOR JUDUL KATEGORI RESMI
+      function renderCategoryHeader(titleText) {
+        if (activeLayout === 'prestige') {
+          return `
+            <div class="cv-section-title border-b border-slate-900 pb-0.5 mb-2 mt-4 flex items-center justify-between">
+              <h2 class="text-[12px] font-bold font-prestige uppercase tracking-wider text-slate-950">${titleText}</h2>
+              <span class="text-[9px] font-serif text-slate-400 italic hidden sm:inline">Executive Portfolio</span>
+            </div>
+          `;
+        } else if (activeLayout === 'pure-ats') {
+          return `
+            <div class="cv-section-title border-b border-black pb-0.5 mb-2 mt-4 text-center">
+              <h2 class="text-[11.5px] font-bold uppercase tracking-widest text-black">${titleText}</h2>
+            </div>
+          `;
+        } else if (activeLayout === 'modern-corporate') {
+          return `
+            <div class="cv-section-title border-b-2 border-blue-900 pb-0.5 mb-2 mt-4 flex items-center gap-2">
+              <span class="w-1.5 h-3 bg-blue-900 rounded-sm"></span>
+              <h2 class="text-[11.5px] font-bold uppercase tracking-wider text-blue-950">${titleText}</h2>
+            </div>
+          `;
+        } else {
+          return `
+            <div class="cv-section-title border-b border-slate-400 pb-0.5 mb-2 mt-4">
+              <h2 class="text-[11.5px] font-semibold uppercase tracking-wider text-slate-800">${titleText}</h2>
+            </div>
+          `;
+        }
+      }
+
+      // EXPERIENCES: PEMISAH HALUS (SUBTLE HAIRLINE DIVIDER) ANTARA PEKERJAAN 1 DAN BERIKUTNYA
+      let experiencesHTML = '';
+      const expElements = document.querySelectorAll('.exp-item');
+      if (expElements.length === 0) {
+        experiencesHTML = `<p class="text-[11px] text-slate-400 italic">${lbl.emptyExperience}</p>`;
+      } else {
+        expElements.forEach((el, index) => {
+          const role = applyTranslation(el.querySelector('.exp-role').value);
+          const comp = el.querySelector('.exp-company').value;
+          const per = applyTranslation(el.querySelector('.exp-period').value);
+          const itemLoc = el.querySelector('.exp-loc').value;
+          const desc = el.querySelector('.exp-desc').value;
+          const acc = applyTranslation(el.querySelector('.exp-acc') ? el.querySelector('.exp-acc').value : '');
+
+          const bullets = desc
+            .split('\n')
+            .filter(l => l.trim().length > 0)
+            .map(l => `<li class="ml-4 list-disc text-slate-700 leading-normal">${highlightNumbers(applyTranslation(l.replace(/^[*-]\s*/, '')))}</li>`)
+            .join('');
+
+          // MAJOR ACCOMPLISHMENT SBG PARAGRAF TEBAL EKSEKUTIF (BEBAS BULLETS/DOT)
+          const accParagraph = acc.trim() ? `
+            <div class="mt-1.5 text-[11px] text-slate-800 leading-normal pl-0.5">
+              <strong class="font-bold text-slate-950">${lbl.majorAccomplishmentLabel}</strong> 
+              <span class="text-slate-800">${highlightNumbers(acc)}</span>
+            </div>
+          ` : '';
+
+          // PEMISAH HALUS (HAIRLINE BORDER) ANTAR ENTRY
+          experiencesHTML += `
+            <div class="cv-entry-block mb-3.5 pb-3 border-b border-slate-200/70 last:border-b-0 last:pb-0 last:mb-1">
+              <div class="flex justify-between items-baseline text-xs">
+                <span class="font-bold text-slate-950 text-[12.5px] tracking-tight">${role || (currentLang === 'en' ? 'Position' : 'Jabatan')}</span>
+                <span class="font-semibold text-slate-700 text-[11px] shrink-0">${per}</span>
+              </div>
+              <div class="flex justify-between items-baseline text-[11px] text-slate-600 mb-1">
+                <span class="font-medium ${activeLayout === 'prestige' ? 'font-prestige italic text-[11.5px]' : 'italic'} text-slate-800">${comp || (currentLang === 'en' ? 'Organization' : 'Perusahaan')}</span>
+                <span class="text-slate-500 italic shrink-0">${itemLoc}</span>
+              </div>
+              <ul class="text-[11px] space-y-0.5 mt-0.5 text-justify">${bullets}</ul>
+              ${accParagraph}
+            </div>
+          `;
+        });
+      }
+
+      // EDUCATIONS: PEMISAH HALUS
+      let educationsHTML = '';
+      const eduElements = document.querySelectorAll('.edu-item');
+      if (eduElements.length === 0) {
+        educationsHTML = `<p class="text-[11px] text-slate-400 italic">${lbl.emptyEducation}</p>`;
+      } else {
+        eduElements.forEach(el => {
+          const deg = applyTranslation(el.querySelector('.edu-deg').value);
+          const school = applyTranslation(el.querySelector('.edu-school').value);
+          const per = applyTranslation(el.querySelector('.edu-period').value);
+          const det = applyTranslation(el.querySelector('.edu-det').value);
+
+          educationsHTML += `
+            <div class="cv-entry-block mb-2 pb-1.5 border-b border-slate-200/50 last:border-b-0 last:pb-0 last:mb-0.5 text-xs">
+              <div class="flex justify-between items-baseline">
+                <span class="font-bold text-slate-950 text-[12px]">${school || 'Universitas'}</span>
+                <span class="text-slate-600 font-medium text-[11px] shrink-0">${per}</span>
+              </div>
+              <div class="flex justify-between items-baseline text-[11px] text-slate-700">
+                <span class="italic">${deg || 'Gelar'}</span>
+                ${det ? `<span class="text-slate-500 font-normal">${det}</span>` : ''}
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      // SKILLS
+      let skillsGroupHTML = '';
+      document.querySelectorAll('.skill-group-item').forEach(el => {
+        const cat = applyTranslation(el.querySelector('.sg-category').value);
+        const sks = applyTranslation(el.querySelector('.sg-skills').value);
+        if (sks.trim()) {
+          skillsGroupHTML += `
+            <div class="text-[11px] leading-relaxed mb-0.5">
+              <strong class="font-semibold text-slate-900">${cat}:</strong> 
+              <span class="text-slate-700">${sks}</span>
+            </div>
+          `;
+        }
+      });
+      if (!skillsGroupHTML) {
+        skillsGroupHTML = `<p class="text-[11px] text-slate-400 italic">${lbl.emptySkills}</p>`;
+      }
+
+      // EXTRAS
+      const certRaw = document.getElementById('input-certifications').value;
+      const certHTML = certRaw.trim() ? certRaw.split('\n').filter(l => l.trim()).map(l => `<li class="ml-4 list-disc text-slate-700 leading-normal">${applyTranslation(l.trim())}</li>`).join('') : '';
+      const langRaw = document.getElementById('input-languages').value;
+      const pubRaw = document.getElementById('input-publications').value;
+
+      // ================= HEADER: SIMETRIS DENGAN PAS FOTO 4:5 =================
+      let headerHTML = '';
+      if (hasPhoto) {
+        headerHTML = `
+          <div class="pb-3 border-b-2 rule-border flex items-center gap-5">
+            <div class="shrink-0">
+              <img class="w-24 h-28 rounded-md object-cover border border-slate-300 shadow-sm" src="${photoData}" alt="${name}" />
+            </div>
+            <div class="flex-grow flex flex-col justify-center min-h-[112px]">
+              <h1 class="text-2xl sm:text-[26px] font-bold tracking-tight text-slate-950 ${activeLayout === 'prestige' ? 'font-prestige' : ''} leading-none">${name}</h1>
+              <p class="text-[11.5px] sm:text-[12px] font-semibold text-slate-700 mt-1.5 tracking-wide leading-snug">${rolesString}</p>
+              ${contactLine}
+            </div>
+          </div>
+        `;
+      } else {
+        headerHTML = `
+          <div class="pb-3 border-b-2 rule-border ${activeLayout === 'pure-ats' ? 'text-center' : 'text-center sm:text-left'}">
+            <h1 class="text-2xl sm:text-[26px] font-bold tracking-tight text-slate-950 ${activeLayout === 'prestige' ? 'font-prestige' : ''} leading-none">${name}</h1>
+            <p class="text-[11.5px] sm:text-[12px] font-semibold text-slate-700 mt-1.5 tracking-wide leading-snug">${rolesString}</p>
+            ${contactLine}
+          </div>
+        `;
+      }
+
+      root.innerHTML = `
+        ${headerHTML}
+
+        ${summary.trim() ? `
+          <div class="mt-3">
+            ${renderCategoryHeader(lbl.sheetSummary)}
+            <p class="text-[11px] leading-relaxed text-slate-700 text-justify">${summary}</p>
+          </div>
+        ` : ''}
+
+        <div class="mt-3">
+          ${renderCategoryHeader(lbl.sheetExperience)}
+          <div>${experiencesHTML}</div>
+        </div>
+
+        <div class="mt-3">
+          ${renderCategoryHeader(lbl.sheetEducation)}
+          <div>${educationsHTML}</div>
+        </div>
+
+        <div class="mt-3">
+          ${renderCategoryHeader(lbl.sheetSkills)}
+          <div class="space-y-0.5">${skillsGroupHTML}</div>
+        </div>
+
+        ${certHTML ? `
+          <div class="mt-3">
+            ${renderCategoryHeader(lbl.sheetCertifications)}
+            <ul class="text-[11px] space-y-0.5">${certHTML}</ul>
+          </div>
+        ` : ''}
+
+        ${(langRaw.trim() || pubRaw.trim()) ? `
+          <div class="mt-3">
+            ${renderCategoryHeader(lbl.sheetLanguages)}
+            <div class="text-[11px] text-slate-700 space-y-0.5">
+              ${langRaw.trim() ? `<div><strong class="font-semibold text-slate-900">${lbl.sheetLanguages}:</strong> ${applyTranslation(langRaw)}</div>` : ''}
+              ${pubRaw.trim() ? `<div><strong class="font-semibold text-slate-900">${lbl.sheetPublications}:</strong> ${applyTranslation(pubRaw)}</div>` : ''}
+            </div>
+          </div>
+        ` : ''}
+      `;
+    }
+
+    window.onload = function() {
+      loadCvList();
+      showDashboardView();
+      setLanguage('id');
+    };
+  </script>
+</body>
+</html>
+HTML_CV
+
+echo "=== Mem-push pembaruan Standar Redaksi & Pemisah Halus ke GitHub ==="
+git add cv.html
+git commit -m "feat: standardize section headings to global corporate ATS standard and implement subtle hairline entry dividers" || true
+git push origin main
+
+echo "=== Selesai! Buka https://gdp.gaeks.com/cv.html untuk melihat hasilnya ==="
