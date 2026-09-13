@@ -3,42 +3,51 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GAEKS ATS CV Studio | Executive High-Density Resume</title>
+  <title>GAEKS ATS CV Studio | Executive Resume Engine</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
   
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    .cv-sheet-font { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    .font-cv-body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    .font-prestige { font-family: 'Merriweather', Georgia, serif; }
 
-    /* VARIAN ARSITEKTUR EKSEKUTIF REALISTIS (BEBAS ELEMEN AI) */
-    .style-traditional {
-      --heading-color: #0f172a;
-      --rule-color: #0f172a;
+    /* DEFINISI TEMA EKSEKUTIF MURNI */
+    .style-prestige {
+      --accent-heading: #0f172a;
+      --accent-rule: #1e293b;
+      --header-bg: #ffffff;
+      --sheet-bg: #ffffff;
     }
     .style-modern-corporate {
-      --heading-color: #1e3a8a;
-      --rule-color: #1e3a8a;
+      --accent-heading: #1e3a8a;
+      --accent-rule: #1e3a8a;
+      --header-bg: #f8fafc;
+      --sheet-bg: #ffffff;
     }
-    .style-slate-minimal {
-      --heading-color: #334155;
-      --rule-color: #cbd5e1;
+    .style-pure-ats {
+      --accent-heading: #000000;
+      --accent-rule: #000000;
+      --header-bg: #ffffff;
+      --sheet-bg: #ffffff;
     }
-    .style-compact-serif {
-      --heading-color: #111827;
-      --rule-color: #374151;
+    .style-nordic-slate {
+      --accent-heading: #1e293b;
+      --accent-rule: #64748b;
+      --header-bg: #ffffff;
+      --sheet-bg: #ffffff;
     }
 
-    .heading-accent { color: var(--heading-color) !important; }
-    .rule-accent { border-color: var(--rule-color) !important; }
+    .heading-accent { color: var(--accent-heading) !important; }
+    .rule-border { border-color: var(--accent-rule) !important; }
 
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: #090d16; }
     ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
 
-    /* CSS CETAK A4 PRESISI ATS (ANTI-TERPOTONG & EFISIENSI RUANG PENUH) */
+    /* CSS CETAK A4 ANTI-TERPOTONG */
     @media print {
       body * { visibility: hidden !important; }
       #cv-preview-sheet, #cv-preview-sheet * { visibility: visible !important; }
@@ -78,7 +87,7 @@
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 antialiased min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white style-traditional" id="main-body">
+<body class="bg-slate-950 text-slate-100 antialiased min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white style-prestige" id="main-body">
 
   <!-- NAVBAR UTAMA -->
   <header class="no-print sticky top-0 z-50 w-full backdrop-blur-md bg-slate-950/90 border-b border-slate-800">
@@ -94,7 +103,7 @@
             GAEKS ATS Studio
           </span>
           <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">
-            Executive Edition
+            Prestige Edition
           </span>
         </div>
       </div>
@@ -180,12 +189,12 @@
           <button onclick="setLanguage('en')" id="btn-lang-en" class="px-2.5 py-1 rounded text-slate-400 hover:text-white transition">EN 🇬🇧</button>
         </div>
 
-        <!-- 4 TEMA ARSITEKTUR EKSEKUTIF MURNI -->
+        <!-- 4 TEMA ARSITEKTUR EKSEKUTIF -->
         <div class="flex items-center space-x-1 bg-slate-900 p-1 rounded-lg border border-slate-800 text-xs font-semibold">
-          <button onclick="setThemeLayout('traditional')" id="btn-layout-traditional" class="px-2.5 py-1 rounded bg-blue-950 text-blue-300 border border-blue-600">Wall Street Classic</button>
-          <button onclick="setThemeLayout('modern-corporate')" id="btn-layout-modern-corporate" class="px-2.5 py-1 rounded text-slate-400 hover:text-white">Corporate Navy</button>
-          <button onclick="setThemeLayout('slate-minimal')" id="btn-layout-slate-minimal" class="px-2.5 py-1 rounded text-slate-400 hover:text-white">Harvard Minimal</button>
-          <button onclick="setThemeLayout('compact-serif')" id="btn-layout-compact-serif" class="px-2.5 py-1 rounded text-slate-400 hover:text-white">Executive Serif</button>
+          <button onclick="setThemeLayout('prestige')" id="btn-layout-prestige" class="px-2.5 py-1 rounded bg-blue-950 text-blue-300 border border-blue-600 font-bold">Prestige Executive</button>
+          <button onclick="setThemeLayout('modern-corporate')" id="btn-layout-modern-corporate" class="px-2.5 py-1 rounded text-slate-400 hover:text-white">Modern Corporate</button>
+          <button onclick="setThemeLayout('pure-ats')" id="btn-layout-pure-ats" class="px-2.5 py-1 rounded text-slate-400 hover:text-white">Pure Classic ATS</button>
+          <button onclick="setThemeLayout('nordic-slate')" id="btn-layout-nordic-slate" class="px-2.5 py-1 rounded text-slate-400 hover:text-white">Nordic Slate</button>
         </div>
       </div>
     </div>
@@ -196,7 +205,7 @@
       <!-- KOLOM FORMULIR DENGAN STICKY TAB (5 KOLOM) -->
       <div class="no-print lg:col-span-5 bg-slate-900/95 rounded-2xl border border-slate-800 p-4 sm:p-5 max-h-[85vh] overflow-y-auto relative shadow-xl">
         
-        <!-- FROZEN / STICKY TAB HEADER -->
+        <!-- FROZEN TAB HEADER -->
         <div class="sticky -top-4 -mx-4 -mt-4 p-4 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 z-30 flex space-x-1 overflow-x-auto shadow-sm">
           <button onclick="switchFormTab('profile')" id="ftab-btn-profile" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 text-white whitespace-nowrap transition">Profil & Kontak</button>
           <button onclick="switchFormTab('experience')" id="ftab-btn-experience" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap transition">Pengalaman</button>
@@ -212,15 +221,16 @@
               <span id="lbl-f-profile-title" class="text-xs font-bold uppercase text-blue-400">Data Personal & Kontak</span>
               <label class="flex items-center space-x-1.5 text-xs text-slate-300 cursor-pointer">
                 <input type="checkbox" id="input-toggle-photo" onchange="togglePhoto()" class="rounded bg-slate-950 border-slate-700 text-blue-600 focus:ring-0" />
-                <span id="lbl-f-toggle-photo">Gunakan Pas Foto</span>
+                <span id="lbl-f-toggle-photo">Gunakan Pas Foto Formal</span>
               </label>
             </div>
 
             <div id="photo-box-input" class="hidden p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center gap-3">
-              <img id="thumb-photo" class="w-12 h-12 rounded-lg object-cover border border-slate-700" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80" alt="Preview" />
+              <img id="thumb-photo" class="w-16 h-20 rounded-md object-cover border border-slate-700" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80" alt="Preview" />
               <div class="text-xs flex-grow">
-                <span id="lbl-f-upload-photo" class="block text-slate-300 font-medium mb-1">Unggah Foto Formal</span>
+                <span id="lbl-f-upload-photo" class="block text-slate-300 font-medium mb-1">Unggah Pas Foto Formal</span>
                 <input type="file" id="input-photo-file" accept="image/*" onchange="uploadPhoto(event)" class="text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-blue-950 file:text-blue-300 cursor-pointer" />
+                <p class="text-[10px] text-slate-500 mt-1">Rasio 4:5 otomatis diselaraskan secara vertikal simetris dengan tinggi nama dan kontak.</p>
               </div>
             </div>
 
@@ -249,7 +259,7 @@
               </div>
               <div>
                 <label id="lbl-f-linkedin" class="block text-[11px] text-slate-400 mb-1">LinkedIn Profile</label>
-                <input type="text" id="input-linkedin" oninput="handleInputChange()" placeholder="username atau url" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
+                <input type="text" id="input-linkedin" oninput="handleInputChange()" placeholder="triawan25" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
               </div>
             </div>
             <div>
@@ -325,7 +335,7 @@
 
       </div>
 
-      <!-- PRATINJAU LEMBAR A4 ATS DENGAN STRUKTUR DENSITAS TINGGI (7 KOLOM) -->
+      <!-- PRATINJAU LEMBAR A4 ATS (7 KOLOM) -->
       <div class="lg:col-span-7 flex flex-col items-center">
         
         <div class="no-print w-full flex justify-between items-center mb-2 px-2 text-xs text-slate-400">
@@ -333,7 +343,7 @@
             <span class="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
             <span class="font-bold text-slate-300">Format Lembar A4 ATS</span>
             <span id="label-active-lang" class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-blue-950 text-blue-300 border border-blue-800">Bahasa Indonesia</span>
-            <span id="label-active-layout" class="text-[10px] text-slate-400 font-semibold">Wall Street Classic</span>
+            <span id="label-active-layout" class="text-[10px] text-slate-400 font-semibold">Prestige Executive</span>
           </div>
           <button onclick="window.print()" class="font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1">
             <span id="ui-btn-sheet-download">Download PDF</span> &rarr;
@@ -341,7 +351,7 @@
         </div>
 
         <!-- LEMBAR A4 RESUME -->
-        <div id="cv-preview-sheet" class="cv-sheet-font w-full max-w-[780px] bg-white text-slate-800 shadow-2xl rounded-sm p-8 sm:p-12 min-h-[1050px] border border-slate-200">
+        <div id="cv-preview-sheet" class="font-cv-body w-full max-w-[780px] bg-white text-slate-800 shadow-2xl rounded-sm p-8 sm:p-11 min-h-[1050px] border border-slate-200">
           <div id="sheet-render-root"></div>
         </div>
       </div>
@@ -355,7 +365,7 @@
 
   <!-- SCRIPT LOGIKA UTAMA -->
   <script>
-    let activeLayout = 'traditional';
+    let activeLayout = 'prestige';
     let currentLang = 'id';
 
     const i18n = {
@@ -381,8 +391,8 @@
         tabExtras: "Sertifikasi & Ekstra",
         
         lblProfileTitle: "Data Personal & Kontak",
-        lblTogglePhoto: "Gunakan Pas Foto",
-        lblUploadPhoto: "Unggah Foto Formal",
+        lblTogglePhoto: "Gunakan Pas Foto Formal",
+        lblUploadPhoto: "Unggah Pas Foto Formal",
         lblName: "Nama Lengkap & Gelar",
         lblJobTitle: "Target Posisi / Profesi",
         lblEmail: "Email",
@@ -403,7 +413,6 @@
         lblLang: "Kemampuan Bahasa (Pisahkan koma)",
         lblPub: "Publikasi Ilmiah / Portofolio Ekstra",
 
-        // Kategori Dokumen
         sheetSummary: "RINGKASAN EKSEKUTIF",
         sheetExperience: "PENGALAMAN KERJA & REKAM JEJAK",
         sheetEducation: "PENDIDIKAN FORMAL",
@@ -411,7 +420,7 @@
         sheetCertifications: "SERTIFIKASI & LISENSI RESMI",
         sheetLanguages: "KEMAMPUAN BAHASA",
         sheetPublications: "PUBLIKASI & RISET",
-        majorAccomplishmentLabel: "Pencapaian Strategis Kunci",
+        majorAccomplishmentLabel: "Pencapaian Kunci",
         badgeLabel: "Bahasa Indonesia",
         present: "Sekarang",
         emptyExperience: "Belum ada pengalaman kerja yang ditambahkan.",
@@ -469,7 +478,7 @@
         sheetCertifications: "LICENSES & CERTIFICATIONS",
         sheetLanguages: "LANGUAGES",
         sheetPublications: "PUBLICATIONS & RESEARCH",
-        majorAccomplishmentLabel: "Key Strategic Impact",
+        majorAccomplishmentLabel: "Key Impact",
         badgeLabel: "English (Translated)",
         present: "Present",
         emptyExperience: "No work experience added yet.",
@@ -493,7 +502,7 @@
       { id: /\bMemimpin\b/gi, en: "Spearheaded" },
       { id: /\bMengembangkan\b/gi, en: "Developed" },
       { id: /\bMeningkatkan\b/gi, en: "Optimized" },
-      { id: /\bMengurangi\b/gi, en: "Reduced" },
+      { id: /\bMengurangi\b/gi, en: "Streamlined" },
       { id: /\bMengelola\b/gi, en: "Managed" },
       { id: /\bMenegosiasikan\b/gi, en: "Negotiated" },
       { id: /\bMengkoordinasikan\b/gi, en: "Coordinated" },
@@ -524,28 +533,28 @@
 
     function formatEmailLink(email) {
       if (!email) return '';
-      return `<a href="mailto:${email}" class="text-slate-700 hover:text-blue-600 hover:underline transition">${email}</a>`;
+      return `<a href="mailto:${email}" class="text-slate-600 hover:text-blue-600 hover:underline transition">${email}</a>`;
     }
 
     function formatPhoneLink(phone) {
       if (!phone) return '';
       const cleanNumber = phone.replace(/[^0-9]/g, '');
       const waLink = cleanNumber.startsWith('0') ? '62' + cleanNumber.slice(1) : cleanNumber;
-      return `<a href="https://wa.me/${waLink}" target="_blank" class="text-slate-700 hover:text-emerald-600 hover:underline transition">${phone}</a>`;
+      return `<a href="https://wa.me/${waLink}" target="_blank" class="text-slate-600 hover:text-emerald-600 hover:underline transition">${phone}</a>`;
     }
 
     function formatLinkedInLink(raw) {
       if (!raw) return '';
       const url = raw.startsWith('http') ? raw : `https://linkedin.com/in/${raw.replace(/^@/, '')}`;
       const display = raw.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//, '');
-      return `<a href="${url}" target="_blank" class="text-slate-700 hover:text-blue-700 hover:underline transition font-medium">linkedin.com/in/${display}</a>`;
+      return `<a href="${url}" target="_blank" class="text-slate-600 hover:text-blue-700 hover:underline transition font-medium">linkedin.com/in/${display}</a>`;
     }
 
     function formatPortfolioLink(raw) {
       if (!raw) return '';
       const url = raw.startsWith('http') ? raw : `https://${raw}`;
       const display = raw.replace(/^https?:\/\//, '');
-      return `<a href="${url}" target="_blank" class="text-slate-700 hover:text-indigo-600 hover:underline transition font-medium">${display}</a>`;
+      return `<a href="${url}" target="_blank" class="text-slate-600 hover:text-indigo-600 hover:underline transition font-medium">${display}</a>`;
     }
 
     let cvList = [];
@@ -553,7 +562,7 @@
     let currentDashboardTab = 'active';
     let historyStack = [];
     let historyIndex = -1;
-    const STORAGE_KEY = 'gaeks_cv_master_list_v9';
+    const STORAGE_KEY = 'gaeks_cv_master_list_v10';
 
     function createBlankCvObject(title = "CV Baru Tanpa Judul") {
       return {
@@ -577,7 +586,7 @@
           languages: "",
           publications: "",
           isPhotoEnabled: false,
-          layout: 'traditional',
+          layout: 'prestige',
           experiences: [],
           educations: []
         }
@@ -617,7 +626,7 @@
           languages: "Bahasa Indonesia (Native), English (C1 Proficient - TOEFL IBT/PBT)",
           publications: "IEEE SIET Publication: Increased information retrieval capabilities on e-commerce websites using scraping techniques (2017)",
           isPhotoEnabled: true,
-          layout: 'traditional',
+          layout: 'prestige',
           experiences: [
             {
               role: "Head of Operations",
@@ -762,7 +771,7 @@
             <div>
               <div class="flex items-start justify-between gap-2 mb-2">
                 <h3 class="font-bold text-white text-base truncate">${cv.title || 'CV Tanpa Judul'}</h3>
-                <span class="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">Executive</span>
+                <span class="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">Prestige</span>
               </div>
               <p class="text-xs text-slate-400 font-medium line-clamp-2">${d.title || (currentLang === 'en' ? 'Position Not Set' : 'Belum Mengisi Posisi')}</p>
               <div class="mt-4 pt-3 border-t border-slate-800/80 text-[11px] text-slate-500 space-y-1">
@@ -888,7 +897,7 @@
       togglePhoto();
       renderFormLists(d.experiences || [], d.educations || []);
       renderSkillGroups(d.skillGroups || []);
-      setThemeLayout(d.layout || 'traditional');
+      setThemeLayout(d.layout || 'prestige');
     }
 
     function extractFormData() {
@@ -1051,6 +1060,7 @@
       }
     }
 
+    // AUTO ANCHOR EXPERIENCES
     function addExperience(item = { role: '', company: '', period: '', location: '', desc: '', accomplishment: '' }) {
       const list = document.getElementById('experience-list');
       const div = document.createElement('div');
@@ -1079,7 +1089,7 @@
         </div>
         <div>
           <div class="flex justify-between items-center mb-0.5">
-            <label class="text-[10px] text-slate-400">${currentLang === 'en' ? 'Bullet Points' : 'Poin Deskripsi Pencapaian'}</label>
+            <label class="text-[10px] text-slate-400">${currentLang === 'en' ? 'Key Responsibilities & Bullets' : 'Poin Deskripsi Pencapaian'}</label>
             <button type="button" onclick="translateItemDesc(this)" class="text-[10px] text-blue-400 hover:text-blue-300 font-semibold">✨ Format ke English</button>
           </div>
           <textarea rows="3" placeholder="${currentLang === 'en' ? 'Start bullets with strong action verbs (e.g. Directed, Spearheaded)...' : 'Gunakan baris baru untuk tiap poin pencapaian...'}" oninput="handleInputChange()" class="exp-desc w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none">${item.desc}</textarea>
@@ -1185,14 +1195,14 @@
       body.className = body.className.replace(/style-\w+/g, '') + ' style-' + name;
 
       const labels = {
-        traditional: "Wall Street Classic",
-        "modern-corporate": "Corporate Navy",
-        "slate-minimal": "Harvard Minimal",
-        "compact-serif": "Executive Serif"
+        prestige: "Prestige Executive",
+        "modern-corporate": "Modern Corporate",
+        "pure-ats": "Pure Classic ATS",
+        "nordic-slate": "Nordic Slate"
       };
       document.getElementById('label-active-layout').innerText = labels[name] || name;
 
-      ['traditional', 'modern-corporate', 'slate-minimal', 'compact-serif'].forEach(t => {
+      ['prestige', 'modern-corporate', 'pure-ats', 'nordic-slate'].forEach(t => {
         const btn = document.getElementById('btn-layout-' + t);
         if (btn) {
           btn.className = (t === name)
@@ -1204,6 +1214,7 @@
       renderCV();
     }
 
+    // FULL I18N
     function setLanguage(lang) {
       currentLang = lang;
       const btnId = document.getElementById('btn-lang-id');
@@ -1289,10 +1300,10 @@
 
     function highlightNumbers(text) {
       if (!text) return '';
-      return text.replace(/(\b\d+(\.\d+)?%\b|\b(Rp|USD|\$)\s?[\d.,]+(\s?(juta|miliar|k|m))?|\b\d+x\b|\b\d{2,}\b|\b100\sTransjakarta\sbuses\b|\b100\sbus\sTransjakarta\b)/gi, '<strong class="font-semibold text-slate-900">$1</strong>');
+      return text.replace(/(\b\d+(\.\d+)?%\b|\b(Rp|USD|\$)\s?[\d.,]+(\s?(juta|miliar|k|m))?|\b\d+x\b|\b\d{2,}\b|\b100\sTransjakarta\sbuses\b|\b100\sbus\sTransjakarta\b)/gi, '<strong class="font-semibold text-slate-950">$1</strong>');
     }
 
-    // RENDER SHEET UTAMA (STANDAR DENSITAS EKSEKUTIF REALISTIS - BEBAS GAYA AI)
+    // RENDER SHEET UTAMA
     function renderCV() {
       const root = document.getElementById('sheet-render-root');
       const lbl = i18n[currentLang];
@@ -1308,7 +1319,7 @@
       const summary = highlightNumbers(applyTranslation(rawSummary));
       const hasPhoto = document.getElementById('input-toggle-photo').checked;
 
-      // KONTAK MINIMALIS BERSIH (SEPARATOR GARIS PIPA HALUS)
+      // KONTAK MINIMALIS BERSIH
       const contactItems = [];
       if (loc) contactItems.push(`<span>${loc}</span>`);
       if (phone) contactItems.push(formatPhoneLink(phone));
@@ -1318,19 +1329,41 @@
 
       const separatorHTML = `<span class="text-slate-300 font-normal mx-1 select-none">|</span>`;
       const contactLine = contactItems.length > 0 
-        ? `<div class="flex flex-wrap items-center justify-center sm:justify-start gap-y-1 text-[11px] text-slate-600 mt-1.5 font-normal">${contactItems.join(separatorHTML)}</div>`
+        ? `<div class="flex flex-wrap items-center justify-center sm:justify-start gap-y-1 text-[11px] text-slate-600 mt-1 font-normal">${contactItems.join(separatorHTML)}</div>`
         : '';
 
-      // GENERATOR JUDUL KATEGORI (GARIS HALUS TUNGGAL, BEBAS GAYA AI)
+      // GENERATOR JUDUL KATEGORI
       function renderCategoryHeader(titleText) {
-        return `
-          <div class="cv-section-title border-b-2 rule-accent pb-0.5 mb-2 mt-4">
-            <h2 class="text-[11.5px] font-bold uppercase tracking-wider heading-accent font-sans">${titleText}</h2>
-          </div>
-        `;
+        if (activeLayout === 'prestige') {
+          return `
+            <div class="cv-section-title border-b border-slate-900 pb-0.5 mb-2 mt-4 flex items-center justify-between">
+              <h2 class="text-[12px] font-bold font-prestige uppercase tracking-wider text-slate-950">${titleText}</h2>
+              <span class="text-[9px] font-serif text-slate-400 italic hidden sm:inline">Executive Portfolio</span>
+            </div>
+          `;
+        } else if (activeLayout === 'pure-ats') {
+          return `
+            <div class="cv-section-title border-b border-black pb-0.5 mb-2 mt-4 text-center">
+              <h2 class="text-[11.5px] font-bold uppercase tracking-widest text-black">${titleText}</h2>
+            </div>
+          `;
+        } else if (activeLayout === 'modern-corporate') {
+          return `
+            <div class="cv-section-title border-b-2 border-blue-900 pb-0.5 mb-2 mt-4 flex items-center gap-2">
+              <span class="w-1.5 h-3 bg-blue-900 rounded-sm"></span>
+              <h2 class="text-[11.5px] font-bold uppercase tracking-wider text-blue-950">${titleText}</h2>
+            </div>
+          `;
+        } else {
+          return `
+            <div class="cv-section-title border-b border-slate-400 pb-0.5 mb-2 mt-4">
+              <h2 class="text-[11.5px] font-semibold uppercase tracking-wider text-slate-800">${titleText}</h2>
+            </div>
+          `;
+        }
       }
 
-      // EXPERIENCES: DENSITAS TINGGI, 2 BARIS SEJAJAR (JABATAN-PERIODE, PERUSAHAAN-LOKASI)
+      // EXPERIENCES
       let experiencesHTML = '';
       const expElements = document.querySelectorAll('.exp-item');
       if (expElements.length === 0) {
@@ -1350,7 +1383,6 @@
             .map(l => `<li class="ml-4 list-disc text-slate-700 leading-normal">${highlightNumbers(applyTranslation(l.replace(/^[*-]\s*/, '')))}</li>`)
             .join('');
 
-          // MAJOR ACCOMPLISHMENT SBG POIN BERBOBOT TINGGI (BUKAN KOTAK AI)
           const accPoint = acc.trim() ? `
             <li class="ml-4 list-disc text-slate-900 font-medium leading-normal pt-0.5">
               <strong class="font-semibold text-slate-950 underline decoration-slate-300 decoration-1 underline-offset-2">${lbl.majorAccomplishmentLabel}:</strong> 
@@ -1360,24 +1392,21 @@
 
           experiencesHTML += `
             <div class="cv-entry-block mb-3 last:mb-1">
-              <!-- BARIS 1: JABATAN (KIRI) & PERIODE (KANAN) -->
               <div class="flex justify-between items-baseline text-xs">
-                <span class="font-bold text-slate-950 text-[12.5px] tracking-tight">${role || (currentLang === 'en' ? 'Position' : 'Posisi')}</span>
+                <span class="font-bold text-slate-950 text-[12.5px] tracking-tight">${role || (currentLang === 'en' ? 'Position' : 'Jabatan')}</span>
                 <span class="font-semibold text-slate-700 text-[11px] shrink-0">${per}</span>
               </div>
-              <!-- BARIS 2: PERUSAHAAN (KIRI) & LOKASI (KANAN) -->
               <div class="flex justify-between items-baseline text-[11px] text-slate-600 mb-1">
-                <span class="font-medium italic text-slate-800">${comp || (currentLang === 'en' ? 'Organization' : 'Perusahaan')}</span>
+                <span class="font-medium ${activeLayout === 'prestige' ? 'font-prestige italic text-[11.5px]' : 'italic'} text-slate-800">${comp || (currentLang === 'en' ? 'Organization' : 'Perusahaan')}</span>
                 <span class="text-slate-500 italic shrink-0">${itemLoc}</span>
               </div>
-              <!-- BULLETS POIN PADAT -->
               <ul class="text-[11px] space-y-0.5 mt-0.5 text-justify">${bullets}${accPoint}</ul>
             </div>
           `;
         });
       }
 
-      // EDUCATIONS: DENSITAS TINGGI
+      // EDUCATIONS
       let educationsHTML = '';
       const eduElements = document.querySelectorAll('.edu-item');
       if (eduElements.length === 0) {
@@ -1404,7 +1433,7 @@
         });
       }
 
-      // SKILLS: COMPACT INLINE CATEGORY (BUKAN BALON AI)
+      // SKILLS
       let skillsGroupHTML = '';
       document.querySelectorAll('.skill-group-item').forEach(el => {
         const cat = applyTranslation(el.querySelector('.sg-category').value);
@@ -1422,30 +1451,32 @@
         skillsGroupHTML = `<p class="text-[11px] text-slate-400 italic">${lbl.emptySkills}</p>`;
       }
 
-      // SERTIFIKASI & EKSTRA
+      // EXTRAS
       const certRaw = document.getElementById('input-certifications').value;
       const certHTML = certRaw.trim() ? certRaw.split('\n').filter(l => l.trim()).map(l => `<li class="ml-4 list-disc text-slate-700 leading-normal">${applyTranslation(l.trim())}</li>`).join('') : '';
       const langRaw = document.getElementById('input-languages').value;
       const pubRaw = document.getElementById('input-publications').value;
 
-      // HEADER
+      // ================= HEADER: SIMETRIS DENGAN PAS FOTO 4:5 =================
       let headerHTML = '';
       if (hasPhoto) {
         headerHTML = `
-          <div class="pb-3 border-b-2 rule-accent flex items-center gap-4">
-            <img class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover border border-slate-300 shadow-sm shrink-0" src="${photoData}" alt="${name}" />
-            <div class="flex-grow">
-              <h1 class="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight heading-accent leading-none">${name}</h1>
-              <p class="text-xs sm:text-[13px] font-semibold text-slate-700 mt-1 tracking-wide">${title}</p>
+          <div class="pb-3 border-b-2 rule-border flex items-center gap-5 ${activeLayout === 'modern-corporate' ? 'p-3.5 bg-slate-50 rounded-lg' : ''}">
+            <div class="shrink-0">
+              <img class="w-24 h-28 rounded-md object-cover border border-slate-300 shadow-sm" src="${photoData}" alt="${name}" />
+            </div>
+            <div class="flex-grow flex flex-col justify-center min-h-[112px]">
+              <h1 class="text-2xl sm:text-[26px] font-bold tracking-tight text-slate-950 ${activeLayout === 'prestige' ? 'font-prestige' : ''} leading-none">${name}</h1>
+              <p class="text-[12px] sm:text-[12.5px] font-semibold text-slate-700 mt-1.5 tracking-wide leading-snug">${title}</p>
               ${contactLine}
             </div>
           </div>
         `;
       } else {
         headerHTML = `
-          <div class="pb-3 border-b-2 rule-accent text-center sm:text-left">
-            <h1 class="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight heading-accent leading-none">${name}</h1>
-            <p class="text-xs sm:text-[13px] font-semibold text-slate-700 mt-1 tracking-wide">${title}</p>
+          <div class="pb-3 border-b-2 rule-border ${activeLayout === 'pure-ats' ? 'text-center' : 'text-center sm:text-left'} ${activeLayout === 'modern-corporate' ? 'p-3.5 bg-slate-50 rounded-lg' : ''}">
+            <h1 class="text-2xl sm:text-[26px] font-bold tracking-tight text-slate-950 ${activeLayout === 'prestige' ? 'font-prestige' : ''} leading-none">${name}</h1>
+            <p class="text-[12px] sm:text-[12.5px] font-semibold text-slate-700 mt-1.5 tracking-wide leading-snug">${title}</p>
             ${contactLine}
           </div>
         `;
