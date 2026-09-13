@@ -70,7 +70,7 @@
           </button>
         </div>
 
-        <!-- 1 TOMBOL RESMI GOOGLE (BEBAS DUPLIKASI) -->
+        <!-- 1 TOMBOL RESMI GOOGLE -->
         <div id="google-auth-wrapper" class="w-full flex justify-center mb-5">
           <div id="g_id_onload"
                data-client_id="41832472270-6r8iudma1eho6kn3q6rs4rl7b9ank7n4.apps.googleusercontent.com"
@@ -165,11 +165,22 @@
 
   <script>
     function getRedirectTarget() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const r = urlParams.get('redirect');
+      const p = new URLSearchParams(window.location.search);
+      const r = p.get('redirect');
       if (r) return decodeURIComponent(r);
       return 'index.html';
     }
+
+    // Jika sudah ada sesi, langsung forward tanpa render form
+    (function() {
+      try {
+        const u = GaeksAuth.getCurrentUser();
+        if (u && u.email) {
+          const dest = getRedirectTarget();
+          window.location.replace(window.location.origin + '/' + dest.replace(/^\//, ''));
+        }
+      } catch(e) {}
+    })();
 
     window.addEventListener('DOMContentLoaded', () => {
       const target = getRedirectTarget();
@@ -231,14 +242,12 @@
         const payload = JSON.parse(jsonPayload);
         if (payload && payload.email) {
           const dest = getRedirectTarget();
-          showAlert("✓ Berhasil masuk dengan Google! Mengalihkan...", true);
-          setTimeout(() => {
-            GaeksAuth.processVerifiedGoogleUser(payload.email, payload.name || payload.given_name, payload.picture, dest);
-          }, 300);
+          showAlert("✓ Berhasil masuk dengan Google! Mengalihkan ke tujuan...", true);
+          GaeksAuth.processVerifiedGoogleUser(payload.email, payload.name || payload.given_name, payload.picture, dest);
         }
       } catch (err) {
         console.error("Gagal membaca kredensial Google:", err);
-        showAlert("Gagal memproses akun Google. Silakan coba kembali.");
+        showAlert("Gagal memproses akun Google: " + err.message);
       }
     }
 
@@ -326,9 +335,7 @@
         if (data.status === 'success') {
           const dest = getRedirectTarget();
           showAlert("✓ Verifikasi berhasil! Mengalihkan...", true);
-          setTimeout(() => {
-            GaeksAuth.loginWithEmail(storedEmail, pass, storedName, dest);
-          }, 300);
+          GaeksAuth.loginWithEmail(storedEmail, pass, storedName, dest);
         } else {
           showAlert(data.message || "Kode verifikasi salah.");
         }

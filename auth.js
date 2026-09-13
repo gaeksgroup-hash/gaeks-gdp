@@ -1,4 +1,4 @@
-// GAEKS DIGITAL ECOSYSTEM - AUTH, USER MANAGEMENT & REDIRECT ENGINE
+// GAEKS DIGITAL ECOSYSTEM - AUTH, DUAL PERSISTENCE & HARD REDIRECT
 const VIP_WHITELIST = [
   "gaeks.group@gmail.com",
   "triawan25@gmail.com",
@@ -12,21 +12,22 @@ const USERS_DB_KEY = 'gaeks_users_db_v2';
 
 const GaeksAuth = {
   getUsersDb() {
-    const raw = localStorage.getItem(USERS_DB_KEY);
+    let raw = null;
+    try { raw = localStorage.getItem(USERS_DB_KEY); } catch(e) {}
     if (!raw) {
       const initial = [
         { id: 'usr_adm_1', email: 'gaeks.group@gmail.com', name: 'GAEKS Group (Admin)', provider: 'google', plan: 'PRO_VIP', registeredAt: Date.now() - 86400000 * 5, lastLoginAt: Date.now() },
         { id: 'usr_vip_2', email: 'triawan25@gmail.com', name: 'Deny Triawan', provider: 'google', plan: 'PRO_VIP', registeredAt: Date.now() - 86400000 * 4, lastLoginAt: Date.now() },
         { id: 'usr_vip_3', email: 'ranesath@gmail.com', name: 'Ranesath', provider: 'google', plan: 'PRO_VIP', registeredAt: Date.now() - 86400000 * 3, lastLoginAt: Date.now() }
       ];
-      localStorage.setItem(USERS_DB_KEY, JSON.stringify(initial));
+      try { localStorage.setItem(USERS_DB_KEY, JSON.stringify(initial)); } catch(e) {}
       return initial;
     }
     try { return JSON.parse(raw); } catch(e) { return []; }
   },
 
   saveUsersDb(db) {
-    localStorage.setItem(USERS_DB_KEY, JSON.stringify(db));
+    try { localStorage.setItem(USERS_DB_KEY, JSON.stringify(db)); } catch(e) {}
   },
 
   recordUserRegistration(userObj) {
@@ -66,7 +67,14 @@ const GaeksAuth = {
   },
 
   getCurrentUser() {
-    const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+    let raw = null;
+    try { raw = localStorage.getItem(AUTH_STORAGE_KEY); } catch(e) {}
+    if (!raw) {
+      try {
+        const m = document.cookie.match(/gaeks_session=([^;]+)/);
+        if (m) raw = decodeURIComponent(m[1]);
+      } catch(e) {}
+    }
     if (!raw) return null;
     try {
       const user = JSON.parse(raw);
@@ -95,6 +103,15 @@ const GaeksAuth = {
     return user ? (user.email.toLowerCase().trim() === SUPER_ADMIN_EMAIL) : false;
   },
 
+  saveSessionDual(user) {
+    try {
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
+    } catch(e) {}
+    try {
+      document.cookie = "gaeks_session=" + encodeURIComponent(JSON.stringify(user)) + "; path=/; max-age=2592000; SameSite=Lax";
+    } catch(e) {}
+  },
+
   processVerifiedGoogleUser(email, name, avatar, targetUrl = '') {
     const cleanEmail = email.toLowerCase().trim();
     const isVip = VIP_WHITELIST.includes(cleanEmail);
@@ -114,18 +131,17 @@ const GaeksAuth = {
       loginAt: Date.now()
     };
 
+    this.saveSessionDual(user);
     this.recordUserRegistration(user);
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
 
-    const finalDest = targetUrl || new URLSearchParams(window.location.search).get('redirect') || 'index.html';
-    window.location.replace(finalDest);
-  };
-
-    this.recordUserRegistration(user);
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
-
-    const finalDest = targetUrl || new URLSearchParams(window.location.search).get('redirect') || 'index.html';
-    window.location.replace(finalDest);
+    let dest = targetUrl;
+    if (!dest) {
+      const p = new URLSearchParams(window.location.search);
+      dest = p.get('redirect') || 'index.html';
+    }
+    dest = decodeURIComponent(dest).replace(/^\//, '');
+    const finalUrl = window.location.origin + '/' + dest;
+    window.location.replace(finalUrl);
   },
 
   loginWithEmail(email, password, customName = '', targetUrl = '') {
@@ -147,23 +163,23 @@ const GaeksAuth = {
       loginAt: Date.now()
     };
 
+    this.saveSessionDual(user);
     this.recordUserRegistration(user);
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
 
-    const finalDest = targetUrl || new URLSearchParams(window.location.search).get('redirect') || 'index.html';
-    window.location.replace(finalDest);
-  };
-
-    this.recordUserRegistration(user);
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
-
-    const finalDest = targetUrl || new URLSearchParams(window.location.search).get('redirect') || 'index.html';
-    window.location.replace(finalDest);
+    let dest = targetUrl;
+    if (!dest) {
+      const p = new URLSearchParams(window.location.search);
+      dest = p.get('redirect') || 'index.html';
+    }
+    dest = decodeURIComponent(dest).replace(/^\//, '');
+    const finalUrl = window.location.origin + '/' + dest;
+    window.location.replace(finalUrl);
   },
 
   logout() {
-    localStorage.removeItem(AUTH_STORAGE_KEY);
-    window.location.replace('index.html');
+    try { localStorage.removeItem(AUTH_STORAGE_KEY); } catch(e) {}
+    try { document.cookie = "gaeks_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"; } catch(e) {}
+    window.location.replace(window.location.origin + '/index.html');
   },
 
   toggleUserPlan(email) {

@@ -228,9 +228,9 @@
     function handleServiceAccess(targetUrl) {
       const user = GaeksAuth.getCurrentUser();
       if (user) {
-        window.location.href = targetUrl;
+        window.location.href = window.location.origin + '/' + targetUrl.replace(/^\//, '');
       } else {
-        window.location.href = 'login.html?redirect=' + encodeURIComponent(targetUrl);
+        window.location.href = window.location.origin + '/login.html?redirect=' + encodeURIComponent(targetUrl);
       }
     }
 
@@ -241,12 +241,15 @@
       const adminBtn = document.getElementById('nav-btn-admin');
 
       if (user) {
-        if (btnLogin) btnLogin.classList.add('hidden');
-        if (pill) pill.classList.remove('hidden');
+        if (btnLogin) btnLogin.style.display = 'none';
+        if (pill) {
+          pill.classList.remove('hidden');
+          pill.style.display = 'flex';
+        }
         const avatar = document.getElementById('nav-user-avatar');
-        if (avatar) avatar.src = user.avatar;
+        if (avatar && user.avatar) avatar.src = user.avatar;
         const name = document.getElementById('nav-user-name');
-        if (name) name.innerText = user.name;
+        if (name && user.name) name.innerText = user.name;
 
         const badge = document.getElementById('nav-user-badge');
         if (badge) {
@@ -257,14 +260,19 @@
           } else if (user.isPro) {
             badge.className = "px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-emerald-950 text-emerald-300 border border-emerald-800";
             badge.innerText = "PRO VIP";
+            if (adminBtn) adminBtn.classList.add('hidden');
           } else {
             badge.className = "px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-blue-950 text-blue-300 border border-blue-800";
             badge.innerText = "FREE";
+            if (adminBtn) adminBtn.classList.add('hidden');
           }
         }
       } else {
-        if (btnLogin) btnLogin.classList.remove('hidden');
-        if (pill) pill.classList.add('hidden');
+        if (btnLogin) btnLogin.style.display = 'inline-flex';
+        if (pill) {
+          pill.classList.add('hidden');
+          pill.style.display = 'none';
+        }
         if (adminBtn) adminBtn.classList.add('hidden');
       }
     }
@@ -346,10 +354,11 @@
       a.click();
     }
 
-    // Jalankan segera saat file diparsing browser
+    // Jalankan segera dan tangani Back-Forward Cache (pageshow)
     updateNavbar();
     window.addEventListener('DOMContentLoaded', updateNavbar);
     window.addEventListener('load', updateNavbar);
+    window.addEventListener('pageshow', updateNavbar);
   </script>
 </body>
 </html>

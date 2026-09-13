@@ -3,9 +3,16 @@
 <head>
   <script>
     (function() {
-      var s = localStorage.getItem('gaeks_user_session_v2');
-      if (!s) {
-        window.location.replace('login.html?redirect=cv.html');
+      var raw = null;
+      try { raw = localStorage.getItem('gaeks_user_session_v2'); } catch(e) {}
+      if (!raw) {
+        try {
+          var m = document.cookie.match(/gaeks_session=([^;]+)/);
+          if (m) raw = decodeURIComponent(m[1]);
+        } catch(e) {}
+      }
+      if (!raw) {
+        window.location.replace(window.location.origin + '/login.html?redirect=cv.html');
       }
     })();
   </script>
