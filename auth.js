@@ -1,4 +1,4 @@
-// GAEKS DIGITAL ECOSYSTEM - AUTH, USER MANAGEMENT & GOOGLE OAUTH
+// GAEKS DIGITAL ECOSYSTEM - AUTH & DYNAMIC REDIRECT
 const VIP_WHITELIST = [
   "gaeks.group@gmail.com",
   "triawan25@gmail.com",
@@ -95,7 +95,7 @@ const GaeksAuth = {
     return user ? (user.email.toLowerCase().trim() === SUPER_ADMIN_EMAIL) : false;
   },
 
-  processVerifiedGoogleUser(email, name, avatar) {
+  processVerifiedGoogleUser(email, name, avatar, targetUrl = '') {
     const cleanEmail = email.toLowerCase().trim();
     const isVip = VIP_WHITELIST.includes(cleanEmail);
     const isSuperAdmin = (cleanEmail === SUPER_ADMIN_EMAIL);
@@ -116,10 +116,16 @@ const GaeksAuth = {
 
     this.recordUserRegistration(user);
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
-    window.location.reload();
+
+    const dest = targetUrl || new URLSearchParams(window.location.search).get('redirect') || (window.location.pathname.includes('login.html') ? 'cv.html' : '');
+    if (dest) {
+      window.location.href = dest;
+    } else {
+      window.location.reload();
+    }
   },
 
-  loginWithEmail(email, password, customName = '') {
+  loginWithEmail(email, password, customName = '', targetUrl = '') {
     const cleanEmail = email.toLowerCase().trim();
     const isVip = VIP_WHITELIST.includes(cleanEmail);
     const isSuperAdmin = (cleanEmail === SUPER_ADMIN_EMAIL);
@@ -140,7 +146,13 @@ const GaeksAuth = {
 
     this.recordUserRegistration(user);
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
-    window.location.reload();
+
+    const dest = targetUrl || new URLSearchParams(window.location.search).get('redirect') || (window.location.pathname.includes('login.html') ? 'cv.html' : '');
+    if (dest) {
+      window.location.href = dest;
+    } else {
+      window.location.reload();
+    }
   },
 
   logout() {
