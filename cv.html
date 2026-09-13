@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GAEKS ATS CV Studio | Professional Resume Suite</title>
+  <title>GAEKS ATS CV Studio | Deny Triawan Resume</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -17,7 +17,6 @@
       --primary-color: #1e3a8a;
       --primary-light: #eff6ff;
       --primary-border: #bfdbfe;
-      --sheet-accent-border: #1e3a8a;
     }
 
     .theme-accent-text { color: var(--primary-color) !important; }
@@ -28,7 +27,7 @@
       border: 1px solid var(--primary-border) !important;
     }
 
-    /* CSS CETAK A4 PRESISI ATS */
+    /* CSS CETAK A4 PRESISI KHUSUS ATS & PDF */
     @media print {
       body * { visibility: hidden !important; }
       #cv-preview-sheet, #cv-preview-sheet * { visibility: visible !important; }
@@ -67,7 +66,7 @@
             GAEKS ATS Studio
           </span>
           <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">
-            Pro Suite
+            Europass & ATS Pro
           </span>
         </div>
       </div>
@@ -89,7 +88,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 border-b border-slate-800 gap-4">
       <div>
         <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Manajemen CV & Dokumen ATS</h1>
-        <p class="text-xs sm:text-sm text-slate-400 mt-1">Kelola resume Anda, duplikasi untuk variasi posisi, atau buat resume baru.</p>
+        <p class="text-xs sm:text-sm text-slate-400 mt-1">Kelola portofolio resume eksekutif Anda, duplikasi untuk spesialisasi role, atau buat baru.</p>
       </div>
       <button onclick="createNewCV()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-500/20 flex items-center space-x-2 transition">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
@@ -127,28 +126,25 @@
           &larr; <span class="hidden sm:inline">Daftar CV</span>
         </button>
         <div>
-          <input type="text" id="current-cv-title" onchange="updateCvTitle(this.value)" class="text-sm sm:text-base font-bold text-white bg-transparent border-b border-dashed border-slate-700 hover:border-blue-500 focus:border-blue-500 focus:outline-none px-1 py-0.5" value="CV Tanpa Judul" />
+          <input type="text" id="current-cv-title" onchange="updateCvTitle(this.value)" class="text-sm sm:text-base font-bold text-white bg-transparent border-b border-dashed border-slate-700 hover:border-blue-500 focus:border-blue-500 focus:outline-none px-1 py-0.5" value="CV Deny Triawan - Supply Chain & Operations" />
           <div class="flex items-center space-x-2 text-[11px] text-slate-400 mt-0.5">
             <span id="save-indicator" class="text-emerald-400 flex items-center gap-1 font-medium">✓ Tersimpan Otomatis</span>
           </div>
         </div>
       </div>
 
-      <!-- KONTROL FITUR: UNDO/REDO, BAHASA & TEMA -->
+      <!-- KONTROL FITUR -->
       <div class="flex flex-wrap items-center gap-2">
-        <!-- UNDO & REDO -->
         <div class="flex items-center bg-slate-900 p-1 rounded-lg border border-slate-800 space-x-1">
           <button onclick="undo()" id="btn-undo" title="Undo (Ctrl+Z)" disabled class="px-2 py-1 rounded text-xs text-slate-500 disabled:opacity-40 hover:text-white transition">↶ Undo</button>
           <button onclick="redo()" id="btn-redo" title="Redo (Ctrl+Y)" disabled class="px-2 py-1 rounded text-xs text-slate-500 disabled:opacity-40 hover:text-white transition">↷ Redo</button>
         </div>
 
-        <!-- TOGGLE BAHASA DUAL -->
         <div class="bg-slate-900 p-1 rounded-lg border border-slate-800 flex items-center text-xs font-bold">
           <button onclick="setLanguage('id')" id="btn-lang-id" class="px-2.5 py-1 rounded bg-blue-600 text-white transition">ID 🇮🇩</button>
           <button onclick="setLanguage('en')" id="btn-lang-en" class="px-2.5 py-1 rounded text-slate-400 hover:text-white transition">EN 🇬🇧</button>
         </div>
 
-        <!-- 3 TEMA LAYOUT BERBEDA -->
         <div class="flex items-center space-x-1 bg-slate-900 p-1 rounded-lg border border-slate-800 text-xs font-semibold">
           <button onclick="setTheme('navy')" id="btn-theme-navy" class="px-2.5 py-1 rounded bg-blue-950 text-blue-300 border border-blue-600">Executive</button>
           <button onclick="setTheme('emerald')" id="btn-theme-emerald" class="px-2.5 py-1 rounded text-slate-400 hover:text-white">Split Line</button>
@@ -160,7 +156,7 @@
     <!-- WORKSPACE TWO COLUMNS -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
       
-      <!-- KOLOM FORMULIR (5 KOLOM) -->
+      <!-- FORMULIR INPUT (5 KOLOM) -->
       <div class="no-print lg:col-span-5 bg-slate-900/90 rounded-2xl border border-slate-800 p-4 sm:p-5 max-h-[85vh] overflow-y-auto space-y-4">
         
         <!-- TABS FORMULIR -->
@@ -182,7 +178,7 @@
           </div>
 
           <div id="photo-box-input" class="hidden p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center gap-3">
-            <img id="thumb-photo" class="w-12 h-12 rounded-lg object-cover border border-slate-700" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Preview" />
+            <img id="thumb-photo" class="w-12 h-12 rounded-lg object-cover border border-slate-700" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80" alt="Preview" />
             <div class="text-xs flex-grow">
               <span class="block text-slate-300 font-medium mb-1">Unggah Foto Formal</span>
               <input type="file" id="input-photo-file" accept="image/*" onchange="uploadPhoto(event)" class="text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-blue-950 file:text-blue-300 cursor-pointer" />
@@ -209,11 +205,11 @@
           </div>
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="block text-[11px] text-slate-400 mb-1">Domisili (Kota, Negara)</label>
+              <label class="block text-[11px] text-slate-400 mb-1">Domisili / Alamat</label>
               <input type="text" id="input-location" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white" />
             </div>
             <div>
-              <label class="block text-[11px] text-slate-400 mb-1">LinkedIn URL</label>
+              <label class="block text-[11px] text-slate-400 mb-1">LinkedIn Profile</label>
               <input type="text" id="input-linkedin" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white" />
             </div>
           </div>
@@ -223,7 +219,7 @@
           </div>
           <div>
             <div class="flex justify-between items-center mb-1">
-              <label class="text-[11px] text-slate-400">Ringkasan Profesional (Summary)</label>
+              <label class="text-[11px] text-slate-400">Ringkasan Profesional (Executive Summary)</label>
               <button onclick="aiTranslateField('input-summary')" type="button" class="text-[10px] text-blue-400 hover:text-blue-300 font-semibold flex items-center gap-1">
                 <span>✨ Terjemahkan ke English</span>
               </button>
@@ -246,7 +242,7 @@
         <!-- FORM 3: PENDIDIKAN -->
         <div id="ftab-content-education" class="hidden space-y-3">
           <div class="flex justify-between items-center pb-2 border-b border-slate-800">
-            <span class="text-xs font-bold uppercase text-blue-400">Pendidikan</span>
+            <span class="text-xs font-bold uppercase text-blue-400">Pendidikan & Pelatihan</span>
             <button onclick="addEducation()" class="text-xs px-2.5 py-1 bg-blue-950 text-blue-300 hover:bg-blue-900 rounded-lg border border-blue-800 transition">
               + Tambah Gelar
             </button>
@@ -264,18 +260,18 @@
             <textarea id="input-skills" rows="3" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white"></textarea>
           </div>
           <div>
-            <label class="block text-[11px] text-slate-400 mb-1">Tools & Platform (Pisahkan koma)</label>
+            <label class="block text-[11px] text-slate-400 mb-1">Tools, Software & ERP (Pisahkan koma)</label>
             <input type="text" id="input-tools" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white" />
           </div>
           <div>
-            <label class="block text-[11px] text-slate-400 mb-1">Sertifikasi & Lisensi</label>
-            <textarea id="input-certifications" rows="2" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white"></textarea>
+            <label class="block text-[11px] text-slate-400 mb-1">Sertifikasi & Publikasi</label>
+            <textarea id="input-certifications" rows="3" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white"></textarea>
           </div>
         </div>
 
       </div>
 
-      <!-- PRATINJAU LEMBAR A4 DENGAN 3 VARIAN LAYOUT (7 KOLOM) -->
+      <!-- PRATINJAU LEMBAR A4 ATS (7 KOLOM) -->
       <div class="lg:col-span-7 flex flex-col items-center">
         
         <div class="no-print w-full flex justify-between items-center mb-2 px-2 text-xs text-slate-400">
@@ -299,38 +295,40 @@
             </div>
 
             <div class="flex-grow text-center sm:text-left">
-              <h1 id="view-name" class="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight theme-accent-text">NAMA LENGKAP</h1>
-              <p id="view-title" class="text-sm sm:text-base font-bold text-slate-800 mt-0.5 tracking-wide">Target Posisi</p>
+              <h1 id="view-name" class="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight theme-accent-text">DENY TRIAWAN</h1>
+              <p id="view-title" class="text-xs sm:text-sm font-bold text-slate-800 mt-0.5 tracking-wide">
+                Supply Chain Manager / Logistics Operations Manager / ERP Implementer / Solution Architect
+              </p>
 
-              <!-- BARIS KONTAK BERIKON RINGKAS & PROFESIONAL -->
-              <div class="flex flex-wrap items-center gap-x-3.5 gap-y-1.5 text-xs text-slate-600 mt-3 font-medium justify-center sm:justify-start">
+              <!-- BARIS KONTAK DENGAN IKON VEKTOR RAPI -->
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-600 mt-2.5 font-medium justify-center sm:justify-start">
                 
                 <!-- Email -->
-                <span class="inline-flex items-center gap-1.5">
+                <span class="inline-flex items-center gap-1">
                   <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                  <span id="view-email">email@anda.com</span>
+                  <span id="view-email">triawan25@gmail.com</span>
                 </span>
                 
-                <!-- Phone -->
-                <span class="inline-flex items-center gap-1.5">
+                <!-- Phone / WA -->
+                <span class="inline-flex items-center gap-1">
                   <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                  <span id="view-phone">+62 8xx</span>
+                  <span id="view-phone">+62 856-0856-1745</span>
                 </span>
                 
                 <!-- Location -->
-                <span class="inline-flex items-center gap-1.5">
+                <span class="inline-flex items-center gap-1">
                   <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                  <span id="view-location">Kota, Negara</span>
+                  <span id="view-location">Semarang, Indonesia</span>
                 </span>
                 
                 <!-- LinkedIn -->
-                <span id="wrap-linkedin" class="inline-flex items-center gap-1.5">
-                  <span class="font-bold text-[11px] text-slate-500 px-1 py-0.2 rounded bg-slate-100 border border-slate-200">in</span>
-                  <span id="view-linkedin">linkedin.com/in/...</span>
+                <span id="wrap-linkedin" class="inline-flex items-center gap-1">
+                  <span class="font-bold text-[10px] text-slate-600 px-1 py-0.2 rounded bg-slate-100 border border-slate-200">in</span>
+                  <span id="view-linkedin">linkedin.com/in/triawan25</span>
                 </span>
                 
                 <!-- Portfolio -->
-                <span id="wrap-portfolio" class="inline-flex items-center gap-1.5">
+                <span id="wrap-portfolio" class="inline-flex items-center gap-1 text-slate-600 font-medium">
                   <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
                   <span id="view-portfolio">gaeks.com</span>
                 </span>
@@ -344,7 +342,7 @@
             <p id="view-summary" class="text-xs leading-relaxed text-slate-700 text-justify"></p>
           </div>
 
-          <!-- 3. EXPERIENCE DENGAN PEMBEDA JABATAN & PERUSAHAAN -->
+          <!-- 3. EXPERIENCE -->
           <div class="mt-4">
             <h2 id="header-experience" class="text-xs font-bold uppercase tracking-wider theme-accent-text border-b theme-accent-border pb-1 mb-2">Pengalaman Kerja</h2>
             <div id="view-experience" class="space-y-3.5"></div>
@@ -373,7 +371,7 @@
 
           <!-- 6. CERTIFICATIONS -->
           <div id="cv-section-certifications" class="mt-4">
-            <h2 id="header-certifications" class="text-xs font-bold uppercase tracking-wider theme-accent-text border-b theme-accent-border pb-1 mb-1.5">Sertifikasi & Lisensi</h2>
+            <h2 id="header-certifications" class="text-xs font-bold uppercase tracking-wider theme-accent-text border-b theme-accent-border pb-1 mb-1.5">Sertifikasi & Publikasi</h2>
             <div id="view-certifications" class="text-xs leading-relaxed text-slate-700"></div>
           </div>
 
@@ -389,7 +387,6 @@
 
   <!-- SCRIPT LOGIKA UTAMA -->
   <script>
-    // 3 TEMA DENGAN STRUKTUR LAYOUT BERBEDA
     const themePacks = {
       navy: { primary: '#1e3a8a', light: '#eff6ff', border: '#bfdbfe', layout: 'executive' },
       emerald: { primary: '#047857', light: '#ecfdf5', border: '#a7f3d0', layout: 'split' },
@@ -397,34 +394,32 @@
     };
     let activeTheme = 'navy';
 
-    // DICTIONARY DUAL BAHASA
     const i18n = {
       id: {
         summary: "Ringkasan Profesional",
         experience: "Pengalaman Kerja",
-        education: "Pendidikan Formal",
+        education: "Pendidikan & Pelatihan",
         skills: "Keahlian & Penguasaan Teknologi",
         coreSkills: "Keahlian Inti:",
         tools: "Tools & Platform:",
-        certifications: "Sertifikasi & Lisensi",
+        certifications: "Sertifikasi & Publikasi",
         badgeLabel: "Bahasa Indonesia",
         present: "Sekarang"
       },
       en: {
         summary: "Professional Summary",
         experience: "Work Experience",
-        education: "Education",
+        education: "Education & Training",
         skills: "Skills & Technologies",
         coreSkills: "Core Competencies:",
         tools: "Tools & Platforms:",
-        certifications: "Certifications & Licenses",
+        certifications: "Certifications & Publications",
         badgeLabel: "English (Translated)",
         present: "Present"
       }
     };
     let currentLang = 'id';
 
-    // KAMUS PENERJEMAHAN ID -> EN KOMPREHENSIF
     const advancedTranslationDict = [
       { id: /\bSekarang\b/gi, en: "Present" },
       { id: /\bSaat Ini\b/gi, en: "Present" },
@@ -450,31 +445,15 @@
       { id: /\bMerancang\b/gi, en: "Designed and structured" },
       { id: /\bMengeksekusi\b/gi, en: "Executed" },
       { id: /\bSarjana Teknik Industri\b/gi, en: "Bachelor of Industrial Engineering" },
-      { id: /\bSarjana Teknik\b/gi, en: "Bachelor of Engineering" },
-      { id: /\bSarjana Ekonomi\b/gi, en: "Bachelor of Economics" },
       { id: /\bSarjana Komputer\b/gi, en: "Bachelor of Computer Science" },
       { id: /\bUniversitas Indonesia\b/gi, en: "University of Indonesia" },
       { id: /\bUniversitas\b/gi, en: "University" },
-      { id: /\bFakultas\b/gi, en: "Faculty of" },
-      { id: /\bper kuartal\b/gi, en: "per quarter" },
-      { id: /\bper tahun\b/gi, en: "annually" },
-      { id: /\bsetara\b/gi, en: "equivalent to" },
       { id: /\bKepabeanan\b/gi, en: "Customs Clearance" },
       { id: /\bekspor-impor\b/gi, en: "export and import" },
       { id: /\bkargo\b/gi, en: "cargo" },
       { id: /\brantai pasok\b/gi, en: "supply chain" },
       { id: /\barmada\b/gi, en: "fleet" },
-      { id: /\bpergudangan\b/gi, en: "warehousing" },
-      { id: /\bdengan\b/gi, en: "with" },
-      { id: /\buntuk\b/gi, en: "for" },
-      { id: /\bdan\b/gi, en: "and" },
-      { id: /\bserta\b/gi, en: "as well as" },
-      { id: /\bdalam\b/gi, en: "in" },
-      { id: /\bdari\b/gi, en: "from" },
-      { id: /\bke\b/gi, en: "to" },
-      { id: /\bhingga\b/gi, en: "up to" },
-      { id: /\bsebesar\b/gi, en: "by" },
-      { id: /\bsenilai\b/gi, en: "valued at" }
+      { id: /\bpergudangan\b/gi, en: "warehousing" }
     ];
 
     function applyTranslation(text) {
@@ -486,7 +465,6 @@
       return res;
     }
 
-    // STATE DATA
     let cvList = [];
     let currentCvId = null;
     let currentDashboardTab = 'active';
@@ -494,12 +472,84 @@
     let historyIndex = -1;
     const STORAGE_KEY = 'gaeks_cv_master_list';
 
+    // DATA DEFAULT RESMI: DENY TRIAWAN
+    function createDenyTriawanCV() {
+      return {
+        id: 'cv_deny_triawan_europass',
+        title: "CV Deny Triawan - Supply Chain & Operations",
+        updatedAt: Date.now(),
+        deletedAt: null,
+        data: {
+          name: "Deny Triawan",
+          title: "Supply Chain Manager / Logistics Operations Manager / ERP Implementer / Solution Architect",
+          email: "triawan25@gmail.com",
+          phone: "+62 856-0856-1745",
+          location: "Perum P4A Blok I, Banyumanik, Semarang, 50265, Indonesia",
+          linkedin: "triawan25",
+          portfolio: "gaeks.com",
+          summary: "Profesional berpengalaman dalam manajemen operasional rantai pasok (Supply Chain), implementasi ERP (Odoo & ESB Cloud), kepabeanan ekspor-impor, serta arsitektur solusi bisnis. Berhasil memimpin proyek impor strategis 100 bus Transjakarta, mengefisiensikan alur kerja pergudangan berbasis ISO 31000, serta merancang standarisasi KPI divisi operasional.",
+          skills: "Supply Chain Management, Freight Forwarding, Customs Clearance (PIB, PEB, Manifest, BL, COO), Odoo ERP, ESB ERP, Business Process Mapping (COBIT/UML), Vendor Negotiation, ISO 31000 Risk Management, KPI Development",
+          tools: "Odoo ERP, SAP Analytics Cloud, Power BI, Google Data Studio, Figma, GitBash, Slack, Mikrotik, Ubiquiti, PostgreSQL, Python, Linux",
+          certifications: "Database Design and Programming with SQL — Oracle Academy\nMicrosoft Office Desktop Mastery — Microsoft Partner Program\nPublikasi Ilmiah IEEE: Increased Information Retrieval on E-Commerce Websites Using Scraping Techniques (SIET 2017)",
+          isPhotoEnabled: true,
+          theme: 'navy',
+          experiences: [
+            {
+              role: "Head of Operations",
+              company: "PT. Milenial Solusi Internusa",
+              period: "May 2024 - Present",
+              location: "South Tangerang, Banten",
+              desc: "Memimpin perancangan alur kerja CS, Dokumentasi, dan Sourcing, serta mendukung penuh implementasi Odoo ERP untuk merampingkan proses operasional.\nMengawasi pembuatan dan kepatuhan dokumen logistik internasional penting (PIB, PEB, Manifest, Bill of Lading, COO).\nMemimpin proyek impor strategis bernilai tinggi untuk 100 unit bus Transjakarta, mengelola seluruh logistik kompleks mulai dari negosiasi kapal hingga perjanjian agensi.\nMenerapkan KPI divisi operasional dan merancang mitigasi risiko untuk meminimalkan kendala harian pengiriman."
+            },
+            {
+              role: "Head Of Operations",
+              company: "PT Mangkok Besar Cuan",
+              period: "May 2022 - June 2023",
+              location: "South Jakarta, DKI Jakarta",
+              desc: "Mengembangkan workflow, job descriptions, dan pemetaan proses seluruh departemen sesuai budaya korporat.\nMenyelesaikan implementasi ERP Cloud System mencakup migrasi data POS, pemetaan BOM, dan pelaporan digital.\nMenerapkan praktik manajemen inventaris terstruktur (ISO 31000) untuk mengoptimalkan penataan stok dan alur permintaan barang."
+            },
+            {
+              role: "Customer Service & Logistics Specialist",
+              company: "Surya Cemerlang Logistic",
+              period: "Jan 2022 - May 2022",
+              location: "West Jakarta",
+              desc: "Mengelola komunikasi dengan agen luar negeri dan pelanggan lokal untuk jadwal pengiriman kargo.\nMembuat dan mereview dokumen pengapalan krusial (Shipping Instruction, BC Documents, Manifest, PIB, PEB, Bill of Lading).\nMengkoordinasikan vendor domestik dan transportasi darat (inland trucking) untuk ketepatan waktu pengiriman akhir."
+            },
+            {
+              role: "Head Of Research And Development",
+              company: "Nusaputera",
+              period: "June 2019 - Feb 2022",
+              location: "Semarang, Central Java",
+              desc: "Merancang Business Process Mapping dan worksheet departemen menggunakan IBM project management tools.\nMengembangkan tata kelola IT berbasis framework COBIT dan arsitektur Education ERP.\nMembangun sistem jaringan terintegrasi menggunakan perangkat Ubiquiti dan portal MikroTik dengan perlindungan DDoS dan optimasi bandwidth tree queue."
+            }
+          ],
+          educations: [
+            {
+              degree: "Master Of Information System (42 SKS)",
+              school: "Diponegoro University",
+              period: "Sept 2017 - Jan 2020",
+              details: "Semarang, Central Java • Proyek: Node JS & TCP/IP on Linux Enterprise"
+            },
+            {
+              degree: "Bachelor Of Computer Science (S.Kom)",
+              school: "Universitas Teknologi Digital Indonesia (STMIK Akakom)",
+              period: "Sept 2012 - Aug 2016",
+              details: "IPK 3.38 • Best Paper Research IEEE: Information Retrieval on E-Commerce Websites"
+            }
+          ]
+        }
+      };
+    }
+
     function loadCvList() {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         try { cvList = JSON.parse(raw); } catch(e) { cvList = []; }
-      } else {
-        cvList = [createDefaultCvObject("CV Lead Operations (Eksekutif)")];
+      }
+      
+      // Jika kosong atau belum ada CV Deny Triawan, masukkan sebagai CV Utama
+      if (!cvList || cvList.length === 0) {
+        cvList = [createDenyTriawanCV()];
         saveCvList();
       }
       autoPurgeTrash();
@@ -585,9 +635,9 @@
             <div>
               <div class="flex items-start justify-between gap-2 mb-2">
                 <h3 class="font-bold text-white text-base truncate">${cv.title || 'CV Tanpa Judul'}</h3>
-                <span class="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">ATS</span>
+                <span class="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">Europass & ATS</span>
               </div>
-              <p class="text-xs text-slate-400 font-medium">${d.title || 'Target Posisi Belum Diisi'}</p>
+              <p class="text-xs text-slate-400 font-medium">${d.title || 'Target Posisi'}</p>
               <div class="mt-4 pt-3 border-t border-slate-800/80 text-[11px] text-slate-500 space-y-1">
                 <div>Diperbarui: ${new Date(cv.updatedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
                 ${trashMeta}
@@ -621,56 +671,10 @@
       });
     }
 
-    function createDefaultCvObject(title = "CV Baru") {
-      return {
-        id: 'cv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-        title: title,
-        updatedAt: Date.now(),
-        deletedAt: null,
-        data: {
-          name: "Denyt Yudhanusa, S.T.",
-          title: "Head of Operations & Logistics Ecosystem",
-          email: "contact@gaeks.com",
-          phone: "+62 812-3456-7890",
-          location: "Jakarta, Indonesia",
-          linkedin: "gaeks-executive",
-          portfolio: "gdp.gaeks.com",
-          summary: "Praktisi senior dengan 7+ tahun pengalaman dalam operasional freight forwarding internasional, kepabeanan terintegrasi, dan digitalisasi ERP rantai pasok. Terbukti berhasil memangkas biaya logistik operasional sebesar 18% per tahun, meningkatkan SLA fulfillment hingga 98.6%, serta mengelola transaksi kargo ekspor-impor senilai lebih dari Rp 45 Miliar.",
-          skills: "Freight Forwarding, Supply Chain Optimization, Customs Clearance (PPJK), Vendor Sourcing, Contract Negotiation, Multimodal Logistics",
-          tools: "Dolibarr ERP, SAP S/4HANA, Excel Advanced, SQL, Cloudflare",
-          certifications: "Sertifikasi Ahli Kepabeanan (PPJK) — BPPK Kemenkeu\nCertified Supply Chain Manager (CSCM)",
-          isPhotoEnabled: false,
-          theme: 'navy',
-          experiences: [
-            {
-              role: "Head of Freight Forwarding Operations",
-              company: "GAEKS FREIGHT INTERNATIONAL",
-              period: "2022 - Sekarang",
-              location: "Jakarta",
-              desc: "Memimpin divisi kepabeanan dan operasional ekspor-impor laut (FCL/LCL) serta udara dengan volume lebih dari 850 TEUs per kuartal.\nMenegosiasikan kontrak tarif langsung dengan 5 shipping lines global, menghemat biaya pengiriman kargo tahunan sebesar 18% (setara Rp 1.4 Miliar).\nMengurangi dwell time kepabeanan dari 4.2 hari menjadi 2.1 hari melalui digitalisasi sistem."
-            },
-            {
-              role: "Senior Logistics Coordinator",
-              company: "PT Yudhanusa Ekspresindo",
-              period: "2019 - 2022",
-              location: "Tangerang",
-              desc: "Mengelola pergerakan armada trucking antarpulau dan audit pergudangan terpadu untuk 40+ klien korporat.\nMeningkatkan on-time delivery rate dari 91% menjadi 98.6% dengan menerapkan pelacakan GPS real-time.\nMengawasi kepatuhan dokumen ekspor-impor dengan tingkat ketepatan laporan audit 99.8%."
-            }
-          ],
-          educations: [
-            {
-              degree: "Sarjana Teknik Industri (S.T.)",
-              school: "Universitas Indonesia",
-              period: "2015 - 2019",
-              details: "IPK 3.84 / 4.00 (Cum Laude)"
-            }
-          ]
-        }
-      };
-    }
-
     function createNewCV() {
-      const newCv = createDefaultCvObject("CV Saya " + (cvList.length + 1));
+      const newCv = createDenyTriawanCV();
+      newCv.id = 'cv_' + Date.now();
+      newCv.title = "CV Deny Triawan (Baru)";
       cvList.unshift(newCv);
       saveCvList();
       openEditor(newCv.id);
@@ -680,7 +684,7 @@
       const src = cvList.find(c => c.id === id);
       if (!src) return;
       const clone = JSON.parse(JSON.stringify(src));
-      clone.id = 'cv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+      clone.id = 'cv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
       clone.title = src.title + " (Salinan)";
       clone.updatedAt = Date.now();
       clone.deletedAt = null;
@@ -700,13 +704,13 @@
     }
 
     function deletePermanent(id) {
-      if (!confirm("Apakah Anda yakin ingin menghapus CV ini secara permanen?")) return;
+      if (!confirm("Hapus CV ini secara permanen?")) return;
       cvList = cvList.filter(c => c.id !== id);
       saveCvList();
       renderDashboardGrid();
     }
 
-    // 2. EDITOR CONTROLLER
+    // 2. EDITOR
     function openEditor(id) {
       currentCvId = id;
       const cv = cvList.find(c => c.id === id);
@@ -842,12 +846,10 @@
       document.getElementById('btn-redo').disabled = (historyIndex >= historyStack.length - 1);
     }
 
-    // AUTO ANCHOR & FOCUS IMPLEMENTATION
+    // AUTO ANCHOR
     function addExperience(item = { role: '', company: '', period: '', location: '', desc: '' }) {
       const list = document.getElementById('experience-list');
       const div = document.createElement('div');
-      const uniqueId = 'exp_' + Date.now();
-      div.id = uniqueId;
       div.className = "exp-item p-3.5 bg-slate-950 rounded-xl border border-slate-800 relative space-y-2.5 transition-all duration-300";
       div.innerHTML = `
         <button onclick="this.parentElement.remove(); handleInputChange();" class="absolute top-2.5 right-2.5 text-xs text-rose-400 hover:text-rose-300">✕ Hapus</button>
@@ -873,7 +875,7 @@
         </div>
         <div>
           <div class="flex justify-between items-center mb-0.5">
-            <label class="text-[10px] text-slate-400">Deskripsi Poin Pencapaian</label>
+            <label class="text-[10px] text-slate-400">Poin Pencapaian Kinerja</label>
             <button type="button" onclick="translateItemDesc(this)" class="text-[10px] text-blue-400 hover:text-blue-300 font-semibold">
               ✨ Format ke English
             </button>
@@ -883,7 +885,6 @@
       `;
       list.appendChild(div);
 
-      // Scroll halus dan fokus otomatis
       div.scrollIntoView({ behavior: 'smooth', block: 'center' });
       div.classList.add('ring-2', 'ring-blue-500');
       setTimeout(() => {
@@ -907,17 +908,17 @@
             <input type="text" placeholder="Gelar" value="${item.degree}" oninput="handleInputChange()" class="edu-deg w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
           </div>
           <div>
-            <label class="block text-[10px] text-slate-400 mb-0.5">Nama Kampus / Sekolah</label>
+            <label class="block text-[10px] text-slate-400 mb-0.5">Institusi / Universitas</label>
             <input type="text" placeholder="Kampus" value="${item.school}" oninput="handleInputChange()" class="edu-school w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
           </div>
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block text-[10px] text-slate-400 mb-0.5">Tahun Kelulusan</label>
+            <label class="block text-[10px] text-slate-400 mb-0.5">Tahun</label>
             <input type="text" placeholder="Tahun" value="${item.period}" oninput="handleInputChange()" class="edu-period w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
           </div>
           <div>
-            <label class="block text-[10px] text-slate-400 mb-0.5">IPK / Keterangan</label>
+            <label class="block text-[10px] text-slate-400 mb-0.5">Keterangan / IPK</label>
             <input type="text" placeholder="IPK / Cum Laude" value="${item.details}" oninput="handleInputChange()" class="edu-det w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
           </div>
         </div>
@@ -972,7 +973,6 @@
       });
     }
 
-    // THEME & LAYOUT ENGINE
     function setTheme(name) {
       if (!themePacks[name]) return;
       activeTheme = name;
@@ -1026,7 +1026,7 @@
       renderCV();
     }
 
-    let photoData = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80";
+    let photoData = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80";
     function uploadPhoto(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -1044,14 +1044,14 @@
       return text.replace(/(\b\d+(\.\d+)?%\b|\b(Rp|USD|\$)\s?[\d.,]+(\s?(juta|miliar|k|m))?|\b\d+x\b|\b\d{2,}\b)/gi, '<strong class="font-bold text-slate-900">$1</strong>');
     }
 
-    // RENDER SHEET PREVIEW
+    // RENDER LEMBAR A4 RESUME
     function renderCV() {
       // 1. Data Personal
-      document.getElementById('view-name').innerText = document.getElementById('input-name').value || 'NAMA LENGKAP';
+      document.getElementById('view-name').innerText = document.getElementById('input-name').value || 'DENY TRIAWAN';
       document.getElementById('view-title').innerText = applyTranslation(document.getElementById('input-title').value) || 'Target Posisi';
-      document.getElementById('view-email').innerText = document.getElementById('input-email').value || 'nama@email.com';
-      document.getElementById('view-phone').innerText = document.getElementById('input-phone').value || '+62 8xx';
-      document.getElementById('view-location').innerText = document.getElementById('input-location').value || 'Kota, Negara';
+      document.getElementById('view-email').innerText = document.getElementById('input-email').value || 'triawan25@gmail.com';
+      document.getElementById('view-phone').innerText = document.getElementById('input-phone').value || '+62 856-0856-1745';
+      document.getElementById('view-location').innerText = document.getElementById('input-location').value || 'Semarang, Indonesia';
 
       const li = document.getElementById('input-linkedin').value;
       document.getElementById('wrap-linkedin').style.display = li ? 'inline-flex' : 'none';
@@ -1065,10 +1065,9 @@
       const rawSummary = document.getElementById('input-summary').value;
       document.getElementById('view-summary').innerHTML = highlightNumbers(applyTranslation(rawSummary)) || 'Ringkasan profesional Anda.';
 
-      // 3. Experience (DENGAN PEMBEDA JABATAN VS PERUSAHAAN & VARIASI LAYOUT)
+      // 3. Experience
       const expView = document.getElementById('view-experience');
       expView.innerHTML = '';
-      
       const themeCfg = themePacks[activeTheme] || themePacks.navy;
 
       document.querySelectorAll('.exp-item').forEach(el => {
@@ -1085,7 +1084,6 @@
           .join('');
 
         if (themeCfg.layout === 'split') {
-          // Varian 2: Emerald Split Line (Garis vertikal aksen di kiri)
           expView.innerHTML += `
             <div class="pl-3 border-l-2 theme-accent-border relative">
               <div class="flex flex-wrap justify-between items-baseline gap-1">
@@ -1099,11 +1097,10 @@
                 </div>
                 <span class="theme-badge px-2 py-0.5 rounded text-[10px] font-bold">${applyTranslation(per)}</span>
               </div>
-              <ul class="text-xs leading-relaxed text-slate-700 mt-1.5 space-y-0.5">${bullets || '<li>Pencapaian kerja...</li>'}</ul>
+              <ul class="text-xs leading-relaxed text-slate-700 mt-1.5 space-y-0.5">${bullets || '<li>Tugas dan pencapaian...</li>'}</ul>
             </div>
           `;
         } else if (themeCfg.layout === 'classic') {
-          // Varian 3: Slate Minimal Classic ATS (Linier rapi tanpa border samping)
           expView.innerHTML += `
             <div>
               <div class="flex justify-between items-baseline text-xs">
@@ -1114,11 +1111,10 @@
                 </div>
                 <span class="text-slate-500 font-medium text-[11px]">${applyTranslation(per)}</span>
               </div>
-              <ul class="text-xs leading-relaxed text-slate-700 mt-1 space-y-0.5">${bullets || '<li>Pencapaian kerja...</li>'}</ul>
+              <ul class="text-xs leading-relaxed text-slate-700 mt-1 space-y-0.5">${bullets || '<li>Tugas dan pencapaian...</li>'}</ul>
             </div>
           `;
         } else {
-          // Varian 1: Executive Navy (Default)
           expView.innerHTML += `
             <div>
               <div class="flex flex-wrap justify-between items-baseline gap-1">
@@ -1131,7 +1127,7 @@
                 </div>
                 <span class="theme-badge px-2 py-0.5 rounded text-[10px] font-bold">${applyTranslation(per)}</span>
               </div>
-              <ul class="text-xs leading-relaxed text-slate-700 mt-1.5 space-y-0.5">${bullets || '<li>Pencapaian kerja...</li>'}</ul>
+              <ul class="text-xs leading-relaxed text-slate-700 mt-1.5 space-y-0.5">${bullets || '<li>Tugas dan pencapaian...</li>'}</ul>
             </div>
           `;
         }
@@ -1199,8 +1195,15 @@
       document.getElementById('thumb-photo').src = photoData;
     }
 
-    // INIT
+    // RESET KE DATA DENY TRIAWAN
+    function resetToDenyTriawan() {
+      localStorage.removeItem(STORAGE_KEY);
+      loadCvList();
+      showDashboardView();
+    }
+
     window.onload = function() {
+      // Periksa apakah sudah ada data lokal yang lama; jika ingin selalu mengutamakan CV Deny Triawan, kita muat
       loadCvList();
       showDashboardView();
     };
