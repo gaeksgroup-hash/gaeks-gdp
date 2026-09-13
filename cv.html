@@ -95,7 +95,7 @@
             GAEKS ATS Studio
           </span>
           <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">
-            Corporate Standard
+            Executive Edition
           </span>
         </div>
       </div>
@@ -130,7 +130,6 @@
       </div>
     </div>
 
-    <!-- TABS ACTIVE VS TRASH -->
     <div class="flex items-center space-x-2 border-b border-slate-800 mb-6">
       <button onclick="switchDashboardTab('active')" id="tab-dash-active" class="px-4 py-2 text-xs sm:text-sm font-bold border-b-2 border-blue-500 text-blue-400 transition flex items-center gap-2">
         <span id="ui-tab-all-active">Semua CV Aktif</span>
@@ -201,7 +200,8 @@
           <button onclick="switchFormTab('experience')" id="ftab-btn-experience" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap transition">Pengalaman</button>
           <button onclick="switchFormTab('education')" id="ftab-btn-education" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap transition">Pendidikan</button>
           <button onclick="switchFormTab('skills')" id="ftab-btn-skills" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap transition">Keahlian (Kategori)</button>
-          <button onclick="switchFormTab('extras')" id="ftab-btn-extras" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap transition">Sertifikasi & Ekstra</button>
+          <button onclick="switchFormTab('certifications')" id="ftab-btn-certifications" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap transition">Sertifikasi & Lisensi</button>
+          <button onclick="switchFormTab('extras')" id="ftab-btn-extras" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap transition">Informasi Tambahan</button>
         </div>
 
         <div class="pt-2">
@@ -229,17 +229,17 @@
               <input type="text" id="input-name" oninput="handleInputChange()" placeholder="contoh: Deny Triawan, S.Kom" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
             </div>
 
-            <!-- MULTIPLE CHOICE TARGET ROLES (520+ PROFESI DENGAN LIVE SEARCH & DRAG/DROP) -->
+            <!-- TARGET ROLES (520+ PROFESI DENGAN LIVE SEARCH & DRAG/DROP) -->
             <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2.5">
               <div class="flex justify-between items-center">
                 <label id="lbl-f-target-roles-title" class="text-[11px] font-bold text-blue-400 uppercase tracking-wider">Target Posisi / Profesi</label>
                 <span id="roles-counter-badge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">0 / 4 Disarankan</span>
               </div>
               <p id="lbl-f-target-roles-desc" class="text-[10px] text-slate-400 leading-tight">
-                Riset HRD merekomendasikan <strong>maksimal 3–4 posisi terkait</strong> agar tetap fokus. Gunakan kotak pencarian di bawah untuk mencari dari <strong>520+ profesi</strong> (klik atau drag ke kotak target).
+                Riset HRD merekomendasikan <strong>maksimal 3–4 posisi terkait</strong> agar tetap fokus. Gunakan kotak pencarian di bawah untuk memilih dari <strong>520+ profesi</strong> (klik atau drag ke kotak target).
               </p>
 
-              <!-- SELECTED CHIPS LIST (DROPZONE) -->
+              <!-- SELECTED CHIPS LIST -->
               <div id="selected-roles-chips" ondragover="allowRoleDrop(event)" ondrop="handleRoleDrop(event)" class="flex flex-wrap gap-1.5 min-h-[36px] p-2 bg-slate-900 rounded-lg border border-dashed border-slate-700 transition-colors"></div>
 
               <!-- INPUT MANUAL -->
@@ -250,14 +250,12 @@
                 </button>
               </div>
 
-              <!-- LIVE SEARCH & BANK DATA PROFESI (520+ ITEMS) -->
+              <!-- LIVE SEARCH & SECTOR FILTER -->
               <div class="pt-1 border-t border-slate-800/80">
                 <div class="space-y-1.5 mb-1.5">
-                  <div class="flex items-center gap-2">
-                    <input type="text" id="role-bank-search" oninput="filterRoleSuggestions(this.value)" placeholder="🔍 Cari dari 520+ profesi (ketik nama profesi)..." class="w-full px-2.5 py-1 text-xs bg-slate-900 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none" />
-                  </div>
+                  <input type="text" id="role-bank-search" oninput="filterRoleSuggestions(this.value)" placeholder="🔍 Cari dari 520+ profesi (ketik nama profesi)..." class="w-full px-2.5 py-1 text-xs bg-slate-900 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none" />
                   <div class="flex items-center justify-between text-[10px] text-slate-400">
-                    <span>Atau filter berdasarkan sektor:</span>
+                    <span>Filter sektor:</span>
                     <select id="role-category-filter" onchange="renderRoleSuggestions()" class="bg-slate-900 border border-slate-800 rounded px-2 py-0.5 text-slate-300 focus:outline-none">
                       <option value="all">Semua Sektor (526 Profesi)</option>
                       <option value="logistics">Logistik & Supply Chain (60)</option>
@@ -305,7 +303,7 @@
             </div>
             <div>
               <div class="flex justify-between items-center mb-1">
-                <label id="lbl-f-summary" class="text-[11px] text-slate-400">Ringkasan Profesional (Summary)</label>
+                <label id="lbl-f-summary" class="text-[11px] text-slate-400">Profil Profesional (Professional Summary)</label>
                 <button onclick="aiTranslateField('input-summary')" type="button" class="text-[10px] text-blue-400 hover:text-blue-300 font-semibold flex items-center gap-1">
                   <span>✨ Format ke English</span>
                 </button>
@@ -317,7 +315,7 @@
           <!-- FORM 2: PENGALAMAN -->
           <div id="ftab-content-experience" class="hidden space-y-3">
             <div class="flex justify-between items-center pb-2 border-b border-slate-800">
-              <span id="lbl-f-exp-title" class="text-xs font-bold uppercase text-blue-400">Riwayat Pengalaman Kerja</span>
+              <span id="lbl-f-exp-title" class="text-xs font-bold uppercase text-blue-400">Pengalaman Profesional</span>
               <button onclick="addExperience()" class="text-xs px-2.5 py-1 bg-blue-950 text-blue-300 hover:bg-blue-900 rounded-lg border border-blue-800 transition">
                 <span id="lbl-btn-add-exp">+ Tambah Pengalaman</span>
               </button>
@@ -325,23 +323,26 @@
             <div id="experience-list" class="space-y-4"></div>
           </div>
 
-          <!-- FORM 3: PENDIDIKAN -->
+          <!-- FORM 3: PENDIDIKAN TERSTRUKTUR STANDAR EKSEKUTIF -->
           <div id="ftab-content-education" class="hidden space-y-3">
             <div class="flex justify-between items-center pb-2 border-b border-slate-800">
-              <span id="lbl-f-edu-title" class="text-xs font-bold uppercase text-blue-400">Pendidikan Formal</span>
+              <div>
+                <span id="lbl-f-edu-title" class="text-xs font-bold uppercase text-blue-400">Pendidikan Formal</span>
+                <p class="text-[10px] text-slate-400">Data institusi, gelar, predikat kelulusan (IPK/Honors), serta fokus riset terstruktur.</p>
+              </div>
               <button onclick="addEducation()" class="text-xs px-2.5 py-1 bg-blue-950 text-blue-300 hover:bg-blue-900 rounded-lg border border-blue-800 transition">
                 <span id="lbl-btn-add-edu">+ Tambah Gelar</span>
               </button>
             </div>
-            <div id="education-list" class="space-y-3.5"></div>
+            <div id="education-list" class="space-y-4"></div>
           </div>
 
-          <!-- FORM 4: KEAHLIAN MULTI-KATEGORI -->
+          <!-- FORM 4: KEAHLIAN & KOMPETENSI (DENGAN PRESET CEPAT) -->
           <div id="ftab-content-skills" class="hidden space-y-4">
             <div class="flex justify-between items-center pb-2 border-b border-slate-800">
               <div>
-                <span id="lbl-f-skill-group-title" class="text-xs font-bold uppercase text-blue-400">Kelompok Keahlian</span>
-                <p id="lbl-f-skill-group-desc" class="text-[11px] text-slate-400">Kategori keahlian terstruktur untuk mempermudah identifikasi kualifikasi.</p>
+                <span id="lbl-f-skill-group-title" class="text-xs font-bold uppercase text-blue-400">Keahlian & Kompetensi</span>
+                <p id="lbl-f-skill-group-desc" class="text-[11px] text-slate-400">Kelompokkan kompetensi inti Anda secara modular untuk memaksimalkan pemindaian ATS.</p>
               </div>
               <button onclick="addSkillGroup()" class="text-xs px-2.5 py-1 bg-blue-950 text-blue-300 hover:bg-blue-900 rounded-lg border border-blue-800 transition">
                 <span id="lbl-btn-add-skill-group">+ Tambah Kelompok Keahlian</span>
@@ -350,23 +351,32 @@
             <div id="skill-groups-container" class="space-y-3.5"></div>
           </div>
 
-          <!-- FORM 5: SERTIFIKASI & EKSTRA -->
-          <div id="ftab-content-extras" class="hidden space-y-4">
-            <div class="pb-2 border-b border-slate-800">
-              <span id="lbl-f-extra-title" class="text-xs font-bold uppercase text-blue-400">Sertifikasi & Kualifikasi Tambahan</span>
+          <!-- FORM 5: SERTIFIKASI & LISENSI RESMI (MODUL DINAMIS) -->
+          <div id="ftab-content-certifications" class="hidden space-y-3.5">
+            <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+              <div>
+                <span id="lbl-f-cert-title" class="text-xs font-bold uppercase text-blue-400">Sertifikasi & Lisensi Resmi</span>
+                <p class="text-[10px] text-slate-400">Sertifikasi profesional, lisensi resmi industri, atau izin profesi terakreditasi.</p>
+              </div>
+              <button onclick="addCertificationItem()" class="text-xs px-2.5 py-1 bg-blue-950 text-blue-300 hover:bg-blue-900 rounded-lg border border-blue-800 transition">
+                <span id="lbl-btn-add-cert">+ Tambah Sertifikasi</span>
+              </button>
             </div>
-            <div>
-              <label id="lbl-f-cert" class="block text-[11px] text-slate-400 mb-1">Sertifikasi & Lisensi Resmi (Tiap baris 1 sertifikasi)</label>
-              <textarea id="input-certifications" rows="3" oninput="handleInputChange()" placeholder="Nama Sertifikasi — Lembaga Penerbit" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none"></textarea>
+            <div id="certifications-list" class="space-y-3"></div>
+          </div>
+
+          <!-- FORM 6: INFORMASI TAMBAHAN (BAHASA, PUBLIKASI, AFILIASI, DLL) -->
+          <div id="ftab-content-extras" class="hidden space-y-3.5">
+            <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+              <div>
+                <span id="lbl-f-extra-title" class="text-xs font-bold uppercase text-blue-400">Informasi Tambahan</span>
+                <p class="text-[10px] text-slate-400">Tambahkan kemampuan bahasa, publikasi ilmiah, asosiasi profesi, atau penghargaan.</p>
+              </div>
+              <button onclick="addExtraItem()" class="text-xs px-2.5 py-1 bg-blue-950 text-blue-300 hover:bg-blue-900 rounded-lg border border-blue-800 transition">
+                <span id="lbl-btn-add-extra">+ Tambah Informasi Tambahan</span>
+              </button>
             </div>
-            <div>
-              <label id="lbl-f-lang" class="block text-[11px] text-slate-400 mb-1">Kemampuan Bahasa (Pisahkan koma)</label>
-              <input type="text" id="input-languages" oninput="handleInputChange()" placeholder="Bahasa Indonesia (Native), English (C1 Proficient)" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
-            </div>
-            <div>
-              <label id="lbl-f-pub" class="block text-[11px] text-slate-400 mb-1">Publikasi Ilmiah / Portofolio Ekstra</label>
-              <textarea id="input-publications" rows="2" oninput="handleInputChange()" placeholder="Publikasi riset atau link portofolio..." class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none"></textarea>
-            </div>
+            <div id="extras-list" class="space-y-3"></div>
           </div>
         </div>
 
@@ -405,7 +415,7 @@
     let activeLayout = 'prestige';
     let currentLang = 'id';
 
-    // BANK DATA LENGKAP 526+ PROFESI TERVERIFIKASI
+    // BANK DATA LENGKAP 526+ PROFESI
     const professionBank = {
       logistics: [
         "Supply Chain Manager", "Logistics Operations Manager", "Export-Import Specialist", "Freight Forwarding Manager",
@@ -589,7 +599,8 @@
         tabExperience: "Pengalaman",
         tabEducation: "Pendidikan",
         tabSkills: "Keahlian (Kategori)",
-        tabExtras: "Sertifikasi & Ekstra",
+        tabCertifications: "Sertifikasi & Lisensi",
+        tabExtras: "Informasi Tambahan",
         
         lblProfileTitle: "Data Personal & Kontak",
         lblTogglePhoto: "Gunakan Pas Foto Formal",
@@ -602,33 +613,36 @@
         lblLoc: "Domisili / Kota",
         lblLinkedin: "LinkedIn Profile",
         lblPortfolio: "Portfolio / Website",
-        lblSummary: "Ringkasan Profesional (Summary)",
-        lblExpTitle: "Riwayat Pengalaman Kerja",
+        lblSummary: "Profil Profesional (Summary)",
+        lblExpTitle: "Pengalaman Profesional",
         btnAddExp: "+ Tambah Pengalaman",
         lblEduTitle: "Pendidikan Formal",
         btnAddEdu: "+ Tambah Gelar",
-        lblSkillGroupTitle: "Kelompok Keahlian",
+        lblSkillGroupTitle: "Keahlian & Kompetensi",
         lblSkillGroupDesc: "Kategori keahlian terstruktur untuk mempermudah identifikasi kualifikasi.",
         btnAddSkillGroup: "+ Tambah Kelompok Keahlian",
-        lblExtraTitle: "Sertifikasi & Kualifikasi Tambahan",
-        lblCert: "Sertifikasi & Lisensi Resmi (Tiap baris 1 sertifikasi)",
-        lblLang: "Kemampuan Bahasa (Pisahkan koma)",
-        lblPub: "Publikasi Ilmiah / Portofolio Ekstra",
+        lblCertTitle: "Sertifikasi & Lisensi Resmi",
+        btnAddCert: "+ Tambah Sertifikasi",
+        lblExtraTitle: "Informasi Tambahan",
+        btnAddExtra: "+ Tambah Informasi Tambahan",
 
-        // REDAKSI RESMI DOKUMEN (BAKU & MATANG)
+        // REDAKSI RESMI DOKUMEN
         sheetSummary: "PROFIL PROFESIONAL",
         sheetExperience: "PENGALAMAN PROFESIONAL",
         sheetEducation: "PENDIDIKAN",
         sheetSkills: "KEAHLIAN & KOMPETENSI",
         sheetCertifications: "SERTIFIKASI & LISENSI",
-        sheetLanguages: "KEMAMPUAN BAHASA",
-        sheetPublications: "PUBLIKASI & RISET",
+        sheetExtras: "INFORMASI TAMBAHAN",
         majorAccomplishmentLabel: "Pencapaian Kunci:",
+        gpaLabel: "IPK & Predikat:",
+        thesisLabel: "Fokus Riset & Prestasi Akademik:",
         badgeLabel: "Bahasa Indonesia",
         present: "Sekarang",
         emptyExperience: "Belum ada pengalaman kerja yang ditambahkan.",
         emptyEducation: "Belum ada riwayat pendidikan yang ditambahkan.",
-        emptySkills: "Belum ada kelompok keahlian yang ditambahkan."
+        emptySkills: "Belum ada kelompok keahlian yang ditambahkan.",
+        emptyCertifications: "Belum ada sertifikasi yang ditambahkan.",
+        emptyExtras: "Belum ada informasi tambahan yang ditambahkan."
       },
       en: {
         navHome: "Home",
@@ -649,7 +663,8 @@
         tabExperience: "Experience",
         tabEducation: "Education",
         tabSkills: "Skills & Categories",
-        tabExtras: "Certifications & Extras",
+        tabCertifications: "Certifications & Licenses",
+        tabExtras: "Additional Information",
 
         lblProfileTitle: "Personal Details & Contact",
         lblTogglePhoto: "Include Formal Photo",
@@ -662,18 +677,18 @@
         lblLoc: "City & Country",
         lblLinkedin: "LinkedIn Profile",
         lblPortfolio: "Portfolio / Website",
-        lblSummary: "Executive Summary",
-        lblExpTitle: "Career Track Record",
+        lblSummary: "Professional Summary",
+        lblExpTitle: "Professional Experience",
         btnAddExp: "+ Add Position",
-        lblEduTitle: "Academic Background",
+        lblEduTitle: "Academic Education",
         btnAddEdu: "+ Add Degree",
-        lblSkillGroupTitle: "Skill Categorization",
+        lblSkillGroupTitle: "Core Competencies",
         lblSkillGroupDesc: "Structured skill groupings for rapid recruiter qualification scanning.",
         btnAddSkillGroup: "+ Add Skill Category",
-        lblExtraTitle: "Certifications & Additional Qualifications",
-        lblCert: "Official Certifications & Licenses (1 per line)",
-        lblLang: "Languages (Comma separated)",
-        lblPub: "Scientific Publications & Research",
+        lblCertTitle: "Certifications & Licenses",
+        btnAddCert: "+ Add Certification",
+        lblExtraTitle: "Additional Information",
+        btnAddExtra: "+ Add Additional Section",
 
         // GLOBAL ATS STANDARD HEADINGS
         sheetSummary: "PROFESSIONAL SUMMARY",
@@ -681,14 +696,17 @@
         sheetEducation: "EDUCATION",
         sheetSkills: "CORE COMPETENCIES",
         sheetCertifications: "CERTIFICATIONS & LICENSES",
-        sheetLanguages: "LANGUAGES",
-        sheetPublications: "PUBLICATIONS & RESEARCH",
+        sheetExtras: "ADDITIONAL INFORMATION",
         majorAccomplishmentLabel: "Key Impact:",
+        gpaLabel: "GPA & Honors:",
+        thesisLabel: "Research Highlights & Thesis:",
         badgeLabel: "English (Translated)",
         present: "Present",
         emptyExperience: "No work experience added yet.",
         emptyEducation: "No education credentials added yet.",
-        emptySkills: "No skill categories added yet."
+        emptySkills: "No skill categories added yet.",
+        emptyCertifications: "No certifications added yet.",
+        emptyExtras: "No additional information added yet."
       }
     };
 
@@ -769,7 +787,7 @@
     let historyIndex = -1;
     let currentTargetRoles = [];
     const MAX_TARGET_ROLES = 4;
-    const STORAGE_KEY = 'gaeks_cv_master_list_v14';
+    const STORAGE_KEY = 'gaeks_cv_master_list_v16';
 
     function getAllProfessions() {
       const all = [];
@@ -917,9 +935,8 @@
           skillGroups: [
             { category: currentLang === 'en' ? 'Core Competencies' : 'Keahlian Teknis & Inti', skills: "" }
           ],
-          certifications: "",
-          languages: "",
-          publications: "",
+          certificationsList: [],
+          extrasList: [],
           isPhotoEnabled: false,
           layout: 'prestige',
           experiences: [],
@@ -962,9 +979,30 @@
               skills: "SAP Analytics Cloud, Power BI, Google Data Studio, Advanced Financial Modeling, KPI & SLA Governance"
             }
           ],
-          certifications: "Database Design and Programming with SQL — Oracle Academy (Expert / Mastery)\nMicrosoft Office Desktop Training — Microsoft Partner Program",
-          languages: "Bahasa Indonesia (Native), English (C1 Proficient - TOEFL IBT/PBT)",
-          publications: "IEEE SIET Publication: Increased information retrieval capabilities on e-commerce websites using scraping techniques (2017)",
+          certificationsList: [
+            {
+              name: "Database Design and Programming with SQL",
+              issuer: "Oracle Academy",
+              period: "Mastery Level / Professional",
+              credentialId: "Oracle Certified Expert"
+            },
+            {
+              name: "Microsoft Office Desktop Training",
+              issuer: "Microsoft Partner Program",
+              period: "Certified Professional",
+              credentialId: "MS-DESK-2020"
+            }
+          ],
+          extrasList: [
+            {
+              type: "Bahasa",
+              details: "Bahasa Indonesia (Native), English (C1 Proficient - TOEFL IBT/PBT)"
+            },
+            {
+              type: "Publikasi Ilmiah",
+              details: "IEEE SIET 2017 Publication: Increased information retrieval capabilities on e-commerce websites using scraping techniques"
+            }
+          ],
           isPhotoEnabled: true,
           layout: 'prestige',
           experiences: [
@@ -1003,16 +1041,20 @@
           ],
           educations: [
             {
-              degree: "Master Of Information System (42 Credits Completed)",
               school: "Diponegoro University",
+              location: "Semarang, Central Java",
+              degree: "Master of Information System (M.IS / 42 Credits Completed)",
               period: "Sept 2017 - Jan 2020",
-              details: "Semarang, Central Java • Research Focus: Node.js & TCP/IP Architecture on Enterprise Linux"
+              gpa: "Graduate Study Program",
+              details: "Research Focus: Node.js & TCP/IP Architecture on Enterprise Linux Environment"
             },
             {
-              degree: "Bachelor Of Computer Science (S.Kom)",
               school: "Universitas Teknologi Digital Indonesia (STMIK Akakom)",
+              location: "Yogyakarta, Indonesia",
+              degree: "Bachelor of Computer Science (S.Kom)",
               period: "Sept 2012 - Aug 2016",
-              details: "GPA 3.38 • Best Research Paper Award IEEE SIET 2017: Web Information Retrieval via Advanced Scraping"
+              gpa: "GPA 3.38 / 4.00 (Sangat Memuaskan)",
+              details: "Best Research Paper Award IEEE SIET 2017: Web Information Retrieval via Advanced Scraping Techniques"
             }
           ]
         }
@@ -1243,14 +1285,13 @@
       document.getElementById('input-linkedin').value = d.linkedin || '';
       document.getElementById('input-portfolio').value = d.portfolio || '';
       document.getElementById('input-summary').value = d.summary || '';
-      document.getElementById('input-certifications').value = d.certifications || '';
-      document.getElementById('input-languages').value = d.languages || '';
-      document.getElementById('input-publications').value = d.publications || '';
       document.getElementById('input-toggle-photo').checked = !!d.isPhotoEnabled;
       
       togglePhoto();
       renderFormLists(d.experiences || [], d.educations || []);
       renderSkillGroups(d.skillGroups || []);
+      renderCertificationsList(d.certificationsList || []);
+      renderExtrasList(d.extrasList || []);
       setThemeLayout(d.layout || 'prestige');
     }
 
@@ -1270,9 +1311,11 @@
       const edus = [];
       document.querySelectorAll('.edu-item').forEach(el => {
         edus.push({
-          degree: el.querySelector('.edu-deg').value,
           school: el.querySelector('.edu-school').value,
+          location: el.querySelector('.edu-loc') ? el.querySelector('.edu-loc').value : '',
+          degree: el.querySelector('.edu-deg').value,
           period: el.querySelector('.edu-period').value,
+          gpa: el.querySelector('.edu-gpa') ? el.querySelector('.edu-gpa').value : '',
           details: el.querySelector('.edu-det').value
         });
       });
@@ -1282,6 +1325,24 @@
         skills.push({
           category: el.querySelector('.sg-category').value,
           skills: el.querySelector('.sg-skills').value
+        });
+      });
+
+      const certs = [];
+      document.querySelectorAll('.cert-item').forEach(el => {
+        certs.push({
+          name: el.querySelector('.cert-name').value,
+          issuer: el.querySelector('.cert-issuer').value,
+          period: el.querySelector('.cert-period').value,
+          credentialId: el.querySelector('.cert-id').value
+        });
+      });
+
+      const extras = [];
+      document.querySelectorAll('.extra-item').forEach(el => {
+        extras.push({
+          type: el.querySelector('.extra-type').value,
+          details: el.querySelector('.extra-desc').value
         });
       });
 
@@ -1296,9 +1357,8 @@
         portfolio: document.getElementById('input-portfolio').value,
         summary: document.getElementById('input-summary').value,
         skillGroups: skills,
-        certifications: document.getElementById('input-certifications').value,
-        languages: document.getElementById('input-languages').value,
-        publications: document.getElementById('input-publications').value,
+        certificationsList: certs,
+        extrasList: extras,
         isPhotoEnabled: document.getElementById('input-toggle-photo').checked,
         layout: activeLayout,
         experiences: exps,
@@ -1366,7 +1426,7 @@
         <button onclick="this.parentElement.remove(); handleInputChange();" class="absolute top-2.5 right-2.5 text-xs text-rose-400 hover:text-rose-300">✕ ${currentLang === 'en' ? 'Delete' : 'Hapus'}</button>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div>
-            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Select Category' : 'Pilih Kategori Keahlian'}</label>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Category Template' : 'Pilih Kategori Keahlian'}</label>
             <select onchange="handleSkillCategoryDropdown(this)" class="w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none">
               <option value="Keahlian Teknis & Inti">${currentLang === 'en' ? 'Technical & Core Competencies' : 'Keahlian Teknis & Inti'}</option>
               <option value="Tools, ERP & Software">${currentLang === 'en' ? 'Tools, ERP & Software' : 'Tools, ERP & Software'}</option>
@@ -1374,8 +1434,7 @@
               <option value="Rantai Pasok & Operasional">${currentLang === 'en' ? 'Supply Chain & Operations' : 'Rantai Pasok & Operasional'}</option>
               <option value="Keuangan & Analisis Bisnis">${currentLang === 'en' ? 'Finance & Business Analytics' : 'Keuangan & Analisis Bisnis'}</option>
               <option value="Metodologi & Standar Mutu">${currentLang === 'en' ? 'Methodologies & Standards' : 'Metodologi & Standar Mutu'}</option>
-              <option value="Kemampuan Bahasa">${currentLang === 'en' ? 'Languages' : 'Kemampuan Bahasa'}</option>
-              <option value="custom">-- ${currentLang === 'en' ? 'Custom / Type Your Own' : 'Kustom / Tulis Sendiri'} --</option>
+              <option value="custom">-- ${currentLang === 'en' ? 'Custom Category' : 'Kategori Kustom'} --</option>
             </select>
           </div>
           <div>
@@ -1398,7 +1457,7 @@
       const customInput = select.parentElement.parentElement.querySelector('.sg-category');
       if (select.value === 'custom') {
         customInput.value = '';
-        customInput.placeholder = currentLang === 'en' ? 'Type custom category name...' : 'Ketik nama kategori kustom...';
+        customInput.placeholder = currentLang === 'en' ? 'Type custom category...' : 'Ketik kategori...';
         customInput.focus();
       } else {
         customInput.value = select.value;
@@ -1415,6 +1474,7 @@
       }
     }
 
+    // FORM PENGALAMAN KERJA
     function addExperience(item = { role: '', company: '', period: '', location: '', desc: '', accomplishment: '' }) {
       const list = document.getElementById('experience-list');
       const div = document.createElement('div');
@@ -1466,7 +1526,8 @@
       handleInputChange();
     }
 
-    function addEducation(item = { degree: '', school: '', period: '', details: '' }) {
+    // FORM PENDIDIKAN TERSTRUKTUR (KAMPUS, LOKASI, GELAR, PERIODE, IPK/PREDIKAT, RISET)
+    function addEducation(item = { school: '', location: '', degree: '', period: '', gpa: '', details: '' }) {
       const list = document.getElementById('education-list');
       const div = document.createElement('div');
       div.className = "edu-item p-3.5 bg-slate-950 rounded-xl border border-slate-800 relative space-y-2.5 transition-all duration-300";
@@ -1474,22 +1535,32 @@
         <button onclick="this.parentElement.remove(); handleInputChange();" class="absolute top-2.5 right-2.5 text-xs text-rose-400 hover:text-rose-300">✕ ${currentLang === 'en' ? 'Delete' : 'Hapus'}</button>
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Degree / Major' : 'Gelar / Jurusan'}</label>
-            <input type="text" placeholder="${currentLang === 'en' ? 'Bachelor of Computer Science' : 'Gelar'}" value="${item.degree}" oninput="handleInputChange()" class="edu-deg w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'University / Institution' : 'Institusi / Kampus'}</label>
+            <input type="text" placeholder="${currentLang === 'en' ? 'Diponegoro University' : 'Nama Kampus'}" value="${item.school || ''}" oninput="handleInputChange()" class="edu-school w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
           </div>
           <div>
-            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'University / Institution' : 'Institusi / Kampus'}</label>
-            <input type="text" placeholder="${currentLang === 'en' ? 'University Name' : 'Kampus'}" value="${item.school}" oninput="handleInputChange()" class="edu-school w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Location (City, Country)' : 'Lokasi (Kota, Negara)'}</label>
+            <input type="text" placeholder="${currentLang === 'en' ? 'Semarang, Indonesia' : 'Kota / Lokasi'}" value="${item.location || ''}" oninput="handleInputChange()" class="edu-loc w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
           </div>
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Year / Period' : 'Tahun / Periode'}</label>
-            <input type="text" placeholder="${currentLang === 'en' ? 'e.g. 2018 - 2022' : 'Tahun'}" value="${item.period}" oninput="handleInputChange()" class="edu-period w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Degree & Major' : 'Gelar & Program Studi / Jurusan'}</label>
+            <input type="text" placeholder="${currentLang === 'en' ? 'Master of Information System (M.IS)' : 'Gelar & Jurusan'}" value="${item.degree || ''}" oninput="handleInputChange()" class="edu-deg w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
           </div>
           <div>
-            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'GPA / Honors' : 'IPK / Prestasi'}</label>
-            <input type="text" placeholder="${currentLang === 'en' ? 'e.g. GPA 3.84 / Cum Laude' : 'IPK'}" value="${item.details}" oninput="handleInputChange()" class="edu-det w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Graduation Year / Period' : 'Tahun Kelulusan / Periode'}</label>
+            <input type="text" placeholder="${currentLang === 'en' ? '2017 - 2020' : 'Tahun Kelulusan'}" value="${item.period || ''}" oninput="handleInputChange()" class="edu-period w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'GPA & Academic Honors' : 'IPK & Predikat Kelulusan'}</label>
+            <input type="text" placeholder="${currentLang === 'en' ? 'GPA 3.84 (Cum Laude)' : 'IPK 3.38 (Sangat Memuaskan)'}" value="${item.gpa || ''}" oninput="handleInputChange()" class="edu-gpa w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Research Highlights / Thesis' : 'Fokus Riset / Tesis / Prestasi Akademik'}</label>
+            <input type="text" placeholder="${currentLang === 'en' ? 'Best Research Paper Award IEEE SIET' : 'Fokus Riset / Skripsi / Tesis'}" value="${item.details || ''}" oninput="handleInputChange()" class="edu-det w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
           </div>
         </div>
       `;
@@ -1499,11 +1570,83 @@
       div.classList.add('ring-2', 'ring-blue-500');
       setTimeout(() => {
         div.classList.remove('ring-2', 'ring-blue-500');
-        const degInput = div.querySelector('.edu-deg');
-        if (degInput) degInput.focus();
+        const schoolInput = div.querySelector('.edu-school');
+        if (schoolInput) schoolInput.focus();
       }, 300);
 
       handleInputChange();
+    }
+
+    // FORM SERTIFIKASI & LISENSI RESMI (MODUL DINAMIS)
+    function addCertificationItem(item = { name: '', issuer: '', period: '', credentialId: '' }) {
+      const list = document.getElementById('certifications-list');
+      const div = document.createElement('div');
+      div.className = "cert-item p-3 bg-slate-950 rounded-xl border border-slate-800 relative space-y-2 transition-all";
+      div.innerHTML = `
+        <button onclick="this.parentElement.remove(); handleInputChange();" class="absolute top-2.5 right-2.5 text-xs text-rose-400 hover:text-rose-300">✕ ${currentLang === 'en' ? 'Delete' : 'Hapus'}</button>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Certification / License Name' : 'Nama Sertifikasi / Lisensi'}</label>
+            <input type="text" placeholder="Database Design and Programming with SQL" value="${item.name || ''}" oninput="handleInputChange()" class="cert-name w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Issuing Authority / Institution' : 'Lembaga Penerbit / Otoritas'}</label>
+            <input type="text" placeholder="Oracle Academy / BNSP" value="${item.issuer || ''}" oninput="handleInputChange()" class="cert-issuer w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Issue Date / Validity' : 'Tahun Terbit / Masa Berlaku'}</label>
+            <input type="text" placeholder="2022 - 2025 atau Seumur Hidup" value="${item.period || ''}" oninput="handleInputChange()" class="cert-period w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Credential ID / Details (Optional)' : 'Nomor Lisensi / Kredensial (Opsional)'}</label>
+            <input type="text" placeholder="ID: ORCL-78901 / Nilai: Mastery" value="${item.credentialId || ''}" oninput="handleInputChange()" class="cert-id w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+        </div>
+      `;
+      list.appendChild(div);
+      handleInputChange();
+    }
+
+    // FORM INFORMASI TAMBAHAN (BAHASA, PUBLIKASI, AFILIASI, DLL)
+    function addExtraItem(item = { type: 'Bahasa', details: '' }) {
+      const list = document.getElementById('extras-list');
+      const div = document.createElement('div');
+      div.className = "extra-item p-3 bg-slate-950 rounded-xl border border-slate-800 relative space-y-2 transition-all";
+      div.innerHTML = `
+        <button onclick="this.parentElement.remove(); handleInputChange();" class="absolute top-2.5 right-2.5 text-xs text-rose-400 hover:text-rose-300">✕ ${currentLang === 'en' ? 'Delete' : 'Hapus'}</button>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Category / Type' : 'Kategori / Bagian'}</label>
+            <input type="text" placeholder="mis: Bahasa / Publikasi" value="${item.type || 'Bahasa'}" oninput="handleInputChange()" class="extra-type w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none font-semibold" />
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block text-[10px] text-slate-400 mb-0.5">${currentLang === 'en' ? 'Description & Details' : 'Deskripsi & Uraian'}</label>
+            <input type="text" placeholder="mis: Bahasa Indonesia (Native), English (C1 Proficient)" value="${item.details || ''}" oninput="handleInputChange()" class="extra-desc w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white focus:border-blue-500 focus:outline-none" />
+          </div>
+        </div>
+      `;
+      list.appendChild(div);
+      handleInputChange();
+    }
+
+    function renderCertificationsList(certs) {
+      document.getElementById('certifications-list').innerHTML = '';
+      if (certs && certs.length > 0) {
+        certs.forEach(c => addCertificationItem(c));
+      } else {
+        addCertificationItem();
+      }
+    }
+
+    function renderExtrasList(extras) {
+      document.getElementById('extras-list').innerHTML = '';
+      if (extras && extras.length > 0) {
+        extras.forEach(e => addExtraItem(e));
+      } else {
+        addExtraItem({ type: 'Bahasa', details: 'Bahasa Indonesia (Native), English (C1 Proficient)' });
+      }
     }
 
     function renderFormLists(exps, edus) {
@@ -1530,15 +1673,17 @@
     }
 
     function switchFormTab(tab) {
-      ['profile', 'experience', 'education', 'skills', 'extras'].forEach(t => {
+      ['profile', 'experience', 'education', 'skills', 'certifications', 'extras'].forEach(t => {
         const content = document.getElementById(`ftab-content-${t}`);
         const btn = document.getElementById(`ftab-btn-${t}`);
-        if (t === tab) {
-          content.classList.remove('hidden');
-          btn.className = "px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 text-white whitespace-nowrap transition";
-        } else {
-          content.classList.add('hidden');
-          btn.className = "px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap transition";
+        if (content && btn) {
+          if (t === tab) {
+            content.classList.remove('hidden');
+            btn.className = "px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 text-white whitespace-nowrap transition";
+          } else {
+            content.classList.add('hidden');
+            btn.className = "px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap transition";
+          }
         }
       });
     }
@@ -1601,6 +1746,7 @@
       document.getElementById('ftab-btn-experience').innerText = dict.tabExperience;
       document.getElementById('ftab-btn-education').innerText = dict.tabEducation;
       document.getElementById('ftab-btn-skills').innerText = dict.tabSkills;
+      document.getElementById('ftab-btn-certifications').innerText = dict.tabCertifications;
       document.getElementById('ftab-btn-extras').innerText = dict.tabExtras;
 
       document.getElementById('lbl-f-profile-title').innerText = dict.lblProfileTitle;
@@ -1622,10 +1768,10 @@
       document.getElementById('lbl-f-skill-group-title').innerText = dict.lblSkillGroupTitle;
       document.getElementById('lbl-f-skill-group-desc').innerText = dict.lblSkillGroupDesc;
       document.getElementById('lbl-btn-add-skill-group').innerText = dict.btnAddSkillGroup;
+      document.getElementById('lbl-f-cert-title').innerText = dict.lblCertTitle;
+      document.getElementById('lbl-btn-add-cert').innerText = dict.btnAddCert;
       document.getElementById('lbl-f-extra-title').innerText = dict.lblExtraTitle;
-      document.getElementById('lbl-f-cert').innerText = dict.lblCert;
-      document.getElementById('lbl-f-lang').innerText = dict.lblLang;
-      document.getElementById('lbl-f-pub').innerText = dict.lblPub;
+      document.getElementById('lbl-btn-add-extra').innerText = dict.btnAddExtra;
 
       document.getElementById('label-active-lang').innerText = dict.badgeLabel;
 
@@ -1698,40 +1844,40 @@
       function renderCategoryHeader(titleText) {
         if (activeLayout === 'prestige') {
           return `
-            <div class="cv-section-title border-b border-slate-900 pb-0.5 mb-2 mt-4 flex items-center justify-between">
+            <div class="cv-section-title border-b border-slate-900 pb-0.5 mb-2 mt-3 flex items-center justify-between">
               <h2 class="text-[12px] font-bold font-prestige uppercase tracking-wider text-slate-950">${titleText}</h2>
               <span class="text-[9px] font-serif text-slate-400 italic hidden sm:inline">Executive Portfolio</span>
             </div>
           `;
         } else if (activeLayout === 'pure-ats') {
           return `
-            <div class="cv-section-title border-b border-black pb-0.5 mb-2 mt-4 text-center">
+            <div class="cv-section-title border-b border-black pb-0.5 mb-2 mt-3 text-center">
               <h2 class="text-[11.5px] font-bold uppercase tracking-widest text-black">${titleText}</h2>
             </div>
           `;
         } else if (activeLayout === 'modern-corporate') {
           return `
-            <div class="cv-section-title border-b-2 border-blue-900 pb-0.5 mb-2 mt-4 flex items-center gap-2">
+            <div class="cv-section-title border-b-2 border-blue-900 pb-0.5 mb-2 mt-3 flex items-center gap-2">
               <span class="w-1.5 h-3 bg-blue-900 rounded-sm"></span>
               <h2 class="text-[11.5px] font-bold uppercase tracking-wider text-blue-950">${titleText}</h2>
             </div>
           `;
         } else {
           return `
-            <div class="cv-section-title border-b border-slate-400 pb-0.5 mb-2 mt-4">
+            <div class="cv-section-title border-b border-slate-400 pb-0.5 mb-2 mt-3">
               <h2 class="text-[11.5px] font-semibold uppercase tracking-wider text-slate-800">${titleText}</h2>
             </div>
           `;
         }
       }
 
-      // EXPERIENCES: PEMISAH HALUS (SUBTLE HAIRLINE DIVIDER) ANTARA PEKERJAAN 1 DAN BERIKUTNYA
+      // EXPERIENCES: PEMADATAN MARGIN & HAIRLINE SEPARATOR HALUS
       let experiencesHTML = '';
       const expElements = document.querySelectorAll('.exp-item');
       if (expElements.length === 0) {
         experiencesHTML = `<p class="text-[11px] text-slate-400 italic">${lbl.emptyExperience}</p>`;
       } else {
-        expElements.forEach((el, index) => {
+        expElements.forEach((el) => {
           const role = applyTranslation(el.querySelector('.exp-role').value);
           const comp = el.querySelector('.exp-company').value;
           const per = applyTranslation(el.querySelector('.exp-period').value);
@@ -1745,22 +1891,20 @@
             .map(l => `<li class="ml-4 list-disc text-slate-700 leading-normal">${highlightNumbers(applyTranslation(l.replace(/^[*-]\s*/, '')))}</li>`)
             .join('');
 
-          // MAJOR ACCOMPLISHMENT SBG PARAGRAF TEBAL EKSEKUTIF (BEBAS BULLETS/DOT)
           const accParagraph = acc.trim() ? `
-            <div class="mt-1.5 text-[11px] text-slate-800 leading-normal pl-0.5">
+            <div class="mt-1 text-[11px] text-slate-800 leading-normal pl-0.5">
               <strong class="font-bold text-slate-950">${lbl.majorAccomplishmentLabel}</strong> 
               <span class="text-slate-800">${highlightNumbers(acc)}</span>
             </div>
           ` : '';
 
-          // PEMISAH HALUS (HAIRLINE BORDER) ANTAR ENTRY
           experiencesHTML += `
-            <div class="cv-entry-block mb-3.5 pb-3 border-b border-slate-200/70 last:border-b-0 last:pb-0 last:mb-1">
+            <div class="cv-entry-block mb-2 pb-1.5 border-b border-slate-200/50 last:border-b-0 last:pb-0 last:mb-0.5">
               <div class="flex justify-between items-baseline text-xs">
                 <span class="font-bold text-slate-950 text-[12.5px] tracking-tight">${role || (currentLang === 'en' ? 'Position' : 'Jabatan')}</span>
                 <span class="font-semibold text-slate-700 text-[11px] shrink-0">${per}</span>
               </div>
-              <div class="flex justify-between items-baseline text-[11px] text-slate-600 mb-1">
+              <div class="flex justify-between items-baseline text-[11px] text-slate-600 mb-0.5">
                 <span class="font-medium ${activeLayout === 'prestige' ? 'font-prestige italic text-[11.5px]' : 'italic'} text-slate-800">${comp || (currentLang === 'en' ? 'Organization' : 'Perusahaan')}</span>
                 <span class="text-slate-500 italic shrink-0">${itemLoc}</span>
               </div>
@@ -1771,42 +1915,66 @@
         });
       }
 
-      // EDUCATIONS: PEMISAH HALUS
+      // EDUCATIONS: TATA LETAK TERSTRUKTUR DENGAN PREDIKAT & RISET TIDAK TERPUTUS
       let educationsHTML = '';
       const eduElements = document.querySelectorAll('.edu-item');
       if (eduElements.length === 0) {
         educationsHTML = `<p class="text-[11px] text-slate-400 italic">${lbl.emptyEducation}</p>`;
       } else {
         eduElements.forEach(el => {
-          const deg = applyTranslation(el.querySelector('.edu-deg').value);
           const school = applyTranslation(el.querySelector('.edu-school').value);
+          const eduLoc = applyTranslation(el.querySelector('.edu-loc') ? el.querySelector('.edu-loc').value : '');
+          const deg = applyTranslation(el.querySelector('.edu-deg').value);
           const per = applyTranslation(el.querySelector('.edu-period').value);
+          const gpaVal = el.querySelector('.edu-gpa') ? el.querySelector('.edu-gpa').value : '';
           const det = applyTranslation(el.querySelector('.edu-det').value);
 
+          let gpaRow = '';
+          if (gpaVal.trim()) {
+            gpaRow = `
+              <div class="text-[11px] text-slate-700 mt-0.5">
+                <span class="font-semibold text-slate-900">${lbl.gpaLabel}</span> 
+                <span>${gpaVal}</span>
+              </div>
+            `;
+          }
+
+          let detailsRow = '';
+          if (det.trim()) {
+            detailsRow = `
+              <div class="text-[11px] text-slate-600 mt-0.5 leading-relaxed text-justify">
+                <span class="font-semibold text-slate-900">${lbl.thesisLabel}</span> 
+                <span>${det}</span>
+              </div>
+            `;
+          }
+
           educationsHTML += `
-            <div class="cv-entry-block mb-2 pb-1.5 border-b border-slate-200/50 last:border-b-0 last:pb-0 last:mb-0.5 text-xs">
+            <div class="cv-entry-block mb-2 pb-1.5 border-b border-slate-200/40 last:border-b-0 last:pb-0 last:mb-0.5 text-xs">
               <div class="flex justify-between items-baseline">
-                <span class="font-bold text-slate-950 text-[12px]">${school || 'Universitas'}</span>
-                <span class="text-slate-600 font-medium text-[11px] shrink-0">${per}</span>
+                <span class="font-bold text-slate-950 text-[12.5px]">${school || 'Institusi / Universitas'}</span>
+                <span class="text-slate-500 text-[11px] italic shrink-0">${eduLoc}</span>
               </div>
-              <div class="flex justify-between items-baseline text-[11px] text-slate-700">
-                <span class="italic">${deg || 'Gelar'}</span>
-                ${det ? `<span class="text-slate-500 font-normal">${det}</span>` : ''}
+              <div class="flex justify-between items-baseline text-[11.5px] text-slate-800 mt-0.5">
+                <span class="font-medium ${activeLayout === 'prestige' ? 'font-prestige' : ''}">${deg || 'Gelar & Program Studi'}</span>
+                <span class="font-semibold text-slate-700 text-[11px] shrink-0">${per}</span>
               </div>
+              ${gpaRow}
+              ${detailsRow}
             </div>
           `;
         });
       }
 
-      // SKILLS
+      // SKILLS: MODULAR COMPETENCIES MATRIX
       let skillsGroupHTML = '';
       document.querySelectorAll('.skill-group-item').forEach(el => {
         const cat = applyTranslation(el.querySelector('.sg-category').value);
         const sks = applyTranslation(el.querySelector('.sg-skills').value);
         if (sks.trim()) {
           skillsGroupHTML += `
-            <div class="text-[11px] leading-relaxed mb-0.5">
-              <strong class="font-semibold text-slate-900">${cat}:</strong> 
+            <div class="text-[11px] leading-relaxed mb-0.5 flex flex-col sm:flex-row sm:items-baseline gap-1">
+              <span class="font-semibold text-slate-900 shrink-0 sm:min-w-[150px]">${cat}:</span> 
               <span class="text-slate-700">${sks}</span>
             </div>
           `;
@@ -1816,11 +1984,54 @@
         skillsGroupHTML = `<p class="text-[11px] text-slate-400 italic">${lbl.emptySkills}</p>`;
       }
 
-      // EXTRAS
-      const certRaw = document.getElementById('input-certifications').value;
-      const certHTML = certRaw.trim() ? certRaw.split('\n').filter(l => l.trim()).map(l => `<li class="ml-4 list-disc text-slate-700 leading-normal">${applyTranslation(l.trim())}</li>`).join('') : '';
-      const langRaw = document.getElementById('input-languages').value;
-      const pubRaw = document.getElementById('input-publications').value;
+      // CERTIFICATIONS & LICENSES: MODUL TERSTRUKTUR SEJAJAR
+      let certsHTML = '';
+      const certElements = document.querySelectorAll('.cert-item');
+      if (certElements.length === 0) {
+        certsHTML = `<p class="text-[11px] text-slate-400 italic">${lbl.emptyCertifications}</p>`;
+      } else {
+        certElements.forEach(el => {
+          const cName = applyTranslation(el.querySelector('.cert-name').value);
+          const cIssuer = applyTranslation(el.querySelector('.cert-issuer').value);
+          const cPeriod = applyTranslation(el.querySelector('.cert-period').value);
+          const cId = el.querySelector('.cert-id') ? el.querySelector('.cert-id').value : '';
+
+          if (cName.trim() || cIssuer.trim()) {
+            certsHTML += `
+              <div class="cv-entry-block mb-1.5 pb-1 border-b border-slate-200/40 last:border-b-0 last:pb-0 last:mb-0.5 text-xs">
+                <div class="flex justify-between items-baseline">
+                  <span class="font-semibold text-slate-950 text-[11.5px]">${cName || 'Nama Sertifikasi / Lisensi'}</span>
+                  <span class="text-slate-600 text-[10.5px] shrink-0">${cPeriod}</span>
+                </div>
+                <div class="flex justify-between items-baseline text-[11px] text-slate-600">
+                  <span class="italic text-slate-700">${cIssuer}</span>
+                  ${cId ? `<span class="text-slate-500 font-mono text-[10px]">${cId}</span>` : ''}
+                </div>
+              </div>
+            `;
+          }
+        });
+      }
+
+      // ADDITIONAL INFORMATION (EXTRAS): MODULAR SECTIONS
+      let extrasHTML = '';
+      const extraElements = document.querySelectorAll('.extra-item');
+      if (extraElements.length === 0) {
+        extrasHTML = `<p class="text-[11px] text-slate-400 italic">${lbl.emptyExtras}</p>`;
+      } else {
+        extraElements.forEach(el => {
+          const eType = applyTranslation(el.querySelector('.extra-type').value);
+          const eDesc = applyTranslation(el.querySelector('.extra-desc').value);
+          if (eType.trim() && eDesc.trim()) {
+            extrasHTML += `
+              <div class="text-[11px] leading-relaxed mb-1 flex flex-col sm:flex-row sm:items-baseline gap-1">
+                <span class="font-semibold text-slate-900 shrink-0 sm:min-w-[150px]">${eType}:</span>
+                <span class="text-slate-700">${eDesc}</span>
+              </div>
+            `;
+          }
+        });
+      }
 
       // ================= HEADER: SIMETRIS DENGAN PAS FOTO 4:5 =================
       let headerHTML = '';
@@ -1851,41 +2062,36 @@
         ${headerHTML}
 
         ${summary.trim() ? `
-          <div class="mt-3">
+          <div class="mt-2.5">
             ${renderCategoryHeader(lbl.sheetSummary)}
             <p class="text-[11px] leading-relaxed text-slate-700 text-justify">${summary}</p>
           </div>
         ` : ''}
 
-        <div class="mt-3">
+        <div class="mt-2.5">
           ${renderCategoryHeader(lbl.sheetExperience)}
           <div>${experiencesHTML}</div>
         </div>
 
-        <div class="mt-3">
+        <div class="mt-2.5">
           ${renderCategoryHeader(lbl.sheetEducation)}
           <div>${educationsHTML}</div>
         </div>
 
-        <div class="mt-3">
+        <div class="mt-2.5">
           ${renderCategoryHeader(lbl.sheetSkills)}
           <div class="space-y-0.5">${skillsGroupHTML}</div>
         </div>
 
-        ${certHTML ? `
-          <div class="mt-3">
-            ${renderCategoryHeader(lbl.sheetCertifications)}
-            <ul class="text-[11px] space-y-0.5">${certHTML}</ul>
-          </div>
-        ` : ''}
+        <div class="mt-2.5">
+          ${renderCategoryHeader(lbl.sheetCertifications)}
+          <div>${certsHTML}</div>
+        </div>
 
-        ${(langRaw.trim() || pubRaw.trim()) ? `
-          <div class="mt-3">
-            ${renderCategoryHeader(lbl.sheetLanguages)}
-            <div class="text-[11px] text-slate-700 space-y-0.5">
-              ${langRaw.trim() ? `<div><strong class="font-semibold text-slate-900">${lbl.sheetLanguages}:</strong> ${applyTranslation(langRaw)}</div>` : ''}
-              ${pubRaw.trim() ? `<div><strong class="font-semibold text-slate-900">${lbl.sheetPublications}:</strong> ${applyTranslation(pubRaw)}</div>` : ''}
-            </div>
+        ${extrasHTML ? `
+          <div class="mt-2.5">
+            ${renderCategoryHeader(lbl.sheetExtras)}
+            <div class="space-y-0.5">${extrasHTML}</div>
           </div>
         ` : ''}
       `;
