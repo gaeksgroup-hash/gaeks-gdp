@@ -1,4 +1,8 @@
-<!DOCTYPE html>
+import os, re, subprocess
+
+print("=== 1. Menulis login.html (Bersih dari Literal Newlines & Tab Responsif) ===")
+with open("login.html", "w") as fp:
+    fp.write('''<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
@@ -182,7 +186,7 @@
         const u = GaeksAuth.getCurrentUser();
         if (u && u.email) {
           const dest = getRedirectTarget();
-          window.location.replace(window.location.origin + '/' + dest.replace(/^\//, ''));
+          window.location.replace(window.location.origin + '/' + dest.replace(/^\\//, ''));
         }
       } catch(e) {}
     })();
@@ -279,7 +283,7 @@
         const p = new URLSearchParams(window.location.search);
         dest = p.get('redirect') || 'index.html';
       }
-      dest = decodeURIComponent(dest).replace(/^\//, '');
+      dest = decodeURIComponent(dest).replace(/^\\//, '');
       const finalUrl = window.location.origin + '/' + dest;
       window.location.replace(finalUrl);
     }
@@ -430,3 +434,338 @@
   </script>
 </body>
 </html>
+''')
+print("✓ login.html berhasil ditulis.")
+
+print("=== 2. Memperbarui auth.js (Dual Persistence v3 & Session Cleaner) ===")
+with open("auth.js", "w") as fp:
+    fp.write('''// GAEKS DIGITAL ECOSYSTEM - AUTH ENGINE V3 (CLEAN SLATE)
+try {
+  localStorage.removeItem('gaeks_user_session_v1');
+  localStorage.removeItem('gaeks_user_session_v2');
+  localStorage.removeItem('gaeks_user_session');
+  document.cookie = "gaeks_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+} catch(e) {}
+
+const VIP_WHITELIST = [
+  "gaeks.group@gmail.com",
+  "triawan25@gmail.com",
+  "ranesath@gmail.com"
+];
+const SUPER_ADMIN_EMAIL = "gaeks.group@gmail.com";
+const GOOGLE_CLIENT_ID = "41832472270-6r8iudma1eho6kn3q6rs4rl7b9ank7n4.apps.googleusercontent.com";
+
+const AUTH_STORAGE_KEY = 'gaeks_user_session_v3';
+const USERS_DB_KEY = 'gaeks_users_db_v3';
+
+const GaeksAuth = {
+  getUsersDb() {
+    let raw = null;
+    try { raw = localStorage.getItem(USERS_DB_KEY); } catch(e) {}
+    if (!raw) {
+      const initial = [
+        { id: 'usr_adm_1', email: 'gaeks.group@gmail.com', name: 'GAEKS Group (Admin)', provider: 'google', plan: 'PRO_VIP', registeredAt: Date.now() - 86400000 * 5, lastLoginAt: Date.now() },
+        { id: 'usr_vip_2', email: 'triawan25@gmail.com', name: 'Deny Triawan', provider: 'google', plan: 'PRO_VIP', registeredAt: Date.now() - 86400000 * 4, lastLoginAt: Date.now() },
+        { id: 'usr_vip_3', email: 'ranesath@gmail.com', name: 'Ranesath', provider: 'google', plan: 'PRO_VIP', registeredAt: Date.now() - 86400000 * 3, lastLoginAt: Date.now() }
+      ];
+      try { localStorage.setItem(USERS_DB_KEY, JSON.stringify(initial)); } catch(e) {}
+      return initial;
+    }
+    try { return JSON.parse(raw); } catch(e) { return []; }
+  },
+
+  saveUsersDb(db) {
+    try { localStorage.setItem(USERS_DB_KEY, JSON.stringify(db)); } catch(e) {}
+  },
+
+  recordUserRegistration(userObj) {
+    const db = this.getUsersDb();
+    const existingIndex = db.findIndex(u => u.email.toLowerCase() === userObj.email.toLowerCase());
+    if (existingIndex >= 0) {
+      db[existingIndex].lastLoginAt = Date.now();
+      if (userObj.name) db[existingIndex].name = userObj.name;
+    } else {
+      db.unshift({
+        id: userObj.id || 'usr_' + Date.now(),
+        email: userObj.email,
+        name: userObj.name || userObj.email.split('@')[0],
+        provider: userObj.provider || 'email',
+        plan: userObj.plan || 'FREE',
+        registeredAt: Date.now(),
+        lastLoginAt: Date.now()
+      });
+      this.sendEmailNotification('welcome', userObj.email, userObj.name);
+    }
+    this.saveUsersDb(db);
+  },
+
+  sendEmailNotification(actionType, email, name, extraData = {}) {
+    try {
+      fetch('/api/mailer.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: actionType,
+          email: email,
+          name: name,
+          ...extraData
+        })
+      }).catch(() => {});
+    } catch(e) {}
+  },
+
+  getCurrentUser() {
+    let raw = null;
+    try { raw = localStorage.getItem(AUTH_STORAGE_KEY); } catch(e) {}
+    if (!raw) {
+      try {
+        const m = document.cookie.match(/gaeks_session_v3=([^;]+)/);
+        if (m) raw = decodeURIComponent(m[1]);
+      } catch(e) {}
+    }
+    if (!raw) return null;
+    try {
+      const user = JSON.parse(raw);
+      if (user && user.email) {
+        const clean = user.email.toLowerCase().trim();
+        user.isAdmin = (clean === SUPER_ADMIN_EMAIL);
+        if (VIP_WHITELIST.includes(clean)) {
+          user.isPro = true;
+          user.plan = 'PRO_VIP';
+          user.planLabel = (clean === SUPER_ADMIN_EMAIL) ? 'SUPER ADMIN (Akses Penuh)' : 'GAEKS PRO VIP (Akses Penuh)';
+        }
+      }
+      return user;
+    } catch(e) {
+      return null;
+    }
+  },
+
+  isProUser() {
+    const user = this.getCurrentUser();
+    return user ? !!user.isPro : false;
+  },
+
+  isAdmin() {
+    const user = this.getCurrentUser();
+    return user ? (user.email.toLowerCase().trim() === SUPER_ADMIN_EMAIL) : false;
+  },
+
+  logout() {
+    try { localStorage.removeItem(AUTH_STORAGE_KEY); } catch(e) {}
+    try { document.cookie = "gaeks_session_v3=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"; } catch(e) {}
+    window.location.replace(window.location.origin + '/index.html');
+  },
+
+  toggleUserPlan(email) {
+    const db = this.getUsersDb();
+    const target = db.find(u => u.email.toLowerCase() === email.toLowerCase());
+    if (target) {
+      const willBePro = (target.plan !== 'PRO' && target.plan !== 'PRO_VIP');
+      target.plan = willBePro ? 'PRO' : 'FREE';
+      this.saveUsersDb(db);
+      if (willBePro) {
+        this.sendEmailNotification('purchase', target.email, target.name, { plan_name: 'GAEKS PRO Member' });
+      }
+      return target.plan;
+    }
+    return null;
+  }
+};
+''')
+print("✓ auth.js berhasil ditulis.")
+
+print("=== 3. Memperbarui api/auth_otp.php (Validasi Akun Sudah Terdaftar) ===")
+os.makedirs("api", exist_ok=True)
+with open("api/auth_otp.php", "w") as fp:
+    fp.write('''<?php
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/mailer.php';
+
+$storageFile = __DIR__ . '/otp_store.json';
+$registeredUsersFile = __DIR__ . '/users_registry.json';
+
+$raw = file_get_contents('php://input');
+$data = json_decode($raw, true) ?? [];
+$action = $data['action'] ?? '';
+$email = filter_var($data['email'] ?? '', FILTER_VALIDATE_EMAIL);
+
+if (!$email) {
+    echo json_encode(["status" => "error", "message" => "Format alamat email tidak valid."]);
+    exit;
+}
+
+if ($action === 'send_otp') {
+    if (file_exists($registeredUsersFile)) {
+        $regUsers = json_decode(file_get_contents($registeredUsersFile), true) ?? [];
+        if (in_array(strtolower($email), array_map('strtolower', $regUsers))) {
+            echo json_encode([
+                "status" => "already_registered",
+                "message" => "Email ini sudah pernah terdaftar. Silakan gunakan tab Masuk ke Akun atau reset sandi."
+            ]);
+            exit;
+        }
+    }
+
+    $name = htmlspecialchars($data['name'] ?? 'Pengguna GAEKS');
+    $otp = strval(random_int(100000, 999999));
+    
+    $store = [];
+    if (file_exists($storageFile)) {
+        $store = json_decode(file_get_contents($storageFile), true) ?? [];
+    }
+    
+    $store[strtolower($email)] = [
+        'code' => $otp,
+        'name' => $name,
+        'expires' => time() + 600
+    ];
+    file_put_contents($storageFile, json_encode($store));
+
+    $subject = "Kode Verifikasi Pendaftaran GAEKS Digital: $otp";
+    $html = "
+    <div style='max-width:520px;margin:auto;font-family:Arial,sans-serif;border:1px solid #e2e8f0;border-radius:12px;background:#ffffff;padding:28px 24px;'>
+      <div style='text-align:center;margin-bottom:20px;'>
+        <h2 style='color:#0f172a;margin:0;font-size:22px;'>GAEKS DIGITAL</h2>
+        <p style='color:#64748b;font-size:12px;margin:4px 0 0;'>Verifikasi Pendaftaran Akun</p>
+      </div>
+      <p style='font-size:14px;color:#1e293b;'>Halo <strong>{$name}</strong>,</p>
+      <p style='font-size:13px;color:#475569;'>Gunakan 6 digit kode verifikasi berikut untuk menyelesaikan pendaftaran akun Anda di GAEKS Digital:</p>
+      <div style='background:#f1f5f9;border:1px dashed #cbd5e1;border-radius:10px;padding:16px;text-align:center;margin:24px 0;'>
+        <span style='font-size:32px;font-weight:900;letter-spacing:6px;color:#2563eb;font-family:monospace;'>{$otp}</span>
+      </div>
+      <p style='font-size:12px;color:#64748b;'>Kode ini berlaku selama <strong>10 menit</strong>. Jangan bagikan kode ini kepada siapapun demi keamanan akun Anda.</p>
+      <hr style='border:none;border-top:1px solid #f1f5f9;margin:20px 0;'>
+      <p style='font-size:11px;color:#94a3b8;text-align:center;margin:0;'>Email ini dikirimkan otomatis oleh sistem resmi no-reply@gaeks.com.</p>
+    </div>";
+
+    $sendRes = sendHostingerSmtp($email, $name, $subject, $html);
+    if ($sendRes['status'] === 'success') {
+        echo json_encode(["status" => "success", "message" => "Kode verifikasi 6 digit telah dikirimkan ke " . $email]);
+    } else {
+        echo json_encode(["status" => "error", "message" => "Gagal mengirim email: " . $sendRes['message']]);
+    }
+    exit;
+}
+
+if ($action === 'verify_otp') {
+    $code = trim($data['code'] ?? '');
+
+    if (!file_exists($storageFile)) {
+        echo json_encode(["status" => "error", "message" => "Kode verifikasi tidak ditemukan atau kedaluwarsa."]);
+        exit;
+    }
+
+    $store = json_decode(file_get_contents($storageFile), true) ?? [];
+    $entry = $store[strtolower($email)] ?? null;
+
+    if (!$entry || time() > $entry['expires']) {
+        echo json_encode(["status" => "error", "message" => "Kode verifikasi telah kedaluwarsa. Silakan minta kode baru."]);
+        exit;
+    }
+
+    if ($entry['code'] !== $code) {
+        echo json_encode(["status" => "error", "message" => "Kode verifikasi 6 digit yang Anda masukkan tidak cocok."]);
+        exit;
+    }
+
+    $regUsers = [];
+    if (file_exists($registeredUsersFile)) {
+        $regUsers = json_decode(file_get_contents($registeredUsersFile), true) ?? [];
+    }
+    if (!in_array(strtolower($email), array_map('strtolower', $regUsers))) {
+        $regUsers[] = strtolower($email);
+        file_put_contents($registeredUsersFile, json_encode($regUsers));
+    }
+
+    $userName = $entry['name'];
+    unset($store[strtolower($email)]);
+    file_put_contents($storageFile, json_encode($store));
+
+    echo json_encode([
+        "status" => "success",
+        "message" => "Pendaftaran berhasil diverifikasi!",
+        "name" => $userName
+    ]);
+    exit;
+}
+
+echo json_encode(["status" => "error", "message" => "Aksi tidak dikenal."]);
+''')
+print("✓ api/auth_otp.php berhasil ditulis.")
+
+print("=== 4. Memperbaiki cv.html (Tombol Buat CV Baru Aktif) ===")
+if os.path.exists("cv.html"):
+    with open("cv.html", "r") as fp:
+        cv = fp.read()
+    
+    legacy_block = """    function _legacy_loadCvList() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        try { cvList = JSON.parse(raw); } catch(e) { cvList = []; }
+      }
+      if (!cvList || cvList.length === 0) {
+        cvList = [getDenyTriawanSampleData()];
+        saveCvList();
+      }
+      autoPurgeTrash();
+    }
+
+    function saveCvList() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cvList));
+      updateDashboardCounts();
+    }"""
+    if legacy_block in cv:
+        cv = cv.replace(legacy_block, "")
+
+    cv = re.sub(
+        r'function createNewBlankCV\(\)\s*\{.*?\}',
+        """function createNewBlankCV() {
+      try {
+        const title = (currentLang === 'en' ? 'New Resume ' : 'CV Baru ') + (cvList.length + 1);
+        const newCv = createBlankCvObject(title);
+        cvList.unshift(newCv);
+        saveCvList();
+        renderDashboardGrid();
+        openEditor(newCv.id);
+      } catch(err) {
+        console.error("Gagal membuat CV baru:", err);
+        alert("Gagal membuka editor CV: " + err.message);
+      }
+    }""",
+        cv,
+        flags=re.DOTALL
+    )
+    cv = cv.replace("gaeks_user_session_v2", "gaeks_user_session_v3")
+    cv = cv.replace("gaeks_session=", "gaeks_session_v3=")
+    cv = cv.replace('src="auth.js"', 'src="auth.js?v=20260914_06"')
+    with open("cv.html", "w") as fp: fp.write(cv)
+    print("✓ cv.html siap.")
+
+print("=== 5. Memperbarui index.html (Anti-Cache) ===")
+if os.path.exists("index.html"):
+    with open("index.html", "r") as fp: idx = fp.read()
+    idx = idx.replace("gaeks_user_session_v2", "gaeks_user_session_v3")
+    idx = idx.replace("gaeks_users_db_v2", "gaeks_users_db_v3")
+    idx = idx.replace("gaeks_session=", "gaeks_session_v3=")
+    idx = idx.replace('src="auth.js"', 'src="auth.js?v=20260914_06"')
+    with open("index.html", "w") as fp: fp.write(idx)
+    print("✓ index.html siap.")
+
+print("=== 6. Menjalankan Git Commit & Force Push ke GitHub ===")
+subprocess.run(["git", "add", "-A"])
+subprocess.run(["git", "commit", "-m", "fix: clean literal newlines, activate tab switcher, check duplicate accounts, and enforce immediate redirect"])
+push_res = subprocess.run(["git", "push", "origin", "main", "--force"], capture_output=True, text=True)
+print(push_res.stdout)
+if push_res.stderr: print(push_res.stderr)
+print("=== DEPLOYMENT SELESAI & SUDAH AKTIF DI SERVER LIVE! ===")

@@ -13,6 +13,7 @@ require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/mailer.php';
 
 $storageFile = __DIR__ . '/otp_store.json';
+$registeredUsersFile = __DIR__ . '/users_registry.json';
 
 $raw = file_get_contents('php://input');
 $data = json_decode($raw, true) ?? [];
@@ -25,6 +26,17 @@ if (!$email) {
 }
 
 if ($action === 'send_otp') {
+    if (file_exists($registeredUsersFile)) {
+        $regUsers = json_decode(file_get_contents($registeredUsersFile), true) ?? [];
+        if (in_array(strtolower($email), array_map('strtolower', $regUsers))) {
+            echo json_encode([
+                "status" => "already_registered",
+                "message" => "Email ini sudah pernah terdaftar. Silakan gunakan tab Masuk ke Akun atau reset sandi."
+            ]);
+            exit;
+        }
+    }
+
     $name = htmlspecialchars($data['name'] ?? 'Pengguna GAEKS');
     $otp = strval(random_int(100000, 999999));
     
@@ -85,6 +97,15 @@ if ($action === 'verify_otp') {
     if ($entry['code'] !== $code) {
         echo json_encode(["status" => "error", "message" => "Kode verifikasi 6 digit yang Anda masukkan tidak cocok."]);
         exit;
+    }
+
+    $regUsers = [];
+    if (file_exists($registeredUsersFile)) {
+        $regUsers = json_decode(file_get_contents($registeredUsersFile), true) ?? [];
+    }
+    if (!in_array(strtolower($email), array_map('strtolower', $regUsers))) {
+        $regUsers[] = strtolower($email);
+        file_put_contents($registeredUsersFile, json_encode($regUsers));
     }
 
     $userName = $entry['name'];
