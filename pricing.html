@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pilihan Paket & Berlangganan | GAEKS Digital</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="auth.js"></script>
+  <style> body { font-family: 'Plus Jakarta Sans', sans-serif; } </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white">
+
+  <header class="sticky top-0 z-50 w-full backdrop-blur-md bg-slate-950/90 border-b border-slate-800">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="index.html" class="text-xs sm:text-sm font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 py-1 px-2 rounded-lg hover:bg-slate-900 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+          <span>Beranda</span>
+        </a>
+        <span class="text-slate-700">|</span>
+        <a href="cv.html" class="text-xs sm:text-sm font-semibold text-slate-400 hover:text-white transition">ATS CV Studio</a>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <a href="profile.html" id="nav-user-profile-btn" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-300 hover:text-white transition">
+          Profil Saya
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto w-full px-4 sm:px-6 py-12 flex-grow space-y-12">
+    <div class="text-center max-w-2xl mx-auto space-y-3">
+      <span class="text-xs font-bold uppercase tracking-widest text-blue-400 bg-blue-950/80 px-3 py-1 rounded-full border border-blue-800/80">Rencana Berlangganan</span>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Investasi Terbaik untuk Karier Impian Anda</h1>
+      <p class="text-xs sm:text-sm text-slate-400">Pilih paket yang sesuai dengan kebutuhan persiapan seleksi kerja dan eksekutif Anda.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch max-w-4xl mx-auto">
+      <!-- FREE TIER -->
+      <div class="p-8 bg-slate-900/80 rounded-2xl border border-slate-800 flex flex-col justify-between shadow-xl">
+        <div class="space-y-4">
+          <div class="flex justify-between items-center">
+            <h3 class="text-lg font-bold text-white">Free Starter</h3>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400">Gratis Selamanya</span>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <span class="text-3xl font-extrabold text-white">Rp 0</span>
+            <span class="text-xs text-slate-400">/ selamanya</span>
+          </div>
+          <p class="text-xs text-slate-400">Cocok untuk fresh graduate atau pembuatan 1 resume cepat standar dasar.</p>
+          
+          <div class="pt-4 border-t border-slate-800 space-y-3 text-xs text-slate-300">
+            <div class="flex items-center gap-2"><span>✓</span><span>Akses 5 Tema Visual Terbuka</span></div>
+            <div class="flex items-center gap-2"><span>✓</span><span>Pencarian 520+ Profesi ATS</span></div>
+            <div class="flex items-center gap-2"><span>✓</span><span>Format A4 Anti-Terpotong</span></div>
+            <div class="flex items-center gap-2 text-slate-500"><span>✕</span><span>10 Tema Eksklusif Bermain Warna</span></div>
+            <div class="flex items-center gap-2 text-slate-500"><span>✕</span><span>Dukungan Konsultasi Prioritas</span></div>
+          </div>
+        </div>
+
+        <div class="pt-8">
+          <a href="cv.html" class="block w-full py-2.5 text-center text-xs font-bold rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition">
+            Gunakan Versi Gratis
+          </a>
+        </div>
+      </div>
+
+      <!-- PRO TIER -->
+      <div class="p-8 bg-gradient-to-b from-blue-950/40 to-slate-900/90 rounded-2xl border-2 border-blue-500 flex flex-col justify-between shadow-2xl relative">
+        <div class="absolute -top-3.5 right-6 px-3 py-0.5 bg-blue-600 rounded-full text-[10px] font-extrabold text-white uppercase tracking-wider">
+          Paling Populer
+        </div>
+
+        <div class="space-y-4">
+          <div class="flex justify-between items-center">
+            <h3 class="text-lg font-bold text-white">GAEKS PRO Member</h3>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">Akses Penuh</span>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <span class="text-3xl font-extrabold text-white">Rp 49.000</span>
+            <span class="text-xs text-slate-400">/ bulan (atau Rp 299.000/thn)</span>
+          </div>
+          <p class="text-xs text-slate-300">Untuk profesional dan eksekutif yang menginginkan impresi visual berkelas dunia.</p>
+          
+          <div class="pt-4 border-t border-slate-800 space-y-3 text-xs text-slate-200 font-medium">
+            <div class="flex items-center gap-2 text-emerald-400"><span>✓</span><span>Buka Seluruh 15 Tema Visual Eksekutif</span></div>
+            <div class="flex items-center gap-2 text-emerald-400"><span>✓</span><span>Desain Bermain Warna (Ivory, Emerald, Linen, Azure)</span></div>
+            <div class="flex items-center gap-2 text-emerald-400"><span>✓</span><span>Kartu Identitas Dua Warna (Two-Tone Header Card)</span></div>
+            <div class="flex items-center gap-2 text-emerald-400"><span>✓</span><span>Simpan Banyak Resume di Cloud Storage Per Akun</span></div>
+            <div class="flex items-center gap-2 text-emerald-400"><span>✓</span><span>Dukungan WhatsApp Prioritas untuk Konsultasi</span></div>
+          </div>
+        </div>
+
+        <div class="pt-8 space-y-2">
+          <a href="https://wa.me/6285608561745?text=Halo%20Admin%20GAEKS%2C%20saya%20ingin%20upgrade%20ke%20GAEKS%20PRO%20Rp49.000%2Fbulan" target="_blank" class="block w-full py-3 text-center text-xs font-bold rounded-xl bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/30 transition">
+            💬 Upgrade ke GAEKS PRO Sekarang
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
+    <p>&copy; 2026 GAEKS DIGITAL PRODUCT. Standard ATS Resume Engine.</p>
+  </footer>
+</body>
+</html>
