@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GAEKS ATS CV Studio | Executive Resume Builder</title>
+  <title>GAEKS ATS CV Studio | Dashboard & Resume Manager</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -11,7 +11,7 @@
   
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    .cv-sheet-font { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    .cv-sheet-font { font-family: 'Inter', sans-serif; }
     
     :root {
       --primary-color: #1e3a8a;
@@ -27,19 +27,10 @@
       border: 1px solid var(--primary-border) !important;
     }
 
-    /* PREVIEW SCROLLBAR */
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-track { background: #0b0f19; }
-    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
-
-    /* CSS CETAK A4 PRESISI KHUSUS PDF & ATS */
+    /* CSS CETAK A4 PRESISI ATS */
     @media print {
-      body * {
-        visibility: hidden !important;
-      }
-      #cv-preview-sheet, #cv-preview-sheet * {
-        visibility: visible !important;
-      }
+      body * { visibility: hidden !important; }
+      #cv-preview-sheet, #cv-preview-sheet * { visibility: visible !important; }
       #cv-preview-sheet {
         position: absolute !important;
         left: 0 !important;
@@ -54,25 +45,20 @@
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
-      .no-print {
-        display: none !important;
-      }
-      @page {
-        size: A4 portrait;
-        margin: 0;
-      }
+      .no-print { display: none !important; }
+      @page { size: A4 portrait; margin: 0; }
     }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 antialiased min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white">
 
   <!-- NAVBAR UTAMA -->
-  <header class="no-print sticky top-0 z-40 w-full backdrop-blur-md bg-slate-950/90 border-b border-slate-800/80">
+  <header class="no-print sticky top-0 z-40 w-full backdrop-blur-md bg-slate-950/90 border-b border-slate-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <a href="index.html" class="text-xs font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 py-1 px-2 rounded-lg hover:bg-slate-900 transition">
+        <a href="index.html" class="text-xs sm:text-sm font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 py-1 px-2 rounded-lg hover:bg-slate-900 transition">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-          <span class="hidden sm:inline">Kembali</span>
+          <span class="hidden sm:inline">Beranda</span>
         </a>
         <span class="text-slate-700">|</span>
         <div class="flex items-center space-x-2">
@@ -80,14 +66,92 @@
             GAEKS ATS Studio
           </span>
           <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">
-            v2.4 Pro
+            Manager & Editor
           </span>
         </div>
       </div>
 
-      <!-- AKSI KANAN: DUAL LANGUAGE & PRINT -->
-      <div class="flex items-center space-x-2 sm:space-x-3">
-        <!-- TOGGLE BAHASA -->
+      <!-- AKSI KANAN -->
+      <div class="flex items-center space-x-2">
+        <button id="nav-btn-dashboard" onclick="showDashboardView()" class="hidden px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 transition">
+          Daftar CV
+        </button>
+        <button id="nav-btn-print" onclick="window.print()" class="hidden px-3.5 py-1.5 text-xs font-bold rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition shadow-sm flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+          <span>Download PDF</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= VIEW 1: DASHBOARD / LIST CV ================= -->
+  <section id="view-dashboard" class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex-grow">
+    
+    <!-- HEADER DASHBOARD -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 border-b border-slate-800 gap-4">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Manajemen CV & Dokumen ATS</h1>
+        <p class="text-xs sm:text-sm text-slate-400 mt-1">Kelola portofolio CV Anda, duplikasi untuk variasi lamaran, atau buat resume baru.</p>
+      </div>
+      <button onclick="createNewCV()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-500/20 flex items-center space-x-2 transition self-start sm:self-auto">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+        <span>+ Buat CV Baru</span>
+      </button>
+    </div>
+
+    <!-- TABS: SEMUA CV vs TEMPAT SAMPAH (TRASH) -->
+    <div class="flex items-center space-x-2 border-b border-slate-800 mb-6">
+      <button onclick="switchDashboardTab('active')" id="tab-dash-active" class="px-4 py-2 text-xs sm:text-sm font-bold border-b-2 border-blue-500 text-blue-400 transition flex items-center gap-2">
+        <span>Semua CV Aktif</span>
+        <span id="badge-active-count" class="px-1.5 py-0.2 rounded-full text-[10px] bg-blue-950 text-blue-300 border border-blue-800">0</span>
+      </button>
+      <button onclick="switchDashboardTab('trash')" id="tab-dash-trash" class="px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-300 transition flex items-center gap-2">
+        <span>Tempat Sampah (Trash)</span>
+        <span id="badge-trash-count" class="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-900 text-slate-400 border border-slate-800">0</span>
+      </button>
+    </div>
+
+    <!-- NOTIFIKASI TRASH RETENSI 3 HARI -->
+    <div id="trash-notice" class="hidden mb-6 p-3.5 bg-amber-950/40 border border-amber-800/60 rounded-xl text-xs text-amber-300 flex items-center gap-2">
+      <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      <span>Dokumen di tempat sampah tersimpan selama <strong>3 hari</strong> sebelum dihapus secara otomatis dan permanen oleh sistem.</span>
+    </div>
+
+    <!-- GRID DAFTAR CV -->
+    <div id="cv-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+  </section>
+
+  <!-- ================= VIEW 2: CV EDITOR STUDIO ================= -->
+  <section id="view-editor" class="hidden max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 flex-grow">
+    
+    <!-- SUBBAR TOOLBAR -->
+    <div class="no-print flex flex-col md:flex-row md:items-center justify-between pb-5 mb-5 border-b border-slate-800 gap-4">
+      <div class="flex items-center space-x-3">
+        <button onclick="showDashboardView()" class="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-xs flex items-center gap-1">
+          &larr; <span class="hidden sm:inline">Daftar CV</span>
+        </button>
+        <div>
+          <input type="text" id="current-cv-title" onchange="updateCvTitle(this.value)" class="text-sm sm:text-base font-bold text-white bg-transparent border-b border-dashed border-slate-700 hover:border-blue-500 focus:border-blue-500 focus:outline-none px-1 py-0.5" value="CV Tanpa Judul" />
+          <div class="flex items-center space-x-2 text-[11px] text-slate-400 mt-0.5">
+            <span id="save-indicator" class="text-emerald-400 flex items-center gap-1 font-medium">✓ Tersimpan Otomatis</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- UNDO / REDO & LANGUAGE CONTROLS -->
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- UNDO & REDO BUTTONS -->
+        <div class="flex items-center bg-slate-900 p-1 rounded-lg border border-slate-800 space-x-1">
+          <button onclick="undo()" id="btn-undo" title="Undo (Ctrl+Z)" disabled class="p-1.5 rounded text-xs text-slate-500 disabled:opacity-40 hover:text-white transition">
+            ↶ Undo
+          </button>
+          <button onclick="redo()" id="btn-redo" title="Redo (Ctrl+Y)" disabled class="p-1.5 rounded text-xs text-slate-500 disabled:opacity-40 hover:text-white transition">
+            ↷ Redo
+          </button>
+        </div>
+
+        <!-- LANGUAGE SWITCHER -->
         <div class="bg-slate-900 p-1 rounded-lg border border-slate-800 flex items-center text-xs font-bold">
           <button onclick="setLanguage('id')" id="btn-lang-id" class="px-2.5 py-1 rounded bg-blue-600 text-white transition">
             ID 🇮🇩
@@ -97,180 +161,132 @@
           </button>
         </div>
 
-        <!-- DOWNLOAD BUTTON -->
-        <button onclick="window.print()" class="px-4 py-2 text-xs sm:text-sm font-bold rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white transition shadow-lg shadow-blue-500/20 flex items-center space-x-1.5">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-          <span>Download PDF</span>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- WORKSPACE UTAMA -->
-  <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 flex-grow">
-    
-    <!-- SUB-BAR / THEME CONTROLLER -->
-    <div class="no-print flex flex-col md:flex-row md:items-center justify-between pb-5 mb-6 border-b border-slate-800/80 gap-4">
-      <div>
-        <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight">Executive Resume Builder</h1>
-        <p class="text-xs text-slate-400 mt-0.5">Tipografi lembut, posisi kategori teruji ATS, dan dukungan terjemahan otomatis ID/EN.</p>
-      </div>
-
-      <!-- TEMA WARNA & CONTROLLER -->
-      <div class="flex flex-wrap items-center gap-2 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800">
-        <span class="text-[11px] text-slate-400 font-semibold px-2">Tema:</span>
-        
-        <!-- 3 TEMA GRATIS -->
-        <button onclick="setTheme('navy')" id="btn-theme-navy" class="px-2.5 py-1 text-xs font-semibold rounded-md bg-blue-950 text-blue-300 border border-blue-600 transition">
-          Executive Navy
-        </button>
-        <button onclick="setTheme('emerald')" id="btn-theme-emerald" class="px-2.5 py-1 text-xs font-semibold rounded-md bg-slate-950 text-slate-400 border border-slate-800 hover:border-slate-700 transition">
-          Emerald Modern
-        </button>
-        <button onclick="setTheme('slate')" id="btn-theme-slate" class="px-2.5 py-1 text-xs font-semibold rounded-md bg-slate-950 text-slate-400 border border-slate-800 hover:border-slate-700 transition">
-          Slate Minimal
-        </button>
-
-        <!-- TEMA TERKUNCI -->
-        <button onclick="openProModal('Burgundy Luxury')" class="px-2.5 py-1 text-xs font-semibold rounded-md bg-slate-950 text-slate-500 border border-slate-800 hover:border-amber-500/50 hover:text-amber-400 transition flex items-center gap-1">
-          <span>Burgundy</span> <span class="text-[9px] text-amber-400">PRO 🔒</span>
-        </button>
-        <button onclick="openProModal('Nordic Teal')" class="px-2.5 py-1 text-xs font-semibold rounded-md bg-slate-950 text-slate-500 border border-slate-800 hover:border-amber-500/50 hover:text-amber-400 transition flex items-center gap-1">
-          <span>Nordic Teal</span> <span class="text-[9px] text-amber-400">PRO 🔒</span>
-        </button>
+        <!-- THEMES -->
+        <div class="flex items-center space-x-1 bg-slate-900 p-1 rounded-lg border border-slate-800 text-xs">
+          <button onclick="setTheme('navy')" id="btn-theme-navy" class="px-2 py-1 rounded font-semibold bg-blue-950 text-blue-300 border border-blue-600">Navy</button>
+          <button onclick="setTheme('emerald')" id="btn-theme-emerald" class="px-2 py-1 rounded font-semibold text-slate-400 hover:text-white">Emerald</button>
+          <button onclick="setTheme('slate')" id="btn-theme-slate" class="px-2 py-1 rounded font-semibold text-slate-400 hover:text-white">Slate</button>
+        </div>
       </div>
     </div>
 
-    <!-- WORKSPACE 2 KOLOM -->
+    <!-- WORKSPACE TWO COLUMNS -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
       
-      <!-- KOLOM FORMULIR (5 KOLOM) DENGAN TABS INTERAKTIF -->
-      <div class="no-print lg:col-span-5 bg-slate-900/90 rounded-2xl border border-slate-800 p-4 sm:p-5 max-h-[85vh] overflow-y-auto">
+      <!-- FORMULIR INPUT (5 KOLOM) -->
+      <div class="no-print lg:col-span-5 bg-slate-900/90 rounded-2xl border border-slate-800 p-4 sm:p-5 max-h-[85vh] overflow-y-auto space-y-4">
         
-        <!-- TAB SELECTOR -->
-        <div class="flex border-b border-slate-800 mb-5 overflow-x-auto space-x-1 pb-1">
-          <button onclick="switchTab('profile')" id="tab-btn-profile" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 text-white transition whitespace-nowrap">
-            1. Profil & Kontak
-          </button>
-          <button onclick="switchTab('experience')" id="tab-btn-experience" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition whitespace-nowrap">
-            2. Pengalaman
-          </button>
-          <button onclick="switchTab('education')" id="tab-btn-education" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition whitespace-nowrap">
-            3. Pendidikan
-          </button>
-          <button onclick="switchTab('skills')" id="tab-btn-skills" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition whitespace-nowrap">
-            4. Keahlian
-          </button>
+        <!-- TABS FORMULIR -->
+        <div class="flex border-b border-slate-800 pb-2 space-x-1 overflow-x-auto">
+          <button onclick="switchFormTab('profile')" id="ftab-btn-profile" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 text-white whitespace-nowrap">Profil & Kontak</button>
+          <button onclick="switchFormTab('experience')" id="ftab-btn-experience" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap">Pengalaman</button>
+          <button onclick="switchFormTab('education')" id="ftab-btn-education" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap">Pendidikan</button>
+          <button onclick="switchFormTab('skills')" id="ftab-btn-skills" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap">Keahlian</button>
         </div>
 
-        <!-- TAB 1: PROFIL & KONTAK -->
-        <div id="tab-content-profile" class="space-y-4">
-          <div class="flex items-center justify-between pb-2 border-b border-slate-800/80">
-            <span class="text-xs font-bold uppercase tracking-wider text-blue-400">Informasi Pribadi</span>
-            <label class="flex items-center space-x-2 text-xs text-slate-300 cursor-pointer">
-              <input type="checkbox" id="toggle-photo" onchange="togglePhoto()" class="rounded bg-slate-950 border-slate-700 text-blue-600 focus:ring-0" />
+        <!-- FORM: PROFIL -->
+        <div id="ftab-content-profile" class="space-y-3">
+          <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+            <span class="text-xs font-bold uppercase text-blue-400">Data Utama</span>
+            <label class="flex items-center space-x-1.5 text-xs text-slate-300 cursor-pointer">
+              <input type="checkbox" id="input-toggle-photo" onchange="togglePhoto()" class="rounded bg-slate-950 border-slate-700 text-blue-600 focus:ring-0" />
               <span>Gunakan Pas Foto</span>
             </label>
           </div>
 
-          <!-- INPUT FOTO -->
           <div id="photo-box-input" class="hidden p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center gap-3">
             <img id="thumb-photo" class="w-12 h-12 rounded-lg object-cover border border-slate-700" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Preview" />
             <div class="text-xs flex-grow">
-              <span class="block text-slate-300 font-medium mb-1">Unggah Foto Formal</span>
-              <input type="file" id="input-photo-file" accept="image/*" onchange="uploadPhoto(event)" class="text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-blue-950 file:text-blue-300 hover:file:bg-blue-900 cursor-pointer" />
+              <span class="block text-slate-300 font-medium mb-1">Upload Foto Formal</span>
+              <input type="file" id="input-photo-file" accept="image/*" onchange="uploadPhoto(event)" class="text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-blue-950 file:text-blue-300 cursor-pointer" />
             </div>
           </div>
 
-          <div class="space-y-3">
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">Nama Lengkap & Gelar</label>
+            <input type="text" id="input-name" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white" />
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">Target Posisi / Profesi</label>
+            <input type="text" id="input-title" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white" />
+          </div>
+          <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="block text-[11px] text-slate-400 mb-1">Nama Lengkap & Gelar</label>
-              <input type="text" id="input-name" oninput="renderCV()" placeholder="Denyt Yudhanusa, S.T." class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
-            </div>
-            <div>
-              <label class="block text-[11px] text-slate-400 mb-1">Target Posisi / Profesi</label>
-              <input type="text" id="input-title" oninput="renderCV()" placeholder="VP of Logistics Operations" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-              <div>
-                <label class="block text-[11px] text-slate-400 mb-1">Email Profesional</label>
-                <input type="email" id="input-email" oninput="renderCV()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
-              </div>
-              <div>
-                <label class="block text-[11px] text-slate-400 mb-1">No. WhatsApp / HP</label>
-                <input type="text" id="input-phone" oninput="renderCV()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
-              </div>
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-              <div>
-                <label class="block text-[11px] text-slate-400 mb-1">Domisili (Kota, Negara)</label>
-                <input type="text" id="input-location" oninput="renderCV()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
-              </div>
-              <div>
-                <label class="block text-[11px] text-slate-400 mb-1">LinkedIn Username/URL</label>
-                <input type="text" id="input-linkedin" oninput="renderCV()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
-              </div>
+              <label class="block text-[11px] text-slate-400 mb-1">Email</label>
+              <input type="email" id="input-email" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white" />
             </div>
             <div>
-              <label class="block text-[11px] text-slate-400 mb-1">Portfolio / Website</label>
-              <input type="text" id="input-portfolio" oninput="renderCV()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
+              <label class="block text-[11px] text-slate-400 mb-1">No. WhatsApp / HP</label>
+              <input type="text" id="input-phone" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white" />
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-1">Domisili</label>
+              <input type="text" id="input-location" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white" />
             </div>
             <div>
-              <label class="block text-[11px] text-slate-400 mb-1">Ringkasan Profesional (Summary)</label>
-              <textarea id="input-summary" rows="4" oninput="renderCV()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none"></textarea>
+              <label class="block text-[11px] text-slate-400 mb-1">LinkedIn Username/URL</label>
+              <input type="text" id="input-linkedin" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white" />
             </div>
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">Portfolio / Website</label>
+            <input type="text" id="input-portfolio" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white" />
+          </div>
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label class="text-[11px] text-slate-400">Ringkasan Profesional (Summary)</label>
+              <button onclick="aiTranslateField('input-summary')" type="button" class="text-[10px] text-blue-400 hover:text-blue-300 font-semibold">
+                ✨ Format ke English
+              </button>
+            </div>
+            <textarea id="input-summary" rows="4" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white"></textarea>
           </div>
         </div>
 
-        <!-- TAB 2: PENGALAMAN KERJA -->
-        <div id="tab-content-experience" class="hidden space-y-4">
-          <div class="flex items-center justify-between pb-2 border-b border-slate-800/80">
-            <span class="text-xs font-bold uppercase tracking-wider text-blue-400">Riwayat Karir</span>
-            <button onclick="addExperience()" class="text-xs px-2.5 py-1 bg-blue-950 text-blue-300 hover:bg-blue-900 rounded-lg border border-blue-800 transition">
-              + Tambah Posisi
-            </button>
+        <!-- FORM: PENGALAMAN -->
+        <div id="ftab-content-experience" class="hidden space-y-3">
+          <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+            <span class="text-xs font-bold uppercase text-blue-400">Riwayat Karir</span>
+            <button onclick="addExperience()" class="text-xs px-2.5 py-1 bg-blue-950 text-blue-300 hover:bg-blue-900 rounded-lg border border-blue-800">+ Tambah Posisi</button>
           </div>
           <div id="experience-list" class="space-y-3"></div>
         </div>
 
-        <!-- TAB 3: PENDIDIKAN -->
-        <div id="tab-content-education" class="hidden space-y-4">
-          <div class="flex items-center justify-between pb-2 border-b border-slate-800/80">
-            <span class="text-xs font-bold uppercase tracking-wider text-blue-400">Pendidikan Formal</span>
-            <button onclick="addEducation()" class="text-xs px-2.5 py-1 bg-blue-950 text-blue-300 hover:bg-blue-900 rounded-lg border border-blue-800 transition">
-              + Tambah Gelar
-            </button>
+        <!-- FORM: PENDIDIKAN -->
+        <div id="ftab-content-education" class="hidden space-y-3">
+          <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+            <span class="text-xs font-bold uppercase text-blue-400">Pendidikan</span>
+            <button onclick="addEducation()" class="text-xs px-2.5 py-1 bg-blue-950 text-blue-300 hover:bg-blue-900 rounded-lg border border-blue-800">+ Tambah Gelar</button>
           </div>
           <div id="education-list" class="space-y-3"></div>
         </div>
 
-        <!-- TAB 4: KEAHLIAN & TOOLS -->
-        <div id="tab-content-skills" class="hidden space-y-4">
-          <div class="pb-2 border-b border-slate-800/80">
-            <span class="text-xs font-bold uppercase tracking-wider text-blue-400">Kompetensi & Sertifikasi</span>
+        <!-- FORM: KEAHLIAN -->
+        <div id="ftab-content-skills" class="hidden space-y-3">
+          <div class="pb-2 border-b border-slate-800">
+            <span class="text-xs font-bold uppercase text-blue-400">Keahlian & Lisensi</span>
           </div>
-          <div class="space-y-3">
-            <div>
-              <label class="block text-[11px] text-slate-400 mb-1">Keahlian Utama (Pisahkan dengan koma)</label>
-              <textarea id="input-skills" rows="3" oninput="renderCV()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none"></textarea>
-            </div>
-            <div>
-              <label class="block text-[11px] text-slate-400 mb-1">Tools & Software (Pisahkan dengan koma)</label>
-              <input type="text" id="input-tools" oninput="renderCV()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
-            </div>
-            <div>
-              <label class="block text-[11px] text-slate-400 mb-1">Sertifikasi Resmi (Tiap baris 1 sertifikasi)</label>
-              <textarea id="input-certifications" rows="2" oninput="renderCV()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none"></textarea>
-            </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">Keahlian Utama (Pisahkan koma)</label>
+            <textarea id="input-skills" rows="3" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white"></textarea>
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">Tools & Software (Pisahkan koma)</label>
+            <input type="text" id="input-tools" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white" />
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">Sertifikasi & Lisensi (Tiap baris 1 lisensi)</label>
+            <textarea id="input-certifications" rows="2" oninput="handleInputChange()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white"></textarea>
           </div>
         </div>
 
       </div>
 
-      <!-- KOLOM PRATINJAU DOKUMEN ATS (7 KOLOM) -->
+      <!-- PRATINJAU LEMBAR A4 (7 KOLOM) -->
       <div class="lg:col-span-7 flex flex-col items-center">
         
-        <!-- STATUS BAR PRATINJAU -->
         <div class="no-print w-full flex justify-between items-center mb-2 px-2 text-xs text-slate-400">
           <div class="flex items-center space-x-2">
             <span class="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
@@ -278,50 +294,32 @@
             <span id="label-active-lang" class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-blue-950 text-blue-300 border border-blue-800">Bahasa Indonesia</span>
           </div>
           <button onclick="window.print()" class="font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1">
-            <span>Cetak PDF</span> &rarr;
+            <span>Download PDF</span> &rarr;
           </button>
         </div>
 
-        <!-- LEMBAR A4 RESUME (WARNA SOFT DAN TIPOGRAFI STANDAR ATS) -->
         <div id="cv-preview-sheet" class="cv-sheet-font w-full max-w-[780px] bg-white text-slate-800 shadow-2xl rounded-sm p-8 sm:p-12 min-h-[1050px] border border-slate-200">
           
-          <!-- HEADER SECTION (NAMA, KONTAK, DAN FOTO) -->
+          <!-- HEADER SECTION -->
           <div id="cv-header-container" class="pb-4 border-b theme-accent-border flex flex-col sm:flex-row items-center sm:items-start gap-5">
-            
-            <!-- AVATAR FOTO (JIKA DIAKTIFKAN) -->
             <div id="view-photo-wrap" class="hidden shrink-0">
               <img id="view-photo-img" class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover border border-slate-300 shadow-sm" src="" alt="Profile" />
             </div>
 
-            <!-- DETAIL IDENTITAS -->
             <div class="flex-grow text-center sm:text-left">
-              <h1 id="view-name" class="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight theme-accent-text">
-                NAMA LENGKAP
-              </h1>
-              <p id="view-title" class="text-sm sm:text-base font-semibold text-slate-700 mt-0.5 tracking-wide">
-                Target Posisi / Profesi
-              </p>
+              <h1 id="view-name" class="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight theme-accent-text">NAMA LENGKAP</h1>
+              <p id="view-title" class="text-sm sm:text-base font-semibold text-slate-700 mt-0.5 tracking-wide">Target Posisi</p>
 
-              <!-- BARIS KONTAK LEMBUT (SOFT SLATE) -->
               <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-600 mt-2.5 font-medium justify-center sm:justify-start">
-                <span class="inline-flex items-center gap-1">
-                  <svg class="w-3.5 h-3.5 text-slate-500" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
-                  <span id="view-email">email@anda.com</span>
-                </span>
+                <span id="view-email">email@anda.com</span>
                 <span>•</span>
-                <span class="inline-flex items-center gap-1">
-                  <svg class="w-3.5 h-3.5 text-slate-500" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
-                  <span id="view-phone">+62 8xx</span>
-                </span>
+                <span id="view-phone">+62 8xx</span>
                 <span>•</span>
-                <span class="inline-flex items-center gap-1">
-                  <svg class="w-3.5 h-3.5 text-slate-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
-                  <span id="view-location">Kota, Negara</span>
-                </span>
+                <span id="view-location">Kota, Negara</span>
                 <span id="sep-linkedin">•</span>
                 <span id="wrap-linkedin" class="inline-flex items-center gap-1">
                   <span class="font-bold text-slate-500">in</span>
-                  <span id="view-linkedin">linkedin.com/in/...</span>
+                  <span id="view-linkedin">linkedin.com</span>
                 </span>
                 <span id="sep-portfolio">•</span>
                 <span id="wrap-portfolio" class="inline-flex items-center gap-1 text-slate-600 font-medium">
@@ -329,41 +327,32 @@
                 </span>
               </div>
             </div>
-
           </div>
 
-          <!-- KATEGORI 1: SUMMARY -->
+          <!-- SUMMARY -->
           <div class="mt-4">
-            <h2 id="header-summary" class="text-xs font-bold uppercase tracking-wider theme-accent-text border-b theme-accent-border pb-1 mb-1.5">
-              Ringkasan Profesional
-            </h2>
+            <h2 id="header-summary" class="text-xs font-bold uppercase tracking-wider theme-accent-text border-b theme-accent-border pb-1 mb-1.5">Ringkasan Profesional</h2>
             <p id="view-summary" class="text-xs leading-relaxed text-slate-700 text-justify"></p>
           </div>
 
-          <!-- KATEGORI 2: EXPERIENCE -->
+          <!-- EXPERIENCE -->
           <div class="mt-4">
-            <h2 id="header-experience" class="text-xs font-bold uppercase tracking-wider theme-accent-text border-b theme-accent-border pb-1 mb-2">
-              Pengalaman Kerja
-            </h2>
+            <h2 id="header-experience" class="text-xs font-bold uppercase tracking-wider theme-accent-text border-b theme-accent-border pb-1 mb-2">Pengalaman Kerja</h2>
             <div id="view-experience" class="space-y-3"></div>
           </div>
 
-          <!-- KATEGORI 3: EDUCATION -->
+          <!-- EDUCATION -->
           <div class="mt-4">
-            <h2 id="header-education" class="text-xs font-bold uppercase tracking-wider theme-accent-text border-b theme-accent-border pb-1 mb-1.5">
-              Pendidikan Formal
-            </h2>
+            <h2 id="header-education" class="text-xs font-bold uppercase tracking-wider theme-accent-text border-b theme-accent-border pb-1 mb-1.5">Pendidikan Formal</h2>
             <div id="view-education" class="space-y-1.5"></div>
           </div>
 
-          <!-- KATEGORI 4: SKILLS & TOOLS -->
+          <!-- SKILLS -->
           <div class="mt-4">
-            <h2 id="header-skills" class="text-xs font-bold uppercase tracking-wider theme-accent-text border-b theme-accent-border pb-1 mb-2">
-              Keahlian & Penguasaan Teknologi
-            </h2>
+            <h2 id="header-skills" class="text-xs font-bold uppercase tracking-wider theme-accent-text border-b theme-accent-border pb-1 mb-2">Keahlian & Penguasaan Teknologi</h2>
             <div class="space-y-2 text-xs">
               <div>
-                <span id="header-core-skills" class="font-semibold text-slate-800 block mb-1">Keahlian Inti:</span>
+                <span id="header-coreSkills" class="font-semibold text-slate-800 block mb-1">Keahlian Inti:</span>
                 <div id="view-skills-chips" class="flex flex-wrap gap-1.5"></div>
               </div>
               <div id="view-tools-wrapper" class="pt-1">
@@ -373,11 +362,9 @@
             </div>
           </div>
 
-          <!-- KATEGORI 5: CERTIFICATIONS -->
+          <!-- CERTIFICATIONS -->
           <div id="cv-section-certifications" class="mt-4">
-            <h2 id="header-certifications" class="text-xs font-bold uppercase tracking-wider theme-accent-text border-b theme-accent-border pb-1 mb-1.5">
-              Sertifikasi & Lisensi
-            </h2>
+            <h2 id="header-certifications" class="text-xs font-bold uppercase tracking-wider theme-accent-text border-b theme-accent-border pb-1 mb-1.5">Sertifikasi & Lisensi</h2>
             <div id="view-certifications" class="text-xs leading-relaxed text-slate-700"></div>
           </div>
 
@@ -385,36 +372,15 @@
       </div>
 
     </div>
-  </main>
-
-  <!-- MODAL UPGRADE PRO -->
-  <div id="proModal" class="no-print fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm hidden">
-    <div class="bg-slate-900 border border-amber-500/40 rounded-2xl w-full max-w-md p-6 m-4 shadow-2xl relative text-center">
-      <div class="w-12 h-12 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center justify-center mx-auto mb-3 text-xl">
-        🔒
-      </div>
-      <h3 class="text-xl font-bold text-white tracking-tight">Tema Eksklusif PRO</h3>
-      <p id="proModalDesc" class="text-xs text-slate-300 mt-2 leading-relaxed">
-        Buka akses ke tema premium ini dengan paket langganan PRO GAEKS Digital Product.
-      </p>
-      <div class="flex gap-2 mt-6">
-        <button onclick="closeProModal()" class="w-1/2 py-2.5 rounded-lg border border-slate-700 text-slate-300 text-xs font-semibold hover:bg-slate-800 transition">
-          Tutup
-        </button>
-        <a href="https://wa.me/?text=Halo%20Admin%20Gaeks,%20saya%20ingin%20upgrade%20ke%20paket%20PRO" target="_blank" class="w-1/2 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition flex items-center justify-center">
-          Upgrade Sekarang
-        </a>
-      </div>
-    </div>
-  </div>
+  </section>
 
   <footer class="no-print border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
-    <p>&copy; 2026 GAEKS DIGITAL PRODUCT. Standar Format ATS Internasional.</p>
+    <p>&copy; 2026 GAEKS DIGITAL PRODUCT. Standard ATS Resume Engine.</p>
   </footer>
 
-  <!-- SCRIPT LOGIKA APLIKASI & DUAL-LANGUAGE TRANSLATOR -->
+  <!-- SCRIPT LOGIKA APLIKASI -->
   <script>
-    // THEMES PRESETS
+    // THEMES
     const themePacks = {
       navy: { primary: '#1e3a8a', light: '#eff6ff', border: '#dbeafe' },
       emerald: { primary: '#047857', light: '#ecfdf5', border: '#a7f3d0' },
@@ -422,7 +388,7 @@
     };
     let activeTheme = 'navy';
 
-    // DICTIONARY DUAL BAHASA
+    // DUAL LANGUAGE DICTIONARY
     const i18n = {
       id: {
         summary: "Ringkasan Profesional",
@@ -449,39 +415,467 @@
     };
     let currentLang = 'id';
 
-    // SMART VOCABULARY TRANSLATOR (ID -> EN)
-    const autoTranslateDict = [
-      { id: /Sekarang/gi, en: "Present" },
-      { id: /Memimpin/gi, en: "Spearheaded and directed" },
-      { id: /Mengembangkan/gi, en: "Developed and implemented" },
-      { id: /Meningkatkan/gi, en: "Increased and optimized" },
-      { id: /Mengurangi/gi, en: "Reduced" },
-      { id: /Mengelola/gi, en: "Managed and oversaw" },
-      { id: /Menegosiasikan/gi, en: "Negotiated" },
-      { id: /Mengkoordinasikan/gi, en: "Coordinated" },
-      { id: /Mengawasi/gi, en: "Supervised" },
-      { id: /Sarjana Teknik Industri/gi, en: "Bachelor of Industrial Engineering" },
-      { id: /Sarjana Ekonomi/gi, en: "Bachelor of Economics" },
-      { id: /Universitas Indonesia/gi, en: "University of Indonesia" },
-      { id: /Universitas/gi, en: "University" },
-      { id: /per kuartal/gi, en: "per quarter" },
-      { id: /per tahun/gi, en: "annually" },
-      { id: /setara/gi, en: "equivalent to" },
-      { id: /Kepabeanan/gi, en: "Customs Clearance" },
-      { id: /ekspor-impor/gi, en: "export-import" },
-      { id: /kargo/gi, en: "cargo" },
-      { id: /rantai pasok/gi, en: "supply chain" },
-      { id: /armada/gi, en: "fleet" },
-      { id: /pergudangan/gi, en: "warehousing" }
+    // KAMUS EKSTENSIF TERJEMAHAN ID -> EN
+    const advancedTranslationDict = [
+      { id: /\bSekarang\b/gi, en: "Present" },
+      { id: /\bSaat Ini\b/gi, en: "Present" },
+      { id: /\bJanuari\b/gi, en: "January" },
+      { id: /\bFebruari\b/gi, en: "February" },
+      { id: /\bMaret\b/gi, en: "March" },
+      { id: /\bMei\b/gi, en: "May" },
+      { id: /\bJuni\b/gi, en: "June" },
+      { id: /\bJuli\b/gi, en: "July" },
+      { id: /\bAgustus\b/gi, en: "August" },
+      { id: /\bOktober\b/gi, en: "October" },
+      { id: /\bDesember\b/gi, en: "December" },
+      { id: /\bMemimpin\b/gi, en: "Spearheaded and directed" },
+      { id: /\bMengembangkan\b/gi, en: "Developed and engineered" },
+      { id: /\bMeningkatkan\b/gi, en: "Increased and enhanced" },
+      { id: /\bMengurangi\b/gi, en: "Reduced" },
+      { id: /\bMengelola\b/gi, en: "Managed and orchestrated" },
+      { id: /\bMenegosiasikan\b/gi, en: "Negotiated" },
+      { id: /\bMengkoordinasikan\b/gi, en: "Coordinated" },
+      { id: /\bMengawasi\b/gi, en: "Supervised and audited" },
+      { id: /\bMenerapkan\b/gi, en: "Implemented" },
+      { id: /\bMembangun\b/gi, en: "Built and structured" },
+      { id: /\bMerancang\b/gi, en: "Architected and designed" },
+      { id: /\bMengeksekusi\b/gi, en: "Executed" },
+      { id: /\bSarjana Teknik Industri\b/gi, en: "Bachelor of Industrial Engineering" },
+      { id: /\bSarjana Teknik\b/gi, en: "Bachelor of Engineering" },
+      { id: /\bSarjana Ekonomi\b/gi, en: "Bachelor of Economics" },
+      { id: /\bSarjana Komputer\b/gi, en: "Bachelor of Computer Science" },
+      { id: /\bUniversitas Indonesia\b/gi, en: "University of Indonesia" },
+      { id: /\bUniversitas\b/gi, en: "University" },
+      { id: /\bFakultas\b/gi, en: "Faculty of" },
+      { id: /\bJurusan\b/gi, en: "Department of" },
+      { id: /\bper kuartal\b/gi, en: "per quarter" },
+      { id: /\bper tahun\b/gi, en: "annually" },
+      { id: /\bsetara\b/gi, en: "equivalent to" },
+      { id: /\bKepabeanan\b/gi, en: "Customs Clearance" },
+      { id: /\bekspor-impor\b/gi, en: "export-import" },
+      { id: /\bekspor impor\b/gi, en: "export and import" },
+      { id: /\bkargo\b/gi, en: "cargo" },
+      { id: /\brantai pasok\b/gi, en: "supply chain" },
+      { id: /\barmada\b/gi, en: "fleet" },
+      { id: /\bpergudangan\b/gi, en: "warehousing" },
+      { id: /\bdengan\b/gi, en: "with" },
+      { id: /\buntuk\b/gi, en: "for" },
+      { id: /\bdan\b/gi, en: "and" },
+      { id: /\bserta\b/gi, en: "as well as" },
+      { id: /\bdalam\b/gi, en: "in" },
+      { id: /\bdari\b/gi, en: "from" },
+      { id: /\bke\b/gi, en: "to" },
+      { id: /\bhingga\b/gi, en: "up to" },
+      { id: /\bsebesar\b/gi, en: "by" },
+      { id: /\bsenilai\b/gi, en: "valued at" }
     ];
 
     function applyTranslation(text) {
       if (!text || currentLang === 'id') return text;
-      let translated = text;
-      autoTranslateDict.forEach(item => {
-        translated = translated.replace(item.id, item.en);
+      let res = text;
+      advancedTranslationDict.forEach(dict => {
+        res = res.replace(dict.id, dict.en);
       });
-      return translated;
+      return res;
+    }
+
+    // STATE DATA CV
+    let cvList = [];
+    let currentCvId = null;
+    let currentDashboardTab = 'active'; // 'active' or 'trash'
+
+    // UNDO / REDO STACK
+    let historyStack = [];
+    let historyIndex = -1;
+    const MAX_HISTORY = 30;
+
+    // LOCAL STORAGE KEYS
+    const STORAGE_KEY = 'gaeks_cv_master_list';
+
+    // 1. DASHBOARD CONTROLLER
+    function loadCvList() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        try {
+          cvList = JSON.parse(raw);
+        } catch(e) { cvList = []; }
+      } else {
+        // Contoh awal jika kosong
+        cvList = [createDefaultCvObject("CV Lead Operations (Eksekutif)")];
+        saveCvList();
+      }
+      autoPurgeTrash();
+    }
+
+    function saveCvList() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cvList));
+      updateDashboardCounts();
+    }
+
+    function autoPurgeTrash() {
+      const now = Date.now();
+      const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+      let changed = false;
+      cvList = cvList.filter(cv => {
+        if (cv.deletedAt && (now - cv.deletedAt > THREE_DAYS_MS)) {
+          changed = true;
+          return false;
+        }
+        return true;
+      });
+      if (changed) saveCvList();
+    }
+
+    function updateDashboardCounts() {
+      const activeCount = cvList.filter(c => !c.deletedAt).length;
+      const trashCount = cvList.filter(c => c.deletedAt).length;
+      document.getElementById('badge-active-count').innerText = activeCount;
+      document.getElementById('badge-trash-count').innerText = trashCount;
+    }
+
+    function showDashboardView() {
+      document.getElementById('view-dashboard').classList.remove('hidden');
+      document.getElementById('view-editor').classList.add('hidden');
+      document.getElementById('nav-btn-dashboard').classList.add('hidden');
+      document.getElementById('nav-btn-print').classList.add('hidden');
+      renderDashboardGrid();
+    }
+
+    function switchDashboardTab(tab) {
+      currentDashboardTab = tab;
+      const tabActive = document.getElementById('tab-dash-active');
+      const tabTrash = document.getElementById('tab-dash-trash');
+      const trashNotice = document.getElementById('trash-notice');
+
+      if (tab === 'trash') {
+        tabTrash.className = "px-4 py-2 text-xs sm:text-sm font-bold border-b-2 border-amber-500 text-amber-400 transition flex items-center gap-2";
+        tabActive.className = "px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-300 transition flex items-center gap-2";
+        trashNotice.classList.remove('hidden');
+      } else {
+        tabActive.className = "px-4 py-2 text-xs sm:text-sm font-bold border-b-2 border-blue-500 text-blue-400 transition flex items-center gap-2";
+        tabTrash.className = "px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-300 transition flex items-center gap-2";
+        trashNotice.classList.add('hidden');
+      }
+      renderDashboardGrid();
+    }
+
+    function renderDashboardGrid() {
+      const container = document.getElementById('cv-grid-container');
+      container.innerHTML = '';
+
+      const items = cvList.filter(c => currentDashboardTab === 'trash' ? c.deletedAt : !c.deletedAt);
+
+      if (items.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-12 text-center text-slate-500 text-sm">
+            ${currentDashboardTab === 'trash' ? 'Tempat sampah kosong.' : 'Belum ada CV yang dibuat. Klik "+ Buat CV Baru" di atas.'}
+          </div>
+        `;
+        return;
+      }
+
+      const now = Date.now();
+      const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+      items.forEach(cv => {
+        const d = cv.data;
+        let trashMeta = '';
+        if (cv.deletedAt) {
+          const daysLeft = Math.max(0, 3 - Math.floor((now - cv.deletedAt) / ONE_DAY_MS));
+          trashMeta = `<span class="text-[11px] text-amber-400 font-medium">Sisa ${daysLeft} hari lagi di sampah</span>`;
+        }
+
+        container.innerHTML += `
+          <div class="p-5 bg-slate-900/90 rounded-2xl border border-slate-800 hover:border-slate-700 transition flex flex-col justify-between shadow-lg">
+            <div>
+              <div class="flex items-start justify-between gap-2 mb-2">
+                <h3 class="font-bold text-white text-base truncate">${cv.title || 'CV Tanpa Judul'}</h3>
+                <span class="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">ATS Ready</span>
+              </div>
+              <p class="text-xs text-slate-400 font-medium">${d.title || 'Target Posisi Belum Diisi'}</p>
+              <div class="mt-4 pt-3 border-t border-slate-800/80 text-[11px] text-slate-500 space-y-1">
+                <div>Diperbarui: ${new Date(cv.updatedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
+                ${trashMeta}
+              </div>
+            </div>
+
+            <div class="mt-5 pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
+              ${currentDashboardTab === 'active' ? `
+                <button onclick="openEditor('${cv.id}')" class="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition">
+                  Buka & Edit
+                </button>
+                <div class="flex items-center space-x-1">
+                  <button onclick="duplicateCV('${cv.id}')" title="Duplikasi CV" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition">
+                    Duplikat
+                  </button>
+                  <button onclick="moveToTrash('${cv.id}')" title="Pindahkan ke Sampah" class="p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-900/50 text-xs transition">
+                    Hapus
+                  </button>
+                </div>
+              ` : `
+                <button onclick="restoreFromTrash('${cv.id}')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition">
+                  Pulihkan
+                </button>
+                <button onclick="deletePermanent('${cv.id}')" class="px-3 py-1.5 rounded-lg bg-rose-900/60 hover:bg-rose-800 text-white text-xs font-semibold transition">
+                  Hapus Permanen
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function createDefaultCvObject(title = "CV Baru") {
+      return {
+        id: 'cv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+        title: title,
+        updatedAt: Date.now(),
+        deletedAt: null,
+        data: {
+          name: "Denyt Yudhanusa, S.T.",
+          title: "Lead Operations & Logistics Ecosystem",
+          email: "contact@gaeks.com",
+          phone: "+62 812-3456-7890",
+          location: "Jakarta, Indonesia",
+          linkedin: "gaeks-executive",
+          portfolio: "gdp.gaeks.com",
+          summary: "Praktisi senior dengan 7+ tahun pengalaman dalam operasional freight forwarding internasional, kepabeanan terintegrasi, dan digitalisasi ERP rantai pasok. Terbukti berhasil memangkas biaya logistik operasional sebesar 18% per tahun, meningkatkan SLA fulfillment hingga 98.6%, serta mengelola transaksi kargo ekspor-impor senilai lebih dari Rp 45 Miliar.",
+          skills: "Freight Forwarding, Supply Chain, Customs Clearance, ERP Systems, Sea & Air Cargo, Negosiasi Kontrak",
+          tools: "Dolibarr ERP, SAP, Excel Advanced, SQL, Cloudflare",
+          certifications: "Sertifikasi Ahli Kepabeanan (PPJK)\nCertified Supply Chain Professional (CSCP)",
+          isPhotoEnabled: false,
+          theme: 'navy',
+          experiences: [
+            {
+              role: "Head of Freight Forwarding Operations",
+              company: "GAEKS FREIGHT INTERNATIONAL",
+              period: "2022 - Sekarang",
+              location: "Jakarta",
+              desc: "Memimpin divisi kepabeanan dan operasional ekspor-impor laut (FCL/LCL) serta udara dengan volume lebih dari 850 TEUs per kuartal.\nMenegosiasikan kontrak tarif langsung dengan 5 shipping lines global, menghemat biaya kargo sebesar 18% (setara Rp 1.4 Miliar).\nMengurangi dwell time kepabeanan dari 4.2 hari menjadi 2.1 hari melalui digitalisasi sistem."
+            }
+          ],
+          educations: [
+            {
+              degree: "Sarjana Teknik Industri (S.T.)",
+              school: "Universitas Indonesia",
+              period: "2015 - 2019",
+              details: "IPK 3.84 / 4.00 (Cum Laude)"
+            }
+          ]
+        }
+      };
+    }
+
+    function createNewCV() {
+      const newCv = createDefaultCvObject("CV Saya " + (cvList.length + 1));
+      cvList.unshift(newCv);
+      saveCvList();
+      openEditor(newCv.id);
+    }
+
+    function duplicateCV(id) {
+      const source = cvList.find(c => c.id === id);
+      if (!source) return;
+      const clone = JSON.parse(JSON.stringify(source));
+      clone.id = 'cv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+      clone.title = source.title + " (Salinan)";
+      clone.updatedAt = Date.now();
+      clone.deletedAt = null;
+      cvList.unshift(clone);
+      saveCvList();
+      renderDashboardGrid();
+    }
+
+    function moveToTrash(id) {
+      const target = cvList.find(c => c.id === id);
+      if (!target) return;
+      target.deletedAt = Date.now();
+      saveCvList();
+      renderDashboardGrid();
+    }
+
+    function restoreFromTrash(id) {
+      const target = cvList.find(c => c.id === id);
+      if (!target) return;
+      target.deletedAt = null;
+      saveCvList();
+      renderDashboardGrid();
+    }
+
+    function deletePermanent(id) {
+      if (!confirm("Apakah Anda yakin ingin menghapus CV ini secara permanen?")) return;
+      cvList = cvList.filter(c => c.id !== id);
+      saveCvList();
+      renderDashboardGrid();
+    }
+
+    // 2. EDITOR CONTROLLER & UNDO/REDO ENGINE
+    function openEditor(id) {
+      currentCvId = id;
+      const cv = cvList.find(c => c.id === id);
+      if (!cv) return;
+
+      document.getElementById('view-dashboard').classList.add('hidden');
+      document.getElementById('view-editor').classList.remove('hidden');
+      document.getElementById('nav-btn-dashboard').classList.remove('hidden');
+      document.getElementById('nav-btn-print').classList.remove('hidden');
+
+      document.getElementById('current-cv-title').value = cv.title;
+
+      // Inisialisasi Form dari Data
+      loadFormData(cv.data);
+
+      // Inisialisasi Undo/Redo Stack
+      historyStack = [JSON.stringify(cv.data)];
+      historyIndex = 0;
+      updateUndoRedoButtons();
+
+      renderCV();
+    }
+
+    function updateCvTitle(newTitle) {
+      const cv = cvList.find(c => c.id === currentCvId);
+      if (cv) {
+        cv.title = newTitle;
+        cv.updatedAt = Date.now();
+        saveCvList();
+      }
+    }
+
+    function loadFormData(d) {
+      document.getElementById('input-name').value = d.name || '';
+      document.getElementById('input-title').value = d.title || '';
+      document.getElementById('input-email').value = d.email || '';
+      document.getElementById('input-phone').value = d.phone || '';
+      document.getElementById('input-location').value = d.location || '';
+      document.getElementById('input-linkedin').value = d.linkedin || '';
+      document.getElementById('input-portfolio').value = d.portfolio || '';
+      document.getElementById('input-summary').value = d.summary || '';
+      document.getElementById('input-skills').value = d.skills || '';
+      document.getElementById('input-tools').value = d.tools || '';
+      document.getElementById('input-certifications').value = d.certifications || '';
+      document.getElementById('input-toggle-photo').checked = !!d.isPhotoEnabled;
+      
+      togglePhoto();
+      renderFormLists(d.experiences || [], d.educations || []);
+      setTheme(d.theme || 'navy');
+    }
+
+    function extractFormData() {
+      const cv = cvList.find(c => c.id === currentCvId);
+      const exps = [];
+      document.querySelectorAll('.exp-item').forEach(el => {
+        exps.push({
+          role: el.querySelector('.exp-role').value,
+          company: el.querySelector('.exp-company').value,
+          period: el.querySelector('.exp-period').value,
+          location: el.querySelector('.exp-loc').value,
+          desc: el.querySelector('.exp-desc').value
+        });
+      });
+
+      const edus = [];
+      document.querySelectorAll('.edu-item').forEach(el => {
+        edus.push({
+          degree: el.querySelector('.edu-deg').value,
+          school: el.querySelector('.edu-school').value,
+          period: el.querySelector('.edu-period').value,
+          details: el.querySelector('.edu-det').value
+        });
+      });
+
+      return {
+        name: document.getElementById('input-name').value,
+        title: document.getElementById('input-title').value,
+        email: document.getElementById('input-email').value,
+        phone: document.getElementById('input-phone').value,
+        location: document.getElementById('input-location').value,
+        linkedin: document.getElementById('input-linkedin').value,
+        portfolio: document.getElementById('input-portfolio').value,
+        summary: document.getElementById('input-summary').value,
+        skills: document.getElementById('input-skills').value,
+        tools: document.getElementById('input-tools').value,
+        certifications: document.getElementById('input-certifications').value,
+        isPhotoEnabled: document.getElementById('input-toggle-photo').checked,
+        theme: activeTheme,
+        experiences: exps,
+        educations: edus
+      };
+    }
+
+    function handleInputChange() {
+      const data = extractFormData();
+      
+      // Auto-save data ke master list
+      const cv = cvList.find(c => c.id === currentCvId);
+      if (cv) {
+        cv.data = data;
+        cv.updatedAt = Date.now();
+        saveCvList();
+      }
+
+      // Record snapshot ke Undo Stack (Debounced / check equality)
+      const currentJson = JSON.stringify(data);
+      if (historyStack[historyIndex] !== currentJson) {
+        historyStack = historyStack.slice(0, historyIndex + 1);
+        historyStack.push(currentJson);
+        if (historyStack.length > MAX_HISTORY) historyStack.shift();
+        historyIndex = historyStack.length - 1;
+        updateUndoRedoButtons();
+      }
+
+      renderCV();
+    }
+
+    function undo() {
+      if (historyIndex > 0) {
+        historyIndex--;
+        const data = JSON.parse(historyStack[historyIndex]);
+        loadFormData(data);
+        const cv = cvList.find(c => c.id === currentCvId);
+        if (cv) { cv.data = data; cv.updatedAt = Date.now(); saveCvList(); }
+        updateUndoRedoButtons();
+        renderCV();
+      }
+    }
+
+    function redo() {
+      if (historyIndex < historyStack.length - 1) {
+        historyIndex++;
+        const data = JSON.parse(historyStack[historyIndex]);
+        loadFormData(data);
+        const cv = cvList.find(c => c.id === currentCvId);
+        if (cv) { cv.data = data; cv.updatedAt = Date.now(); saveCvList(); }
+        updateUndoRedoButtons();
+        renderCV();
+      }
+    }
+
+    function updateUndoRedoButtons() {
+      const btnUndo = document.getElementById('btn-undo');
+      const btnRedo = document.getElementById('btn-redo');
+      btnUndo.disabled = (historyIndex <= 0);
+      btnRedo.disabled = (historyIndex >= historyStack.length - 1);
+    }
+
+    // KEYBOARD SHORTCUTS (CTRL+Z, CTRL+Y)
+    window.addEventListener('keydown', function(e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+        e.preventDefault();
+        undo();
+      } else if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
+        e.preventDefault();
+        redo();
+      }
+    });
+
+    // AI TRANSLATE HELPER FIELD
+    function aiTranslateField(elementId) {
+      const el = document.getElementById(elementId);
+      if (!el || !el.value.trim()) return;
+      el.value = applyTranslation(el.value);
+      handleInputChange();
     }
 
     function setLanguage(lang) {
@@ -497,7 +891,6 @@
         btnEn.className = "px-2.5 py-1 rounded text-slate-400 hover:text-white transition";
       }
 
-      // Update Section Headings
       const labels = i18n[lang];
       document.getElementById('header-summary').innerText = labels.summary;
       document.getElementById('header-experience').innerText = labels.experience;
@@ -511,17 +904,16 @@
       renderCV();
     }
 
-    // TAB SYSTEM
-    function switchTab(tab) {
+    function switchFormTab(tab) {
       ['profile', 'experience', 'education', 'skills'].forEach(t => {
-        const content = document.getElementById(`tab-content-${t}`);
-        const btn = document.getElementById(`tab-btn-${t}`);
+        const content = document.getElementById(`ftab-content-${t}`);
+        const btn = document.getElementById(`ftab-btn-${t}`);
         if (t === tab) {
           content.classList.remove('hidden');
-          btn.className = "px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 text-white transition whitespace-nowrap";
+          btn.className = "px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 text-white whitespace-nowrap";
         } else {
           content.classList.add('hidden');
-          btn.className = "px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition whitespace-nowrap";
+          btn.className = "px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white whitespace-nowrap";
         }
       });
     }
@@ -538,34 +930,18 @@
         const b = document.getElementById('btn-theme-' + t);
         if (b) {
           b.className = (t === name) 
-            ? "px-2.5 py-1 text-xs font-semibold rounded-md bg-blue-950 text-blue-300 border border-blue-600 transition"
-            : "px-2.5 py-1 text-xs font-semibold rounded-md bg-slate-950 text-slate-400 border border-slate-800 hover:border-slate-700 transition";
+            ? "px-2 py-1 rounded font-semibold bg-blue-950 text-blue-300 border border-blue-600"
+            : "px-2 py-1 rounded font-semibold text-slate-400 hover:text-white";
         }
       });
       renderCV();
     }
 
-    function openProModal(name) {
-      document.getElementById('proModalDesc').innerText = `Tema "${name}" terkunci. Dapatkan akses ke semua tema eksekutif dengan langganan PRO GAEKS.`;
-      document.getElementById('proModal').classList.remove('hidden');
-    }
-
-    function closeProModal() {
-      document.getElementById('proModal').classList.add('hidden');
-    }
-
-    // STATE DATA
-    let experiences = [];
-    let educations = [];
-    let hasPhoto = false;
-    let photoData = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80";
-
     function togglePhoto() {
-      hasPhoto = document.getElementById('toggle-photo').checked;
+      const enabled = document.getElementById('input-toggle-photo').checked;
       const boxInput = document.getElementById('photo-box-input');
       const viewWrap = document.getElementById('view-photo-wrap');
-
-      if (hasPhoto) {
+      if (enabled) {
         boxInput.classList.remove('hidden');
         viewWrap.classList.remove('hidden');
       } else {
@@ -575,79 +951,63 @@
       renderCV();
     }
 
-    function uploadPhoto(event) {
-      const file = event.target.files[0];
+    let photoData = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80";
+    function uploadPhoto(e) {
+      const file = e.target.files[0];
       if (!file) return;
       const reader = new FileReader();
-      reader.onload = function(e) {
-        photoData = e.target.result;
+      reader.onload = function(evt) {
+        photoData = evt.target.result;
         document.getElementById('thumb-photo').src = photoData;
         document.getElementById('view-photo-img').src = photoData;
       };
       reader.readAsDataURL(file);
     }
 
-    function addExperience(data = { role: '', company: '', period: '', location: '', desc: '' }) {
-      experiences.push(data);
-      renderFormLists();
-      renderCV();
+    function addExperience(item = { role: '', company: '', period: '', location: '', desc: '' }) {
+      const list = document.getElementById('experience-list');
+      const div = document.createElement('div');
+      div.className = "exp-item p-3 bg-slate-950 rounded-xl border border-slate-800 relative space-y-2";
+      div.innerHTML = `
+        <button onclick="this.parentElement.remove(); handleInputChange();" class="absolute top-2 right-2 text-xs text-rose-400">✕ Hapus</button>
+        <div class="grid grid-cols-2 gap-2">
+          <input type="text" placeholder="Jabatan" value="${item.role}" oninput="handleInputChange()" class="exp-role px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white" />
+          <input type="text" placeholder="Perusahaan" value="${item.company}" oninput="handleInputChange()" class="exp-company px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white" />
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <input type="text" placeholder="Periode" value="${item.period}" oninput="handleInputChange()" class="exp-period px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white" />
+          <input type="text" placeholder="Lokasi" value="${item.location}" oninput="handleInputChange()" class="exp-loc px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white" />
+        </div>
+        <textarea rows="3" placeholder="Pencapaian (tuliskan poin & angka)" oninput="handleInputChange()" class="exp-desc w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white">${item.desc}</textarea>
+      `;
+      list.appendChild(div);
+      handleInputChange();
     }
 
-    function removeExperience(index) {
-      experiences.splice(index, 1);
-      renderFormLists();
-      renderCV();
+    function addEducation(item = { degree: '', school: '', period: '', details: '' }) {
+      const list = document.getElementById('education-list');
+      const div = document.createElement('div');
+      div.className = "edu-item p-3 bg-slate-950 rounded-xl border border-slate-800 relative space-y-2";
+      div.innerHTML = `
+        <button onclick="this.parentElement.remove(); handleInputChange();" class="absolute top-2 right-2 text-xs text-rose-400">✕ Hapus</button>
+        <div class="grid grid-cols-2 gap-2">
+          <input type="text" placeholder="Gelar" value="${item.degree}" oninput="handleInputChange()" class="edu-deg px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white" />
+          <input type="text" placeholder="Kampus" value="${item.school}" oninput="handleInputChange()" class="edu-school px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white" />
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <input type="text" placeholder="Tahun" value="${item.period}" oninput="handleInputChange()" class="edu-period px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white" />
+          <input type="text" placeholder="IPK" value="${item.details}" oninput="handleInputChange()" class="edu-det px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white" />
+        </div>
+      `;
+      list.appendChild(div);
+      handleInputChange();
     }
 
-    function addEducation(data = { degree: '', school: '', period: '', details: '' }) {
-      educations.push(data);
-      renderFormLists();
-      renderCV();
-    }
-
-    function removeEducation(index) {
-      educations.splice(index, 1);
-      renderFormLists();
-      renderCV();
-    }
-
-    function renderFormLists() {
-      const expContainer = document.getElementById('experience-list');
-      expContainer.innerHTML = '';
-      experiences.forEach((exp, i) => {
-        expContainer.innerHTML += `
-          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 relative space-y-2">
-            <button onclick="removeExperience(${i})" class="absolute top-2 right-2 text-xs text-rose-400">✕ Hapus</button>
-            <div class="grid grid-cols-2 gap-2">
-              <input type="text" placeholder="Jabatan" value="${exp.role}" oninput="experiences[${i}].role = this.value; renderCV()" class="px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white" />
-              <input type="text" placeholder="Perusahaan" value="${exp.company}" oninput="experiences[${i}].company = this.value; renderCV()" class="px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white" />
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-              <input type="text" placeholder="Periode (mis: 2022 - Sekarang)" value="${exp.period}" oninput="experiences[${i}].period = this.value; renderCV()" class="px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white" />
-              <input type="text" placeholder="Lokasi" value="${exp.location}" oninput="experiences[${i}].location = this.value; renderCV()" class="px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white" />
-            </div>
-            <textarea rows="3" placeholder="Pencapaian & angka kinerja" oninput="experiences[${i}].desc = this.value; renderCV()" class="w-full px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white">${exp.desc}</textarea>
-          </div>
-        `;
-      });
-
-      const eduContainer = document.getElementById('education-list');
-      eduContainer.innerHTML = '';
-      educations.forEach((edu, i) => {
-        eduContainer.innerHTML += `
-          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 relative space-y-2">
-            <button onclick="removeEducation(${i})" class="absolute top-2 right-2 text-xs text-rose-400">✕ Hapus</button>
-            <div class="grid grid-cols-2 gap-2">
-              <input type="text" placeholder="Gelar" value="${edu.degree}" oninput="educations[${i}].degree = this.value; renderCV()" class="px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white" />
-              <input type="text" placeholder="Kampus" value="${edu.school}" oninput="educations[${i}].school = this.value; renderCV()" class="px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white" />
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-              <input type="text" placeholder="Tahun" value="${edu.period}" oninput="educations[${i}].period = this.value; renderCV()" class="px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white" />
-              <input type="text" placeholder="IPK / Keterangan" value="${edu.details}" oninput="educations[${i}].details = this.value; renderCV()" class="px-2.5 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded text-white" />
-            </div>
-          </div>
-        `;
-      });
+    function renderFormLists(exps, edus) {
+      document.getElementById('experience-list').innerHTML = '';
+      exps.forEach(exp => addExperience(exp));
+      document.getElementById('education-list').innerHTML = '';
+      edus.forEach(edu => addEducation(edu));
     }
 
     function highlightNumbers(text) {
@@ -677,11 +1037,17 @@
       const rawSummary = document.getElementById('input-summary').value;
       document.getElementById('view-summary').innerHTML = highlightNumbers(applyTranslation(rawSummary)) || 'Ringkasan profesional Anda.';
 
-      // Experiences
+      // Experience
       const expView = document.getElementById('view-experience');
       expView.innerHTML = '';
-      experiences.forEach(exp => {
-        const bullets = exp.desc
+      document.querySelectorAll('.exp-item').forEach(el => {
+        const role = el.querySelector('.exp-role').value;
+        const comp = el.querySelector('.exp-company').value;
+        const per = el.querySelector('.exp-period').value;
+        const loc = el.querySelector('.exp-loc').value;
+        const desc = el.querySelector('.exp-desc').value;
+
+        const bullets = desc
           .split('\n')
           .filter(l => l.trim().length > 0)
           .map(l => `<li class="ml-4 list-disc">${highlightNumbers(applyTranslation(l.replace(/^[*-]\s*/, '')))}</li>`)
@@ -691,34 +1057,39 @@
           <div>
             <div class="flex flex-wrap justify-between items-baseline gap-1">
               <div>
-                <span class="font-bold text-slate-900 text-xs">${applyTranslation(exp.role)}</span>
-                <span class="font-semibold text-slate-700 text-xs"> | ${exp.company}</span>
-                ${exp.location ? `<span class="text-[11px] text-slate-500 italic"> (${exp.location})</span>` : ''}
+                <span class="font-bold text-slate-900 text-xs">${applyTranslation(role)}</span>
+                <span class="font-semibold text-slate-700 text-xs"> | ${comp}</span>
+                ${loc ? `<span class="text-[11px] text-slate-500 italic"> (${loc})</span>` : ''}
               </div>
-              <span class="theme-badge px-2 py-0.5 rounded text-[10px] font-semibold">${applyTranslation(exp.period)}</span>
+              <span class="theme-badge px-2 py-0.5 rounded text-[10px] font-semibold">${applyTranslation(per)}</span>
             </div>
             <ul class="text-xs leading-relaxed text-slate-700 mt-1 space-y-0.5">${bullets || '<li>Tugas dan pencapaian...</li>'}</ul>
           </div>
         `;
       });
 
-      // Educations
+      // Education
       const eduView = document.getElementById('view-education');
       eduView.innerHTML = '';
-      educations.forEach(edu => {
+      document.querySelectorAll('.edu-item').forEach(el => {
+        const deg = el.querySelector('.edu-deg').value;
+        const school = el.querySelector('.edu-school').value;
+        const per = el.querySelector('.edu-period').value;
+        const det = el.querySelector('.edu-det').value;
+
         eduView.innerHTML += `
           <div class="flex justify-between items-baseline text-xs">
             <div>
-              <span class="font-bold text-slate-900">${applyTranslation(edu.school)}</span>
-              <span class="text-slate-700"> — ${applyTranslation(edu.degree)}</span>
-              ${edu.details ? `<div class="text-[11px] text-slate-500">${applyTranslation(edu.details)}</div>` : ''}
+              <span class="font-bold text-slate-900">${applyTranslation(school)}</span>
+              <span class="text-slate-700"> — ${applyTranslation(deg)}</span>
+              ${det ? `<div class="text-[11px] text-slate-500">${applyTranslation(det)}</div>` : ''}
             </div>
-            <span class="text-slate-500 text-[11px] font-medium">${applyTranslation(edu.period)}</span>
+            <span class="text-slate-500 text-[11px] font-medium">${applyTranslation(per)}</span>
           </div>
         `;
       });
 
-      // Skill chips
+      // Skills Chips
       const rawSkills = document.getElementById('input-skills').value;
       const chipContainer = document.getElementById('view-skills-chips');
       chipContainer.innerHTML = '';
@@ -728,7 +1099,7 @@
         });
       }
 
-      // Tools chips
+      // Tools Chips
       const rawTools = document.getElementById('input-tools').value;
       const toolContainer = document.getElementById('view-tools-chips');
       toolContainer.innerHTML = '';
@@ -754,59 +1125,16 @@
       } else {
         certSec.style.display = 'none';
       }
-    }
-
-    function loadInitialData() {
-      document.getElementById('input-name').value = "Denyt Yudhanusa, S.T.";
-      document.getElementById('input-title').value = "Lead Operations & Logistics Ecosystem";
-      document.getElementById('input-email').value = "contact@gaeks.com";
-      document.getElementById('input-phone').value = "+62 812-3456-7890";
-      document.getElementById('input-location').value = "Jakarta, Indonesia";
-      document.getElementById('input-linkedin').value = "gaeks-executive";
-      document.getElementById('input-portfolio').value = "gdp.gaeks.com";
-
-      document.getElementById('input-summary').value = 
-        "Praktisi senior dengan 7+ tahun pengalaman dalam operasional freight forwarding internasional, kepabeanan terintegrasi, dan digitalisasi ERP rantai pasok. Terbukti berhasil memangkas biaya logistik operasional sebesar 18% per tahun, meningkatkan SLA fulfillment hingga 98.6%, serta mengelola transaksi kargo ekspor-impor senilai lebih dari Rp 45 Miliar.";
-
-      experiences = [
-        {
-          role: "Head of Freight Forwarding Operations",
-          company: "GAEKS FREIGHT INTERNATIONAL",
-          period: "2022 - Sekarang",
-          location: "Jakarta",
-          desc: "Memimpin divisi kepabeanan dan operasional ekspor-impor laut (FCL/LCL) serta udara dengan volume lebih dari 850 TEUs per kuartal.\nMenegosiasikan kontrak tarif langsung dengan 5 shipping lines global, menghemat biaya kargo sebesar 18% (setara Rp 1.4 Miliar).\nMengurangi dwell time kepabeanan dari 4.2 hari menjadi 2.1 hari melalui digitalisasi sistem."
-        },
-        {
-          role: "Senior Logistics Coordinator",
-          company: "PT Yudhanusa Ekspresindo",
-          period: "2019 - 2022",
-          location: "Tangerang",
-          desc: "Mengelola pergerakan armada trucking antarpulau dan audit pergudangan terpadu untuk 40+ klien korporat.\nMeningkatkan on-time delivery rate dari 91% menjadi 98.6% dengan menerapkan pelacakan GPS real-time.\nMengawasi kepatuhan dokumen ekspor-impor dengan tingkat ketepatan laporan audit 99.8%."
-        }
-      ];
-
-      educations = [
-        {
-          degree: "Sarjana Teknik Industri (S.T.)",
-          school: "Universitas Indonesia",
-          period: "2015 - 2019",
-          details: "IPK 3.84 / 4.00 (Cum Laude)"
-        }
-      ];
-
-      document.getElementById('input-skills').value = "Freight Forwarding, Supply Chain, Customs Clearance, ERP Systems, Sea & Air Cargo, Negosiasi Kontrak";
-      document.getElementById('input-tools').value = "Dolibarr ERP, SAP, Excel Advanced, SQL, Cloudflare";
-      document.getElementById('input-certifications').value = "Sertifikasi Ahli Kepabeanan (PPJK)\nCertified Supply Chain Professional (CSCP)";
 
       document.getElementById('view-photo-img').src = photoData;
       document.getElementById('thumb-photo').src = photoData;
-
-      renderFormLists();
-      setTheme('navy');
-      renderCV();
     }
 
-    window.onload = loadInitialData;
+    // INIT
+    window.onload = function() {
+      loadCvList();
+      showDashboardView();
+    };
   </script>
 </body>
 </html>
