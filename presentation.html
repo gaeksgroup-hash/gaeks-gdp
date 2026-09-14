@@ -180,7 +180,7 @@
                     <h2 id="dashboardTitle" class="text-3xl font-extrabold text-slate-800">Arsip Materi Presentasi</h2>
                     <p class="text-xs sm:text-sm text-slate-500 mt-1">Platform pembuatan slide presentasi pitch deck investor dan materi meeting eksekutif.</p>
                 </div>
-                <button type="button" id="btnCreateNew" onclick="createNewMeeting()" class="bg-accent text-white px-6 py-2.5 rounded-lg font-bold shadow-lg hover:bg-blue-600 transition-all hover:scale-105 relative z-50 cursor-pointer cursor-pointer">+ Buat Meeting Baru</button>
+                <button type="button" id="btnCreateNew" onclick="createNewMeeting()" class="bg-accent text-white px-6 py-2.5 rounded-lg font-bold shadow-lg hover:bg-blue-600 transition-all hover:scale-105 relative z-50 cursor-pointer">+ Buat Meeting Baru</button>
             </div>
             <div id="meetingListContainer" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
         </section>
@@ -1392,40 +1392,31 @@ function getLocalMeetingsList() {
         function nextSlide() { const maxIdx = activeMeeting.slides.length + 3; if(currentSlideIndex < maxIdx) { currentSlideIndex++; renderSlideView(currentSlideIndex); } }
         function prevSlide() { if(currentSlideIndex > 0) { currentSlideIndex--; renderSlideView(currentSlideIndex); } }
         
-                        function switchView(view) {
+                                function switchView(view) {
             const vDash = document.getElementById('dashboardView');
             const vAdmin = document.getElementById('adminView');
             const vPres = document.getElementById('presentationView');
             const header = document.getElementById('mainHeader');
 
-            vDash.classList.add('hidden');
-            vDash.style.setProperty('display', 'none', 'important');
-            vAdmin.classList.add('hidden');
-            vAdmin.style.setProperty('display', 'none', 'important');
-            vPres.classList.add('hidden');
-            vPres.style.setProperty('display', 'none', 'important');
-            header.classList.remove('hidden');
-            header.style.removeProperty('display');
+            if (vDash) { vDash.classList.add('hidden'); vDash.style.setProperty('display', 'none', 'important'); }
+            if (vAdmin) { vAdmin.classList.add('hidden'); vAdmin.style.setProperty('display', 'none', 'important'); }
+            if (vPres) { vPres.classList.add('hidden'); vPres.style.setProperty('display', 'none', 'important'); }
+            if (header) { header.classList.remove('hidden'); header.style.setProperty('display', 'flex', 'important'); }
             document.body.classList.remove('exporting-mode');
 
-            if(view === 'dashboard') { 
-                vDash.classList.remove('hidden');
-                vDash.style.setProperty('display', 'block', 'important');
-                if(meetingsList.length > 0) renderDashboardList(meetingsList, currentTab); 
+            if (view === 'dashboard') { 
+                if (vDash) { vDash.classList.remove('hidden'); vDash.style.setProperty('display', 'block', 'important'); }
+                loadDashboard();
             } 
-            else if(view === 'admin') { 
-                header.classList.add('hidden');
-                header.style.setProperty('display', 'none', 'important');
-                vAdmin.classList.remove('hidden');
-                vAdmin.style.setProperty('display', 'block', 'important');
+            else if (view === 'admin') { 
+                if (header) { header.classList.add('hidden'); header.style.setProperty('display', 'none', 'important'); }
+                if (vAdmin) { vAdmin.classList.remove('hidden'); vAdmin.style.setProperty('display', 'block', 'important'); }
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } 
-            else if(view === 'presentation') { 
+            else if (view === 'presentation') { 
                 pullDataFromForm();
-                header.classList.add('hidden');
-                header.style.setProperty('display', 'none', 'important');
-                vPres.classList.remove('hidden');
-                vPres.style.setProperty('display', 'flex', 'important');
+                if (header) { header.classList.add('hidden'); header.style.setProperty('display', 'none', 'important'); }
+                if (vPres) { vPres.classList.remove('hidden'); vPres.style.setProperty('display', 'flex', 'important'); }
                 resizePenCanvas(); 
                 
                 const presEl = document.documentElement;
@@ -1434,6 +1425,7 @@ function getLocalMeetingsList() {
                         console.warn("Fullscreen diblokir otomatis oleh browser, mengabaikan... ", err);
                     });
                 }
+                
                 currentSlideIndex = 0; 
                 renderSlideView(0); 
             }
