@@ -57,10 +57,10 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-3">
-          <button type="button" onclick="loadSampleReferenceCV()" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs sm:text-sm font-bold transition shadow-sm cursor-pointer flex items-center gap-2">
-            <span>+ Muat Sampel CV Deny Triawan</span>
+          <button type="button" id="btn-sample-deny" onclick="loadSampleReferenceCV()" class="hidden px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs sm:text-sm font-bold transition shadow-sm cursor-pointer flex items-center gap-2">
+            <span>+ Muat Sampel Khusus Admin</span>
           </button>
-          <button type="button" onclick="createNewBlankCV()" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-500/25 flex items-center gap-2 transition hover:scale-[1.02] cursor-pointer">
+          <button type="button" id="btn-create-new-resume" onclick="window.createNewBlankCV()" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-500/25 flex items-center gap-2 transition hover:scale-[1.02] cursor-pointer">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
             <span>+ Buat Resume Baru</span>
           </button>
@@ -215,7 +215,10 @@
             <p class="text-xs text-slate-400 max-w-sm mx-auto mb-6">
               ${currentTab === 'trash' ? 'Tidak ada resume yang sedang dihapus.' : 'Klik tombol "+ Buat Resume Baru" di atas untuk mulai menyusun CV profesional Anda.'}
             </p>
-            ${currentTab === 'active' ? `<button onclick="createNewBlankCV()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition">+ Buat Resume Baru Sekarang</button>` : ''}
+            ${currentTab === 'active' ? `<button type="button" id="btn-create-new-resume" onclick="window.createNewBlankCV()" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-500/25 flex items-center gap-2 transition hover:scale-[1.02] cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <span>+ Buat Resume Baru</span>
+          </button>` : ''}
           </div>
         `;
         return;
@@ -285,13 +288,35 @@
     }
 
     function createNewBlankCV() {
-      const title = 'CV Baru ' + (cvList.length + 1);
-      const newCv = createBlankCvObject(title);
-      newCv.isDraft = true;
-      cvList.unshift(newCv);
-      saveCvList();
-      window.location.href = 'cv.html?id=' + newCv.id;
+      try {
+        const title = 'CV Baru ' + (cvList.length + 1);
+        const newCv = createBlankCvObject(title);
+        newCv.isDraft = true;
+        cvList.unshift(newCv);
+        saveCvList();
+        window.location.href = 'cv.html?id=' + encodeURIComponent(newCv.id);
+      } catch(e) {
+        console.error("Error createNewBlankCV:", e);
+        alert("Gagal membuat resume baru: " + e.message);
+      }
     }
+    window.createNewBlankCV = createNewBlankCV;
+
+    function checkAdminSampleAccess() {
+      try {
+        const user = (window.GaeksAuth && GaeksAuth.getCurrentUser) ? GaeksAuth.getCurrentUser() : null;
+        const btn = document.getElementById('btn-sample-deny');
+        if (btn) {
+          if (user && user.email && user.email.toLowerCase() === 'gaeks.group@gmail.com') {
+            btn.classList.remove('hidden');
+          } else {
+            btn.classList.add('hidden');
+          }
+        }
+      } catch(e) {}
+    }
+
+    
 
     function loadSampleReferenceCV() {
       const sample = getDenyTriawanSampleData();
@@ -342,10 +367,22 @@
       renderDashboardGrid();
     }
 
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('btn-create-new-resume');
+      if (btn) {
+        btn.onclick = function(e) {
+          if (e) e.preventDefault();
+          window.createNewBlankCV();
+        };
+      }
+      checkAdminSampleAccess();
+    });
+
     window.onload = function() {
       loadCvList();
       renderDashboardGrid();
       updateCounts();
+      checkAdminSampleAccess();
     };
   </script>
 </body>

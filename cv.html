@@ -2326,8 +2326,11 @@
 
       const urlParams = new URLSearchParams(window.location.search);
       const targetId = urlParams.get('id');
+
       if (targetId) {
-        openEditor(targetId);
+        window.openEditor(targetId);
+      } else if (urlParams.get('action') === 'new') {
+        window.createNewBlankCV();
       } else {
         window.location.replace('cv-dashboard.html');
         return;
