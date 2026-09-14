@@ -1,21 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <script>
-      (function() {
-        var raw = null;
-        try { raw = localStorage.getItem('gaeks_user_session_v3') || localStorage.getItem('gaeks_user_session_v2') || localStorage.getItem('gaeks_user_session'); } catch(e) {}
-        if (!raw) {
-          try {
-            var m = document.cookie.match(/gaeks_session_v3=([^;]+)/) || document.cookie.match(/gaeks_session=([^;]+)/);
-            if (m) raw = decodeURIComponent(m);
-          } catch(e) {}
-        }
-        if (!raw) {
-          window.location.replace('login.html?redirect=presentation.html');
-        }
-      })();
-    </script>
+    <!-- Guest and Authenticated access enabled -->
     <meta charset="UTF-8">
     <title>GAEKS Presentation Studio | Enterprise Pitch Deck Engine</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -189,7 +175,7 @@
                     <h2 id="dashboardTitle" class="text-3xl font-extrabold text-slate-800">Arsip Materi Presentasi</h2>
                     <p class="text-xs sm:text-sm text-slate-500 mt-1">Platform pembuatan slide presentasi pitch deck investor dan materi meeting eksekutif.</p>
                 </div>
-                <button onclick="createNewMeeting()" id="btnCreateNew" class="bg-accent text-white px-6 py-2.5 rounded-lg font-bold shadow-lg hover:bg-blue-600 transition-all hover:scale-105 relative z-50 cursor-pointer">+ Buat Meeting Baru</button>
+                <button type="button" id="btnCreateNew" onclick="createNewMeeting()" class="bg-accent text-white px-6 py-2.5 rounded-lg font-bold shadow-lg hover:bg-blue-600 transition-all hover:scale-105 relative z-50 cursor-pointer cursor-pointer">+ Buat Meeting Baru</button>
             </div>
             <div id="meetingListContainer" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
         </section>
@@ -684,7 +670,22 @@
         function showLoader(title, desc) { document.getElementById('loaderTitle').innerText = title; document.getElementById('loaderDesc').innerText = desc; document.getElementById('globalLoader').style.display = 'flex'; document.getElementById('globalLoader').classList.remove('hidden'); }
         function hideLoader() { document.getElementById('globalLoader').style.display = 'none'; }
 
-        document.addEventListener('DOMContentLoaded', () => loadDashboard());
+                document.addEventListener('DOMContentLoaded', () => {
+            const btnNew = document.getElementById('btnCreateNew');
+            if (btnNew) {
+                btnNew.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    createNewMeeting();
+                });
+            }
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('action') === 'new') {
+                loadDashboard();
+                setTimeout(() => createNewMeeting(), 150);
+            } else {
+                loadDashboard();
+            }
+        });
 
         document.addEventListener('fullscreenchange', () => {
             if (!document.fullscreenElement && !document.getElementById('presentationView').classList.contains('hidden') && !window.exportJob.active) exitPresentation();
@@ -820,7 +821,7 @@
                 
                 if (!Array.isArray(slide.images)) { slide.images = [{url:"", caption:""},{url:"", caption:""},{url:"", caption:""},{url:"", caption:""}]; } 
                 else {
-                    slide.images =.map(idx => {
+                    slide.images = [0,1,2,3].map(idx => {
                         let img = slide.images[idx];
                         if (typeof img === 'string') return {url: img, caption: ""};
                         if (img && typeof img === 'object') return {url: img.url || "", caption: img.caption || ""};
@@ -967,7 +968,7 @@
                                 <div id="field_img_${i}" class="${slide.layout === 'image' ? 'block' : 'hidden'} space-y-3">
                                     <label class="block text-xs font-bold text-brand border-b border-slate-300 pb-2 mb-3">Upload Gambar & Deskripsi Pop-up</label>
                                     <div class="grid grid-cols-1 gap-2">
-                                    ${.map(imgIndex => `
+                                    ${[0,1,2,3].map(imgIndex => `
                                         <div class="flex items-center gap-2 bg-white p-2 border border-slate-200 rounded-lg relative">
                                             <div class="flex flex-col w-20 flex-shrink-0 border-r pr-2">
                                                 <input type="file" accept="image/*" class="w-full text-[9px] file:py-1 file:px-1 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700 cursor-pointer" onchange="handleImageUpload(this, 'img_${i}_${imgIndex}', 'statusImg_${i}_${imgIndex}')">

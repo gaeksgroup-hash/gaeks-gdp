@@ -1,21 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <script>
-    (function() {
-      var raw = null;
-      try { raw = localStorage.getItem('gaeks_user_session_v3'); } catch(e) {}
-      if (!raw) {
-        try {
-          var m = document.cookie.match(/gaeks_session_v3=([^;]+)/);
-          if (m) raw = decodeURIComponent(m[1]);
-        } catch(e) {}
-      }
-      if (!raw) {
-        window.location.replace(window.location.origin + '/login.html?redirect=cv.html');
-      }
-    })();
-  </script>
+  <!-- Guest and Authenticated access enabled -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GAEKS ATS CV Studio | Executive Resume Engine</title>
@@ -209,7 +195,7 @@
         <p id="ui-dash-subtitle" class="text-xs sm:text-sm text-slate-400 mt-1">Format eksekutif dengan kepadatan informasi optimal, bebas dari elemen visual template AI.</p>
       </div>
       <div class="flex flex-wrap gap-2">
-        <button type="button" id="btn-create-blank-action" onclick="createNewBlankCV()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-500/20 flex items-center space-x-1.5 transition cursor-pointer cursor-pointer">
+        <button type="button" id="btn-create-blank-action" onclick="createNewBlankCV()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-500/20 flex items-center space-x-1.5 transition cursor-pointer cursor-pointer cursor-pointer">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
           <span id="ui-btn-create-blank">+ Buat CV Baru</span>
         </button>
