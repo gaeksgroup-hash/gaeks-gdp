@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <script src="auth.js?v=20260914_06"></script>
+  <script src="auth.js?v=20260914_07"></script>
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
     .hero-glow {
@@ -57,9 +57,9 @@
       <script>
         (function() {
           try {
-            var raw = localStorage.getItem('gaeks_user_session_v3');
+            var raw = localStorage.getItem('gaeks_user_session_v3') || localStorage.getItem('gaeks_user_session_v2') || localStorage.getItem('gaeks_user_session');
             if (!raw) {
-              var m = document.cookie.match(/gaeks_session_v3=([^;]+)/);
+              var m = document.cookie.match(/gaeks_session_v3=([^;]+)/) || document.cookie.match(/gaeks_session=([^;]+)/);
               if (m) raw = decodeURIComponent(m[1]);
             }
             if (raw) {
@@ -149,7 +149,7 @@
         </div>
 
         <div class="pt-6 mt-6 border-t border-slate-800/80">
-          <button onclick="handleServiceAccess('presentation.html')" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20">
+          <button onclick="handleServiceAccess('presentation.html')" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 cursor-pointer">
             <span>Mulai Uji Coba 3 Hari Presentation Maker &rarr;</span>
           </button>
         </div>
@@ -180,7 +180,7 @@
         </div>
 
         <div class="pt-6 mt-6 border-t border-slate-800/80">
-          <button onclick="handleServiceAccess('cv.html')" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20">
+          <button onclick="handleServiceAccess('cv.html')" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 cursor-pointer">
             <span>Buka ATS CV Studio Sekarang &rarr;</span>
           </button>
         </div>

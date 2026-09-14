@@ -4,10 +4,10 @@
   <script>
     (function() {
       var raw = null;
-      try { raw = localStorage.getItem('gaeks_user_session_v3'); } catch(e) {}
+      try { raw = localStorage.getItem('gaeks_user_session_v3') || localStorage.getItem('gaeks_user_session_v2') || localStorage.getItem('gaeks_user_session'); } catch(e) {}
       if (!raw) {
         try {
-          var m = document.cookie.match(/gaeks_session_v3=([^;]+)/);
+          var m = document.cookie.match(/gaeks_session_v3=([^;]+)/) || document.cookie.match(/gaeks_session=([^;]+)/);
           if (m) raw = decodeURIComponent(m[1]);
         } catch(e) {}
       }
@@ -23,7 +23,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="auth.js?v=20260914_06"></script>
+  <script src="auth.js?v=20260914_07"></script>
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
     .slide-canvas { aspect-ratio: 16 / 9; }
@@ -65,7 +65,6 @@
   <!-- MAIN WORKSPACE -->
   <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex-grow grid grid-cols-1 lg:grid-cols-12 gap-6">
     
-    <!-- LEFT SIDEBAR: SLIDE OUTLINE -->
     <div class="no-print lg:col-span-4 bg-slate-900/70 border border-slate-800 rounded-2xl p-5 space-y-4 h-fit">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800">
         <div>
@@ -81,10 +80,8 @@
       </div>
     </div>
 
-    <!-- RIGHT MAIN: SLIDE CANVAS & CONTENT EDITOR -->
     <div class="lg:col-span-8 space-y-6">
       
-      <!-- 16:9 SLIDE PREVIEW CANVAS -->
       <div id="slide-viewport" class="slide-canvas w-full bg-gradient-to-br from-slate-900 via-slate-900 to-blue-950/60 rounded-2xl border-2 border-slate-700 shadow-2xl p-8 sm:p-12 flex flex-col justify-between relative overflow-hidden transition-all duration-300">
         <div class="flex justify-between items-start">
           <div class="space-y-1">
@@ -104,7 +101,6 @@
         </div>
       </div>
 
-      <!-- INLINE SLIDE EDITOR CONTROLS -->
       <div class="no-print bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl">
         <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Editor Konten Slide Aktif</h3>
         

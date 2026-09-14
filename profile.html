@@ -1,12 +1,27 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <script>
+    (function() {
+      var raw = null;
+      try { raw = localStorage.getItem('gaeks_user_session_v3') || localStorage.getItem('gaeks_user_session_v2') || localStorage.getItem('gaeks_user_session'); } catch(e) {}
+      if (!raw) {
+        try {
+          var m = document.cookie.match(/gaeks_session_v3=([^;]+)/) || document.cookie.match(/gaeks_session=([^;]+)/);
+          if (m) raw = decodeURIComponent(m[1]);
+        } catch(e) {}
+      }
+      if (!raw) {
+        window.location.replace('login.html?redirect=profile.html');
+      }
+    })();
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Profil Akun & Berlangganan | GAEKS Digital</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="auth.js"></script>
+  <script src="auth.js?v=20260914_07"></script>
   <style> body { font-family: 'Plus Jakarta Sans', sans-serif; } </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white">
@@ -21,7 +36,7 @@
         <span class="text-slate-700">|</span>
         <a href="cv.html" class="text-xs sm:text-sm font-semibold text-slate-400 hover:text-white transition">ATS CV Studio</a>
         <span class="text-slate-700">|</span>
-        <span class="font-extrabold text-base bg-gradient-to-r from-blue-400 to-indigo-300 bg-clip-text text-transparent">Profil & Langganan</span>
+        <a href="presentation.html" class="text-xs sm:text-sm font-semibold text-slate-400 hover:text-white transition">Presentation Maker</a>
       </div>
 
       <div class="flex items-center space-x-3">
@@ -33,6 +48,7 @@
   </header>
 
   <main class="max-w-4xl mx-auto w-full px-4 sm:px-6 py-10 flex-grow space-y-8">
+    
     <div class="p-6 sm:p-8 bg-slate-900/90 rounded-2xl border border-slate-800 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-6">
       <div class="flex items-center gap-4">
         <img id="prof-avatar" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl border border-slate-700 object-cover" src="https://api.dicebear.com/7.x/initials/svg?seed=User" alt="Avatar" />
@@ -57,6 +73,7 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
       <div class="p-6 bg-slate-900/80 rounded-2xl border border-slate-800 space-y-4">
         <h3 class="text-sm font-bold uppercase tracking-wider text-blue-400">Status Langganan Anda</h3>
         <div class="p-4 bg-slate-950 rounded-xl border border-slate-800/80">
@@ -74,7 +91,7 @@
           </div>
         </div>
         <p class="text-xs text-slate-400 leading-relaxed">
-          Nikmati akses ke mesin resume standar ATS global. Tingkatkan keanggotaan untuk membuka seluruh 15 tema visual eksekutif dan fitur premium lainnya.
+          Nikmati akses ke mesin resume standar ATS global dan uji coba presentasi maker. Tingkatkan keanggotaan untuk membuka seluruh tema visual eksekutif.
         </p>
       </div>
 
@@ -83,7 +100,7 @@
         <ul class="space-y-2.5 text-xs text-slate-300">
           <li class="flex items-center gap-2">
             <span class="text-emerald-400 font-bold">✓</span>
-            <span>Buka seluruh <strong>15 Tema Visual</strong> (termasuk tema bermain warna lembar kerja).</span>
+            <span>Buka seluruh <strong>15 Tema Visual</strong> Studio CV.</span>
           </li>
           <li class="flex items-center gap-2">
             <span class="text-emerald-400 font-bold">✓</span>
@@ -91,43 +108,49 @@
           </li>
           <li class="flex items-center gap-2">
             <span class="text-emerald-400 font-bold">✓</span>
-            <span>Penyimpanan banyak versi CV di server cloud per akun.</span>
+            <span>Penyimpanan banyak versi CV & Slide Presentasi di server cloud.</span>
           </li>
           <li class="flex items-center gap-2">
             <span class="text-emerald-400 font-bold">✓</span>
-            <span>Dukungan prioritas WhatsApp untuk review dan saran tata letak ATS.</span>
+            <span>Dukungan prioritas WhatsApp untuk konsultasi dan review.</span>
           </li>
         </ul>
       </div>
+
     </div>
 
     <div class="p-5 bg-slate-900/50 rounded-2xl border border-slate-800/80 flex flex-wrap items-center justify-between gap-4">
       <div>
-        <h4 class="text-sm font-bold text-white">Mulai Membuat Resume Baru?</h4>
-        <p class="text-xs text-slate-400">Buka studio resume ATS untuk menyusun pengalaman kerja Anda.</p>
+        <h4 class="text-sm font-bold text-white">Mulai Membuat Resume atau Presentasi?</h4>
+        <p class="text-xs text-slate-400">Pilih alat produktivitas digital untuk kebutuhan karier dan bisnis Anda.</p>
       </div>
-      <a href="cv.html" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition">
-        Buka ATS CV Studio &rarr;
-      </a>
+      <div class="flex gap-2">
+        <a href="cv.html" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition">
+          Buka Studio CV &rarr;
+        </a>
+        <a href="presentation.html" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition">
+          Buka Presentation Maker &rarr;
+        </a>
+      </div>
     </div>
+
   </main>
 
   <footer class="border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
-    <p>&copy; 2026 GAEKS DIGITAL PRODUCT. Standard ATS Resume Engine.</p>
+    <p>&copy; 2026 GAEKS DIGITAL PRODUCT. All rights reserved.</p>
   </footer>
 
   <script>
-    window.onload = function() {
+    function renderProfile() {
       const user = GaeksAuth.getCurrentUser();
       if (!user) {
-        alert("Silakan masuk atau daftar akun terlebih dahulu.");
-        window.location.href = "cv.html";
+        window.location.replace('login.html?redirect=profile.html');
         return;
       }
 
       document.getElementById('prof-name').innerText = user.name || 'Pengguna GAEKS';
       document.getElementById('prof-email').innerText = user.email || '-';
-      document.getElementById('prof-avatar').src = user.avatar || 'https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(user.name);
+      document.getElementById('prof-avatar').src = user.avatar || ('https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(user.name || 'User'));
       document.getElementById('prof-provider').innerText = (user.provider || 'email') + ' authentication';
 
       if (user.isPro) {
@@ -145,7 +168,11 @@
         document.getElementById('plan-name-detail').innerText = "Free Plan";
         document.getElementById('plan-themes-detail').innerText = "5 Tema Dasar";
       }
-    };
+    }
+
+    renderProfile();
+    window.addEventListener('DOMContentLoaded', renderProfile);
+    window.addEventListener('pageshow', renderProfile);
   </script>
 </body>
 </html>

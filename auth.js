@@ -1,11 +1,4 @@
-// GAEKS DIGITAL ECOSYSTEM - AUTH ENGINE V3 (CLEAN SLATE)
-try {
-  localStorage.removeItem('gaeks_user_session_v1');
-  localStorage.removeItem('gaeks_user_session_v2');
-  localStorage.removeItem('gaeks_user_session');
-  document.cookie = "gaeks_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-} catch(e) {}
-
+// GAEKS DIGITAL ECOSYSTEM - MULTI-KEY PERSISTENT AUTH ENGINE
 const VIP_WHITELIST = [
   "gaeks.group@gmail.com",
   "triawan25@gmail.com",
@@ -21,6 +14,9 @@ const GaeksAuth = {
   getUsersDb() {
     let raw = null;
     try { raw = localStorage.getItem(USERS_DB_KEY); } catch(e) {}
+    if (!raw) {
+      try { raw = localStorage.getItem('gaeks_users_db_v2'); } catch(e) {}
+    }
     if (!raw) {
       const initial = [
         { id: 'usr_adm_1', email: 'gaeks.group@gmail.com', name: 'GAEKS Group (Admin)', provider: 'google', plan: 'PRO_VIP', registeredAt: Date.now() - 86400000 * 5, lastLoginAt: Date.now() },
@@ -75,14 +71,28 @@ const GaeksAuth = {
 
   getCurrentUser() {
     let raw = null;
-    try { raw = localStorage.getItem(AUTH_STORAGE_KEY); } catch(e) {}
+    try { raw = localStorage.getItem('gaeks_user_session_v3'); } catch(e) {}
+    if (!raw) {
+      try { raw = localStorage.getItem('gaeks_user_session_v2'); } catch(e) {}
+    }
+    if (!raw) {
+      try { raw = localStorage.getItem('gaeks_user_session'); } catch(e) {}
+    }
     if (!raw) {
       try {
         const m = document.cookie.match(/gaeks_session_v3=([^;]+)/);
         if (m) raw = decodeURIComponent(m[1]);
       } catch(e) {}
     }
+    if (!raw) {
+      try {
+        const m = document.cookie.match(/gaeks_session=([^;]+)/);
+        if (m) raw = decodeURIComponent(m[1]);
+      } catch(e) {}
+    }
+
     if (!raw) return null;
+
     try {
       const user = JSON.parse(raw);
       if (user && user.email) {
@@ -93,11 +103,16 @@ const GaeksAuth = {
           user.plan = 'PRO_VIP';
           user.planLabel = (clean === SUPER_ADMIN_EMAIL) ? 'SUPER ADMIN (Akses Penuh)' : 'GAEKS PRO VIP (Akses Penuh)';
         }
+        try {
+          localStorage.setItem('gaeks_user_session_v3', JSON.stringify(user));
+          document.cookie = "gaeks_session_v3=" + encodeURIComponent(JSON.stringify(user)) + "; path=/; max-age=2592000; SameSite=Lax";
+        } catch(e) {}
+        return user;
       }
-      return user;
     } catch(e) {
       return null;
     }
+    return null;
   },
 
   isProUser() {
@@ -111,8 +126,15 @@ const GaeksAuth = {
   },
 
   logout() {
-    try { localStorage.removeItem(AUTH_STORAGE_KEY); } catch(e) {}
-    try { document.cookie = "gaeks_session_v3=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"; } catch(e) {}
+    try {
+      localStorage.removeItem('gaeks_user_session_v3');
+      localStorage.removeItem('gaeks_user_session_v2');
+      localStorage.removeItem('gaeks_user_session');
+    } catch(e) {}
+    try {
+      document.cookie = "gaeks_session_v3=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      document.cookie = "gaeks_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    } catch(e) {}
     window.location.replace(window.location.origin + '/index.html');
   },
 

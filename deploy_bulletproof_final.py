@@ -1,6 +1,6 @@
 import os, re, subprocess
 
-print("=== 1. Menulis login.html (Bebas \\n\\n, Tab Responsif & Deteksi Duplikat) ===")
+print("=== 1. Menulis login.html (Bersih \\n\\n, Tab Responsif & Deteksi Duplikat) ===")
 with open("login.html", "w") as fp:
     fp.write('''<!DOCTYPE html>
 <html lang="id">
@@ -13,7 +13,7 @@ with open("login.html", "w") as fp:
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="auth.js?v=20260914_06"></script>
+  <script src="auth.js?v=20260914_07"></script>
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
     .cursor-pointer { cursor: pointer; }
@@ -23,7 +23,7 @@ with open("login.html", "w") as fp:
 
   <div class="max-w-4xl w-full bg-slate-900 rounded-3xl border border-slate-800 shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[580px]">
     
-    <!-- LEFT SIDEBAR: BRAND SHOWCASE -->
+    <!-- LEFT SIDEBAR -->
     <div class="lg:col-span-5 bg-gradient-to-br from-slate-900 via-blue-950/40 to-slate-950 p-8 sm:p-10 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-800">
       <div class="space-y-6">
         <a href="index.html" class="flex items-center space-x-2.5">
@@ -64,7 +64,7 @@ with open("login.html", "w") as fp:
       </div>
     </div>
 
-    <!-- RIGHT PANEL: AUTH FORMS -->
+    <!-- RIGHT PANEL -->
     <div class="lg:col-span-7 p-8 sm:p-10 flex flex-col justify-between bg-slate-900/60">
       
       <div>
@@ -104,7 +104,7 @@ with open("login.html", "w") as fp:
 
         <div id="status-alert" class="hidden p-3.5 rounded-xl text-xs mb-4"></div>
 
-        <!-- VIEW 1: FORM LOGIN -->
+        <!-- FORM LOGIN -->
         <form id="form-login" onsubmit="submitLogin(event)" class="space-y-3.5">
           <div>
             <label class="block text-[11px] font-semibold text-slate-400 mb-1">Alamat Email</label>
@@ -122,7 +122,7 @@ with open("login.html", "w") as fp:
           </button>
         </form>
 
-        <!-- VIEW 2: FORM DAFTAR DENGAN OTP EMAIL -->
+        <!-- FORM DAFTAR DENGAN OTP EMAIL -->
         <div id="form-register" class="hidden space-y-4">
           <div id="reg-step-request" class="space-y-3.5">
             <div>
@@ -179,7 +179,6 @@ with open("login.html", "w") as fp:
       return 'index.html';
     }
 
-    // Auto-forward jika sudah ada sesi aktif
     (function() {
       try {
         const u = GaeksAuth.getCurrentUser();
@@ -436,7 +435,350 @@ with open("login.html", "w") as fp:
 ''')
 print("✓ login.html berhasil ditulis.")
 
-print("=== 2. Menulis presentation.html (Gaeks Presentation Maker Trial 3 Hari) ===")
+print("=== 2. Menulis auth.js (Multi-Key Session Tolerance & Hard Redirect) ===")
+with open("auth.js", "w") as fp:
+    fp.write('''// GAEKS DIGITAL ECOSYSTEM - MULTI-KEY PERSISTENT AUTH ENGINE
+const VIP_WHITELIST = [
+  "gaeks.group@gmail.com",
+  "triawan25@gmail.com",
+  "ranesath@gmail.com"
+];
+const SUPER_ADMIN_EMAIL = "gaeks.group@gmail.com";
+const GOOGLE_CLIENT_ID = "41832472270-6r8iudma1eho6kn3q6rs4rl7b9ank7n4.apps.googleusercontent.com";
+
+const AUTH_STORAGE_KEY = 'gaeks_user_session_v3';
+const USERS_DB_KEY = 'gaeks_users_db_v3';
+
+const GaeksAuth = {
+  getUsersDb() {
+    let raw = null;
+    try { raw = localStorage.getItem(USERS_DB_KEY); } catch(e) {}
+    if (!raw) {
+      try { raw = localStorage.getItem('gaeks_users_db_v2'); } catch(e) {}
+    }
+    if (!raw) {
+      const initial = [
+        { id: 'usr_adm_1', email: 'gaeks.group@gmail.com', name: 'GAEKS Group (Admin)', provider: 'google', plan: 'PRO_VIP', registeredAt: Date.now() - 86400000 * 5, lastLoginAt: Date.now() },
+        { id: 'usr_vip_2', email: 'triawan25@gmail.com', name: 'Deny Triawan', provider: 'google', plan: 'PRO_VIP', registeredAt: Date.now() - 86400000 * 4, lastLoginAt: Date.now() },
+        { id: 'usr_vip_3', email: 'ranesath@gmail.com', name: 'Ranesath', provider: 'google', plan: 'PRO_VIP', registeredAt: Date.now() - 86400000 * 3, lastLoginAt: Date.now() }
+      ];
+      try { localStorage.setItem(USERS_DB_KEY, JSON.stringify(initial)); } catch(e) {}
+      return initial;
+    }
+    try { return JSON.parse(raw); } catch(e) { return []; }
+  },
+
+  saveUsersDb(db) {
+    try { localStorage.setItem(USERS_DB_KEY, JSON.stringify(db)); } catch(e) {}
+  },
+
+  recordUserRegistration(userObj) {
+    const db = this.getUsersDb();
+    const existingIndex = db.findIndex(u => u.email.toLowerCase() === userObj.email.toLowerCase());
+    if (existingIndex >= 0) {
+      db[existingIndex].lastLoginAt = Date.now();
+      if (userObj.name) db[existingIndex].name = userObj.name;
+    } else {
+      db.unshift({
+        id: userObj.id || 'usr_' + Date.now(),
+        email: userObj.email,
+        name: userObj.name || userObj.email.split('@')[0],
+        provider: userObj.provider || 'email',
+        plan: userObj.plan || 'FREE',
+        registeredAt: Date.now(),
+        lastLoginAt: Date.now()
+      });
+      this.sendEmailNotification('welcome', userObj.email, userObj.name);
+    }
+    this.saveUsersDb(db);
+  },
+
+  sendEmailNotification(actionType, email, name, extraData = {}) {
+    try {
+      fetch('/api/mailer.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: actionType,
+          email: email,
+          name: name,
+          ...extraData
+        })
+      }).catch(() => {});
+    } catch(e) {}
+  },
+
+  getCurrentUser() {
+    let raw = null;
+    try { raw = localStorage.getItem('gaeks_user_session_v3'); } catch(e) {}
+    if (!raw) {
+      try { raw = localStorage.getItem('gaeks_user_session_v2'); } catch(e) {}
+    }
+    if (!raw) {
+      try { raw = localStorage.getItem('gaeks_user_session'); } catch(e) {}
+    }
+    if (!raw) {
+      try {
+        const m = document.cookie.match(/gaeks_session_v3=([^;]+)/);
+        if (m) raw = decodeURIComponent(m[1]);
+      } catch(e) {}
+    }
+    if (!raw) {
+      try {
+        const m = document.cookie.match(/gaeks_session=([^;]+)/);
+        if (m) raw = decodeURIComponent(m[1]);
+      } catch(e) {}
+    }
+
+    if (!raw) return null;
+
+    try {
+      const user = JSON.parse(raw);
+      if (user && user.email) {
+        const clean = user.email.toLowerCase().trim();
+        user.isAdmin = (clean === SUPER_ADMIN_EMAIL);
+        if (VIP_WHITELIST.includes(clean)) {
+          user.isPro = true;
+          user.plan = 'PRO_VIP';
+          user.planLabel = (clean === SUPER_ADMIN_EMAIL) ? 'SUPER ADMIN (Akses Penuh)' : 'GAEKS PRO VIP (Akses Penuh)';
+        }
+        try {
+          localStorage.setItem('gaeks_user_session_v3', JSON.stringify(user));
+          document.cookie = "gaeks_session_v3=" + encodeURIComponent(JSON.stringify(user)) + "; path=/; max-age=2592000; SameSite=Lax";
+        } catch(e) {}
+        return user;
+      }
+    } catch(e) {
+      return null;
+    }
+    return null;
+  },
+
+  isProUser() {
+    const user = this.getCurrentUser();
+    return user ? !!user.isPro : false;
+  },
+
+  isAdmin() {
+    const user = this.getCurrentUser();
+    return user ? (user.email.toLowerCase().trim() === SUPER_ADMIN_EMAIL) : false;
+  },
+
+  logout() {
+    try {
+      localStorage.removeItem('gaeks_user_session_v3');
+      localStorage.removeItem('gaeks_user_session_v2');
+      localStorage.removeItem('gaeks_user_session');
+    } catch(e) {}
+    try {
+      document.cookie = "gaeks_session_v3=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      document.cookie = "gaeks_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    } catch(e) {}
+    window.location.replace(window.location.origin + '/index.html');
+  },
+
+  toggleUserPlan(email) {
+    const db = this.getUsersDb();
+    const target = db.find(u => u.email.toLowerCase() === email.toLowerCase());
+    if (target) {
+      const willBePro = (target.plan !== 'PRO' && target.plan !== 'PRO_VIP');
+      target.plan = willBePro ? 'PRO' : 'FREE';
+      this.saveUsersDb(db);
+      if (willBePro) {
+        this.sendEmailNotification('purchase', target.email, target.name, { plan_name: 'GAEKS PRO Member' });
+      }
+      return target.plan;
+    }
+    return null;
+  }
+};
+''')
+print("✓ auth.js berhasil ditulis.")
+
+print("=== 3. Menulis profile.html (Bebas Pop-up Alert & Sesi Mulus) ===")
+with open("profile.html", "w") as fp:
+    fp.write('''<!DOCTYPE html>
+<html lang="id">
+<head>
+  <script>
+    (function() {
+      var raw = null;
+      try { raw = localStorage.getItem('gaeks_user_session_v3') || localStorage.getItem('gaeks_user_session_v2') || localStorage.getItem('gaeks_user_session'); } catch(e) {}
+      if (!raw) {
+        try {
+          var m = document.cookie.match(/gaeks_session_v3=([^;]+)/) || document.cookie.match(/gaeks_session=([^;]+)/);
+          if (m) raw = decodeURIComponent(m[1]);
+        } catch(e) {}
+      }
+      if (!raw) {
+        window.location.replace('login.html?redirect=profile.html');
+      }
+    })();
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profil Akun & Berlangganan | GAEKS Digital</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="auth.js?v=20260914_07"></script>
+  <style> body { font-family: 'Plus Jakarta Sans', sans-serif; } </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white">
+
+  <header class="sticky top-0 z-50 w-full backdrop-blur-md bg-slate-950/90 border-b border-slate-800">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="index.html" class="text-xs sm:text-sm font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 py-1 px-2 rounded-lg hover:bg-slate-900 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+          <span>Beranda</span>
+        </a>
+        <span class="text-slate-700">|</span>
+        <a href="cv.html" class="text-xs sm:text-sm font-semibold text-slate-400 hover:text-white transition">ATS CV Studio</a>
+        <span class="text-slate-700">|</span>
+        <a href="presentation.html" class="text-xs sm:text-sm font-semibold text-slate-400 hover:text-white transition">Presentation Maker</a>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <button onclick="GaeksAuth.logout()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-rose-950/40 hover:bg-rose-900/60 border border-rose-900/50 text-rose-300 transition">
+          Keluar (Sign Out)
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto w-full px-4 sm:px-6 py-10 flex-grow space-y-8">
+    
+    <div class="p-6 sm:p-8 bg-slate-900/90 rounded-2xl border border-slate-800 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+      <div class="flex items-center gap-4">
+        <img id="prof-avatar" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl border border-slate-700 object-cover" src="https://api.dicebear.com/7.x/initials/svg?seed=User" alt="Avatar" />
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 id="prof-name" class="text-xl sm:text-2xl font-extrabold text-white">Nama Pengguna</h1>
+            <span id="prof-badge-plan" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-950 text-blue-300 border border-blue-800">Free Tier</span>
+          </div>
+          <p id="prof-email" class="text-xs sm:text-sm text-slate-400 mt-0.5">user@email.com</p>
+          <p class="text-[11px] text-slate-500 mt-1">Metode Masuk: <span id="prof-provider" class="font-medium text-slate-300 uppercase">Google / Email</span></p>
+        </div>
+      </div>
+
+      <div id="box-upgrade-cta" class="shrink-0 flex flex-col gap-2">
+        <a href="pricing.html" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-bold shadow-lg shadow-blue-500/20 text-center transition">
+          ⭐ Upgrade ke GAEKS PRO
+        </a>
+        <a href="https://wa.me/6285608561745?text=Halo%20Admin%20GAEKS%2C%20saya%20ingin%20tanya%20paket%20langganan%20GAEKS%20PRO" target="_blank" class="text-[11px] text-slate-400 hover:text-emerald-400 text-center font-medium transition">
+          💬 Tanya via WhatsApp
+        </a>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <div class="p-6 bg-slate-900/80 rounded-2xl border border-slate-800 space-y-4">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-blue-400">Status Langganan Anda</h3>
+        <div class="p-4 bg-slate-950 rounded-xl border border-slate-800/80">
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-xs text-slate-400">Paket Saat Ini</span>
+            <span id="plan-name-detail" class="text-xs font-bold text-white">Free Plan</span>
+          </div>
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-xs text-slate-400">Masa Aktif</span>
+            <span id="plan-expiry-detail" class="text-xs font-medium text-emerald-400">Tidak Terbatas</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-slate-400">Akses Tema CV</span>
+            <span id="plan-themes-detail" class="text-xs font-bold text-slate-300">5 Tema Dasar</span>
+          </div>
+        </div>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Nikmati akses ke mesin resume standar ATS global dan uji coba presentasi maker. Tingkatkan keanggotaan untuk membuka seluruh tema visual eksekutif.
+        </p>
+      </div>
+
+      <div class="p-6 bg-slate-900/80 rounded-2xl border border-slate-800 space-y-4">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-emerald-400">Keunggulan GAEKS PRO</h3>
+        <ul class="space-y-2.5 text-xs text-slate-300">
+          <li class="flex items-center gap-2">
+            <span class="text-emerald-400 font-bold">✓</span>
+            <span>Buka seluruh <strong>15 Tema Visual</strong> Studio CV.</span>
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="text-emerald-400 font-bold">✓</span>
+            <span>Ekspor PDF resolusi tinggi A4 tanpa batas dan tanpa watermark.</span>
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="text-emerald-400 font-bold">✓</span>
+            <span>Penyimpanan banyak versi CV & Slide Presentasi di server cloud.</span>
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="text-emerald-400 font-bold">✓</span>
+            <span>Dukungan prioritas WhatsApp untuk konsultasi dan review.</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="p-5 bg-slate-900/50 rounded-2xl border border-slate-800/80 flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <h4 class="text-sm font-bold text-white">Mulai Membuat Resume atau Presentasi?</h4>
+        <p class="text-xs text-slate-400">Pilih alat produktivitas digital untuk kebutuhan karier dan bisnis Anda.</p>
+      </div>
+      <div class="flex gap-2">
+        <a href="cv.html" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition">
+          Buka Studio CV &rarr;
+        </a>
+        <a href="presentation.html" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition">
+          Buka Presentation Maker &rarr;
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
+    <p>&copy; 2026 GAEKS DIGITAL PRODUCT. All rights reserved.</p>
+  </footer>
+
+  <script>
+    function renderProfile() {
+      const user = GaeksAuth.getCurrentUser();
+      if (!user) {
+        window.location.replace('login.html?redirect=profile.html');
+        return;
+      }
+
+      document.getElementById('prof-name').innerText = user.name || 'Pengguna GAEKS';
+      document.getElementById('prof-email').innerText = user.email || '-';
+      document.getElementById('prof-avatar').src = user.avatar || ('https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(user.name || 'User'));
+      document.getElementById('prof-provider').innerText = (user.provider || 'email') + ' authentication';
+
+      if (user.isPro) {
+        document.getElementById('prof-badge-plan').className = "px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800";
+        document.getElementById('prof-badge-plan').innerText = user.planLabel || "GAEKS PRO (Aktif)";
+        document.getElementById('plan-name-detail').innerText = "GAEKS PRO VIP (Akses Penuh)";
+        document.getElementById('plan-themes-detail').innerText = "15 Tema Visual Terbuka";
+        document.getElementById('box-upgrade-cta').innerHTML = `
+          <div class="px-4 py-2 bg-emerald-950/80 border border-emerald-800 rounded-xl text-xs text-emerald-300 font-bold flex items-center gap-1.5">
+            <span>✓ Member PRO VIP Aktif</span>
+          </div>
+        `;
+      } else {
+        document.getElementById('prof-badge-plan').innerText = "Free Tier";
+        document.getElementById('plan-name-detail').innerText = "Free Plan";
+        document.getElementById('plan-themes-detail').innerText = "5 Tema Dasar";
+      }
+    }
+
+    renderProfile();
+    window.addEventListener('DOMContentLoaded', renderProfile);
+    window.addEventListener('pageshow', renderProfile);
+  </script>
+</body>
+</html>
+''')
+print("✓ profile.html berhasil ditulis.")
+
+print("=== 4. Menulis presentation.html (Gaeks Presentation Maker Trial 3 Hari) ===")
 with open("presentation.html", "w") as fp:
     fp.write('''<!DOCTYPE html>
 <html lang="id">
@@ -444,10 +786,10 @@ with open("presentation.html", "w") as fp:
   <script>
     (function() {
       var raw = null;
-      try { raw = localStorage.getItem('gaeks_user_session_v3'); } catch(e) {}
+      try { raw = localStorage.getItem('gaeks_user_session_v3') || localStorage.getItem('gaeks_user_session_v2') || localStorage.getItem('gaeks_user_session'); } catch(e) {}
       if (!raw) {
         try {
-          var m = document.cookie.match(/gaeks_session_v3=([^;]+)/);
+          var m = document.cookie.match(/gaeks_session_v3=([^;]+)/) || document.cookie.match(/gaeks_session=([^;]+)/);
           if (m) raw = decodeURIComponent(m[1]);
         } catch(e) {}
       }
@@ -463,7 +805,7 @@ with open("presentation.html", "w") as fp:
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="auth.js?v=20260914_06"></script>
+  <script src="auth.js?v=20260914_07"></script>
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
     .slide-canvas { aspect-ratio: 16 / 9; }
@@ -505,7 +847,6 @@ with open("presentation.html", "w") as fp:
   <!-- MAIN WORKSPACE -->
   <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex-grow grid grid-cols-1 lg:grid-cols-12 gap-6">
     
-    <!-- LEFT SIDEBAR: SLIDE OUTLINE -->
     <div class="no-print lg:col-span-4 bg-slate-900/70 border border-slate-800 rounded-2xl p-5 space-y-4 h-fit">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800">
         <div>
@@ -521,10 +862,8 @@ with open("presentation.html", "w") as fp:
       </div>
     </div>
 
-    <!-- RIGHT MAIN: SLIDE CANVAS & CONTENT EDITOR -->
     <div class="lg:col-span-8 space-y-6">
       
-      <!-- 16:9 SLIDE PREVIEW CANVAS -->
       <div id="slide-viewport" class="slide-canvas w-full bg-gradient-to-br from-slate-900 via-slate-900 to-blue-950/60 rounded-2xl border-2 border-slate-700 shadow-2xl p-8 sm:p-12 flex flex-col justify-between relative overflow-hidden transition-all duration-300">
         <div class="flex justify-between items-start">
           <div class="space-y-1">
@@ -544,7 +883,6 @@ with open("presentation.html", "w") as fp:
         </div>
       </div>
 
-      <!-- INLINE SLIDE EDITOR CONTROLS -->
       <div class="no-print bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl">
         <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Editor Konten Slide Aktif</h3>
         
@@ -689,30 +1027,7 @@ with open("presentation.html", "w") as fp:
 ''')
 print("✓ presentation.html berhasil ditulis.")
 
-print("=== 3. Menulis .htaccess (Clean URL Routing & Keamanan) ===")
-with open(".htaccess", "w") as fp:
-    fp.write('''RewriteEngine On
-RewriteBase /
-
-# 1. Enforce HTTPS
-RewriteCond %{HTTPS} off
-RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-
-# 2. Clean URLs (Menghilangkan ekstensi .html di URL)
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME}.html -f
-RewriteRule ^([^\.]+)$ $1.html [NC,L]
-
-# 3. Index File Fallback
-DirectoryIndex index.html index.php cv.html
-
-# 4. Encoding UTF-8
-AddDefaultCharset UTF-8
-''')
-print("✓ .htaccess berhasil ditulis.")
-
-print("=== 4. Menulis index.html (Katalog Ekosistem Lengkap GAEKS) ===")
+print("=== 5. Menulis index.html (Katalog Lengkap GAEKS: Services & Products) ===")
 with open("index.html", "w") as fp:
     fp.write('''<!DOCTYPE html>
 <html lang="id">
@@ -724,7 +1039,7 @@ with open("index.html", "w") as fp:
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <script src="auth.js?v=20260914_06"></script>
+  <script src="auth.js?v=20260914_07"></script>
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
     .hero-glow {
@@ -773,9 +1088,9 @@ with open("index.html", "w") as fp:
       <script>
         (function() {
           try {
-            var raw = localStorage.getItem('gaeks_user_session_v3');
+            var raw = localStorage.getItem('gaeks_user_session_v3') || localStorage.getItem('gaeks_user_session_v2') || localStorage.getItem('gaeks_user_session');
             if (!raw) {
-              var m = document.cookie.match(/gaeks_session_v3=([^;]+)/);
+              var m = document.cookie.match(/gaeks_session_v3=([^;]+)/) || document.cookie.match(/gaeks_session=([^;]+)/);
               if (m) raw = decodeURIComponent(m[1]);
             }
             if (raw) {
@@ -865,7 +1180,7 @@ with open("index.html", "w") as fp:
         </div>
 
         <div class="pt-6 mt-6 border-t border-slate-800/80">
-          <button onclick="handleServiceAccess('presentation.html')" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20">
+          <button onclick="handleServiceAccess('presentation.html')" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 cursor-pointer">
             <span>Mulai Uji Coba 3 Hari Presentation Maker &rarr;</span>
           </button>
         </div>
@@ -896,7 +1211,7 @@ with open("index.html", "w") as fp:
         </div>
 
         <div class="pt-6 mt-6 border-t border-slate-800/80">
-          <button onclick="handleServiceAccess('cv.html')" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20">
+          <button onclick="handleServiceAccess('cv.html')" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 cursor-pointer">
             <span>Buka ATS CV Studio Sekarang &rarr;</span>
           </button>
         </div>
@@ -1053,13 +1368,186 @@ with open("index.html", "w") as fp:
 </body>
 </html>
 ''')
-print("✓ index.html selesai ditulis.")
+print("✓ index.html berhasil ditulis.")
 
-print("=== 5. Memperbarui cv.html (Tombol Buat CV Baru & Head Guard) ===")
+print("=== 6. Menulis .htaccess (Clean URLs & HTTPS) ===")
+with open(".htaccess", "w") as fp:
+    fp.write('''RewriteEngine On
+RewriteBase /
+
+# 1. Enforce HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# 2. Clean URLs (Menghilangkan ekstensi .html di URL)
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^([^\.]+)$ $1.html [NC,L]
+
+# 3. Index File Fallback
+DirectoryIndex index.html index.php cv.html
+
+# 4. Encoding UTF-8
+AddDefaultCharset UTF-8
+''')
+print("✓ .htaccess berhasil ditulis.")
+
+print("=== 7. Menulis api/auth_otp.php (Validasi Duplikat di Server) ===")
+os.makedirs("api", exist_ok=True)
+with open("api/auth_otp.php", "w") as fp:
+    fp.write('''<?php
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/mailer.php';
+
+$storageFile = __DIR__ . '/otp_store.json';
+$registeredUsersFile = __DIR__ . '/users_registry.json';
+
+$raw = file_get_contents('php://input');
+$data = json_decode($raw, true) ?? [];
+$action = $data['action'] ?? '';
+$email = filter_var($data['email'] ?? '', FILTER_VALIDATE_EMAIL);
+
+if (!$email) {
+    echo json_encode(["status" => "error", "message" => "Format alamat email tidak valid."]);
+    exit;
+}
+
+if ($action === 'send_otp') {
+    if (file_exists($registeredUsersFile)) {
+        $regUsers = json_decode(file_get_contents($registeredUsersFile), true) ?? [];
+        if (in_array(strtolower($email), array_map('strtolower', $regUsers))) {
+            echo json_encode([
+                "status" => "already_registered",
+                "message" => "Email ini sudah pernah terdaftar. Silakan gunakan tab Masuk ke Akun atau reset sandi."
+            ]);
+            exit;
+        }
+    }
+
+    $name = htmlspecialchars($data['name'] ?? 'Pengguna GAEKS');
+    $otp = strval(random_int(100000, 999999));
+    
+    $store = [];
+    if (file_exists($storageFile)) {
+        $store = json_decode(file_get_contents($storageFile), true) ?? [];
+    }
+    
+    $store[strtolower($email)] = [
+        'code' => $otp,
+        'name' => $name,
+        'expires' => time() + 600
+    ];
+    file_put_contents($storageFile, json_encode($store));
+
+    $subject = "Kode Verifikasi Pendaftaran GAEKS Digital: $otp";
+    $html = "
+    <div style='max-width:520px;margin:auto;font-family:Arial,sans-serif;border:1px solid #e2e8f0;border-radius:12px;background:#ffffff;padding:28px 24px;'>
+      <div style='text-align:center;margin-bottom:20px;'>
+        <h2 style='color:#0f172a;margin:0;font-size:22px;'>GAEKS DIGITAL</h2>
+        <p style='color:#64748b;font-size:12px;margin:4px 0 0;'>Verifikasi Pendaftaran Akun</p>
+      </div>
+      <p style='font-size:14px;color:#1e293b;'>Halo <strong>{$name}</strong>,</p>
+      <p style='font-size:13px;color:#475569;'>Gunakan 6 digit kode verifikasi berikut untuk menyelesaikan pendaftaran akun Anda di GAEKS Digital:</p>
+      <div style='background:#f1f5f9;border:1px dashed #cbd5e1;border-radius:10px;padding:16px;text-align:center;margin:24px 0;'>
+        <span style='font-size:32px;font-weight:900;letter-spacing:6px;color:#2563eb;font-family:monospace;'>{$otp}</span>
+      </div>
+      <p style='font-size:12px;color:#64748b;'>Kode ini berlaku selama <strong>10 menit</strong>. Jangan bagikan kode ini kepada siapapun demi keamanan akun Anda.</p>
+      <hr style='border:none;border-top:1px solid #f1f5f9;margin:20px 0;'>
+      <p style='font-size:11px;color:#94a3b8;text-align:center;margin:0;'>Email ini dikirimkan otomatis oleh sistem resmi no-reply@gaeks.com.</p>
+    </div>";
+
+    $sendRes = sendHostingerSmtp($email, $name, $subject, $html);
+    if ($sendRes['status'] === 'success') {
+        echo json_encode(["status" => "success", "message" => "Kode verifikasi 6 digit telah dikirimkan ke " . $email]);
+    } else {
+        echo json_encode(["status" => "error", "message" => "Gagal mengirim email: " . $sendRes['message']]);
+    }
+    exit;
+}
+
+if ($action === 'verify_otp') {
+    $code = trim($data['code'] ?? '');
+
+    if (!file_exists($storageFile)) {
+        echo json_encode(["status" => "error", "message" => "Kode verifikasi tidak ditemukan atau kedaluwarsa."]);
+        exit;
+    }
+
+    $store = json_decode(file_get_contents($storageFile), true) ?? [];
+    $entry = $store[strtolower($email)] ?? null;
+
+    if (!$entry || time() > $entry['expires']) {
+        echo json_encode(["status" => "error", "message" => "Kode verifikasi telah kedaluwarsa. Silakan minta kode baru."]);
+        exit;
+    }
+
+    if ($entry['code'] !== $code) {
+        echo json_encode(["status" => "error", "message" => "Kode verifikasi 6 digit yang Anda masukkan tidak cocok."]);
+        exit;
+    }
+
+    $regUsers = [];
+    if (file_exists($registeredUsersFile)) {
+        $regUsers = json_decode(file_get_contents($registeredUsersFile), true) ?? [];
+    }
+    if (!in_array(strtolower($email), array_map('strtolower', $regUsers))) {
+        $regUsers[] = strtolower($email);
+        file_put_contents($registeredUsersFile, json_encode($regUsers));
+    }
+
+    $userName = $entry['name'];
+    unset($store[strtolower($email)]);
+    file_put_contents($storageFile, json_encode($store));
+
+    echo json_encode([
+        "status" => "success",
+        "message" => "Pendaftaran berhasil diverifikasi!",
+        "name" => $userName
+    ]);
+    exit;
+}
+
+echo json_encode(["status" => "error", "message" => "Aksi tidak dikenal."]);
+''')
+print("✓ api/auth_otp.php berhasil ditulis.")
+
+print("=== 8. Memperbarui cv.html (Tombol Buat CV Baru Aktif & Hapus Modal Lama) ===")
 if os.path.exists("cv.html"):
     with open("cv.html", "r") as fp:
         cv = fp.read()
-    
+
+    # 1. Hapus fungsi modal lama
+    cv = re.sub(r'function openAuthModal\(\)\s*\{.*?\}\s*function closeAuthModal\(\)\s*\{.*?\}', '''function openAuthModal() {
+      window.location.href = 'login.html?redirect=cv.html';
+    }
+
+    function closeAuthModal() {
+    }''', cv, flags=re.DOTALL)
+
+    # 2. Hapus elemen modal lama dari DOM
+    idx_modal = cv.find('<div id="auth-modal"')
+    if idx_modal != -1:
+        idx_comment = cv.rfind('<!-- ================= MODAL MASUK', 0, idx_modal)
+        if idx_comment == -1: idx_comment = idx_modal
+        idx_next = cv.find('<!-- ================= MODAL ADMIN', idx_modal)
+        if idx_next != -1:
+            cv = cv[:idx_comment] + cv[idx_next:]
+        else:
+            idx_next = cv.find('</body>', idx_modal)
+            cv = cv[:idx_comment] + '\\n</body>\\n</html>'
+
+    # 3. Hapus duplikasi saveCvList legacy
     legacy_block = """    function _legacy_loadCvList() {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
@@ -1079,9 +1567,61 @@ if os.path.exists("cv.html"):
     if legacy_block in cv:
         cv = cv.replace(legacy_block, "")
 
-    cv = re.sub(
-        r'function createNewBlankCV\(\)\s*\{.*?\}',
-        """function createNewBlankCV() {
+    # 4. Perbaiki openEditor agar langsung membuka kanvas
+    open_editor_fix = """    function openEditor(id) {
+      currentCvId = id;
+      const cv = cvList.find(c => c.id === id);
+      if (!cv) return;
+
+      const vDash = document.getElementById('view-dashboard');
+      const vEdit = document.getElementById('view-editor');
+      const btnDash = document.getElementById('nav-btn-dashboard');
+      const btnPrint = document.getElementById('nav-btn-print');
+
+      if (vDash) vDash.classList.add('hidden');
+      if (vEdit) {
+        vEdit.classList.remove('hidden');
+        vEdit.style.display = 'block';
+      }
+      if (btnDash) btnDash.classList.remove('hidden');
+      if (btnPrint) btnPrint.classList.remove('hidden');
+
+      const titleInput = document.getElementById('current-cv-title');
+      if (titleInput) titleInput.value = cv.title;
+      loadFormData(cv.data);
+
+      historyStack = [JSON.stringify(cv.data)];
+      historyIndex = 0;
+      updateUndoRedoButtons();
+
+      renderCV();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }"""
+    cv = re.sub(r'function openEditor\(id\)\s*\{.*?renderCV\(\);\s*\}', open_editor_fix, cv, flags=re.DOTALL)
+
+    # 5. Perbaiki showDashboardView
+    show_dash_fix = """    function showDashboardView() {
+      const vDash = document.getElementById('view-dashboard');
+      const vEdit = document.getElementById('view-editor');
+      const btnDash = document.getElementById('nav-btn-dashboard');
+      const btnPrint = document.getElementById('nav-btn-print');
+
+      if (vDash) {
+        vDash.classList.remove('hidden');
+        vDash.style.display = 'block';
+      }
+      if (vEdit) {
+        vEdit.classList.add('hidden');
+        vEdit.style.display = 'none';
+      }
+      if (btnDash) btnDash.classList.add('hidden');
+      if (btnPrint) btnPrint.classList.add('hidden');
+      renderDashboardGrid();
+    }"""
+    cv = re.sub(r'function showDashboardView\(\)\s*\{.*?renderDashboardGrid\(\);\s*\}', show_dash_fix, cv, flags=re.DOTALL)
+
+    # 6. Perbaiki createNewBlankCV
+    create_cv_fix = """function createNewBlankCV() {
       try {
         const title = (currentLang === 'en' ? 'New Resume ' : 'CV Baru ') + (cvList.length + 1);
         const newCv = createBlankCvObject(title);
@@ -1093,22 +1633,22 @@ if os.path.exists("cv.html"):
         console.error("Gagal membuat CV baru:", err);
         alert("Gagal membuka editor CV: " + err.message);
       }
-    }""",
-        cv,
-        flags=re.DOTALL
-    )
+    }"""
+    cv = re.sub(r'function createNewBlankCV\(\)\s*\{.*?\}', create_cv_fix, cv, flags=re.DOTALL)
 
-    cv = cv.replace("gaeks_user_session_v2", "gaeks_user_session_v3")
-    cv = cv.replace("gaeks_session=", "gaeks_session_v3=")
-    cv = cv.replace('src="auth.js"', 'src="auth.js?v=20260914_06"')
-    with open("cv.html", "w") as fp:
-        fp.write(cv)
-    print("✓ cv.html siap.")
+    cv = cv.replace('src="auth.js"', 'src="auth.js?v=20260914_07"')
+    cv = cv.replace('src="auth.js?v=20260914_04"', 'src="auth.js?v=20260914_07"')
+    cv = cv.replace('src="auth.js?v=20260914_05"', 'src="auth.js?v=20260914_07"')
+    cv = cv.replace('src="auth.js?v=20260914_06"', 'src="auth.js?v=20260914_07"')
 
-print("=== 6. Menjalankan Git Commit & Force Push ke GitHub ===")
+    with open("cv.html", "w") as f:
+        f.write(cv)
+    print("✓ cv.html berhasil diperbarui & modal lama dibersihkan.")
+
+print("=== 9. Menjalankan Git Commit & Force Push ke GitHub ===")
 subprocess.run(["git", "add", "-A"])
-subprocess.run(["git", "commit", "-m", "feat: launch full GAEKS digital ecosystem (Presentation Maker trial, CV Studio, ERP, E-Book, Web Builder, SMM) with Clean URLs and UI/UX Pro Max design standards"])
+subprocess.run(["git", "commit", "-m", "fix: complete bulletproof auth system, profile session sync without popups, active createNewBlankCV action, and clean full catalog"])
 push_res = subprocess.run(["git", "push", "origin", "main", "--force"], capture_output=True, text=True)
 print(push_res.stdout)
 if push_res.stderr: print(push_res.stderr)
-print("=== DEPLOYMENT EKOSISTEM SELESAI & AKTIF DI SERVER! ===")
+print("=== DEPLOYMENT SELESAI & AKTIF DI SERVER LIVE! ===")
