@@ -4,7 +4,7 @@
   <!-- Guest and Authenticated access enabled -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GAEKS ATS CV Studio | Executive Resume Engine</title>
+  <title>GAEKS ATS CV Studio | Direct Standalone Editor</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -180,10 +180,10 @@
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
           <span>Editor Form</span>
         </button>
-        <button id="nav-btn-dashboard" onclick="showDashboardView()" class="hidden px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 transition">
+        <a id="nav-btn-dashboard" href="cv.html" class="hidden px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 transition">
           <span id="ui-btn-cv-list">Daftar CV</span>
-        </button>
-        <button id="nav-btn-print" onclick="window.print()" class="hidden px-3.5 py-1.5 text-xs font-bold rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition shadow-sm flex items-center gap-1.5">
+        </a>
+        <button id="nav-btn-print" onclick="window.print()" class=" px-3.5 py-1.5 text-xs font-bold rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition shadow-sm flex items-center gap-1.5">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
           <span id="ui-btn-download-pdf">Download PDF</span>
         </button>
@@ -243,14 +243,14 @@
   </section>
 
   <!-- ================= VIEW 2: CV EDITOR STUDIO ================= -->
-  <section id="view-editor" class="hidden max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 flex-grow">
+  <section id="view-editor" class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 flex-grow">
     
     <!-- SUBBAR TOOLBAR -->
     <div class="no-print flex flex-col md:flex-row md:items-center justify-between pb-4 mb-5 border-b border-slate-800 gap-4">
       <div class="flex items-center space-x-3">
-        <button onclick="showDashboardView()" class="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-xs flex items-center gap-1">
+        <a href="cv.html" class="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-xs flex items-center gap-1">
           &larr; <span id="ui-btn-back-dashboard">Daftar CV</span>
-        </button>
+        </a>
         <div>
           <input type="text" id="current-cv-title" onchange="updateCvTitle(this.value)" class="text-sm sm:text-base font-bold text-white bg-transparent border-b border-dashed border-slate-700 hover:border-blue-500 focus:border-blue-500 focus:outline-none px-1 py-0.5" value="CV Tanpa Judul" />
           <div class="flex items-center space-x-2 text-[11px] text-slate-400 mt-0.5">
