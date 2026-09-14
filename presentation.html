@@ -348,15 +348,9 @@
         }
 
         const GAEKS_PRES_LIST_KEY = () => 'gaeks_pres_vault_v25_' + getPresAccountScope();
-        const GAEKS_PRES_ITEM_KEY = (id) => 'gaeks_pres_item_v25_' + getPresAccountScope() + '_' + id;
-            try {
-                const raw = localStorage.getItem('gaeks_user_session_v3') || localStorage.getItem('gaeks_user_session_v2');
-                if (raw) { const u = JSON.parse(raw); if (u && u.id) uId = u.id; }
-            } catch(e) {}
-            return 'gaeks_pres_item_' + uId + '_' + id + '_v2';
-        };
+        const GAEKS_PRES_ITEM_KEY = (id) => "gaeks_pres_item_" + id + "_v2";
 
-function getLocalMeetingsList() {
+        function getLocalMeetingsList() {
             const raw = localStorage.getItem(GAEKS_PRES_LIST_KEY());
             let list = raw ? JSON.parse(raw) : [];
             const NOW = Date.now();
@@ -488,7 +482,8 @@ function getLocalMeetingsList() {
             };
         }
 
-        const google = {
+        // ADAPTER GOOGLE SCRIPT RUN EMULATOR
+        var google = {
             script: {
                 run: {
                     withSuccessHandler(successFn) {
@@ -512,7 +507,7 @@ function getLocalMeetingsList() {
                                         catch(e) { if (failFn) failFn(e); }
                                     },
                                     uploadLocalImageToDrive(filename, mimeType, base64Data) {
-                                        try { setTimeout(() => successFn({ status: 'success', url: base64Data }), 30); }
+                                        try { setTimeout(() => successFn({ status: "success", url: base64Data }), 30); }
                                         catch(e) { if (failFn) failFn(e); }
                                     }
                                 };
@@ -521,12 +516,13 @@ function getLocalMeetingsList() {
                             saveMeeting(data) { setTimeout(() => successFn(saveLocalMeeting(data)), 30); },
                             getMeetingDetails(id) { setTimeout(() => successFn(getLocalMeetingDetails(id)), 30); },
                             updateMeetingStatus(id, status) { setTimeout(() => successFn(updateLocalMeetingStatus(id, status)), 30); },
-                            uploadLocalImageToDrive(filename, mimeType, base64Data) { setTimeout(() => successFn({ status: 'success', url: base64Data }), 30); }
+                            uploadLocalImageToDrive(filename, mimeType, base64Data) { setTimeout(() => successFn({ status: "success", url: base64Data }), 30); }
                         };
                     }
                 }
             }
         };
+        window.google = google;
 
         window.exportJob = { active: false, paused: false, cancelled: false, id: 'exportToastMain', percent: 0, text: '' };
         window.imageBase64Cache = new Map();

@@ -182,7 +182,7 @@
           <span>Editor Form</span>
         </button>
         <button id="nav-btn-dashboard" onclick="showDashboardView()" class="hidden px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 transition cursor-pointer">
-          <span id="ui-btn-cv-list">Daftar CV</span>
+          <span id="ui-btn-cv-list">Daftar Resume</span>
         </button>
         <button id="nav-btn-print" onclick="window.print()" class="hidden px-3.5 py-1.5 text-xs font-bold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition shadow-sm flex items-center gap-1.5 cursor-pointer">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
@@ -749,7 +749,7 @@
     const i18n = {
       id: {
         navHome: "Beranda",
-        btnCvList: "Daftar CV",
+        btnCvList: "Daftar Resume",
         btnDownloadPdf: "Download PDF",
         dashTitle: "Manajemen Resume & CV Profesional",
         dashSubtitle: "Format eksekutif dengan kepadatan informasi optimal, bebas dari elemen visual template AI.",
@@ -1526,26 +1526,32 @@
       };
     }
 
-    function handleInputChange() {
-      const data = extractFormData();
-      const cv = cvList.find(c => c.id === currentCvId);
-      if (cv) {
-        cv.data = data;
-        cv.updatedAt = Date.now();
-        saveCvList();
+            function handleInputChange() {
+      const badge = document.getElementById("cv-status-badge");
+      if (badge) {
+        badge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-amber-950/80 text-amber-300 border border-amber-800 flex items-center gap-1.5";
+        badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span><span>DRAFT</span>';
+      }
+      const ind = document.getElementById("save-indicator");
+      if (ind) {
+        ind.innerText = currentLang === "en" ? "Editing..." : "Sedang diedit...";
+        ind.className = "text-amber-400 text-xs font-medium pl-1";
       }
 
-      const currentJson = JSON.stringify(data);
-      if (historyStack[historyIndex] !== currentJson) {
-        historyStack = historyStack.slice(0, historyIndex + 1);
-        historyStack.push(currentJson);
-        if (historyStack.length > 30) historyStack.shift();
-        historyIndex = historyStack.length - 1;
-        updateUndoRedoButtons();
-      }
-
-      renderCV();
+      clearTimeout(window.inputDebounceTimer);
+      window.inputDebounceTimer = setTimeout(() => {
+        const data = extractFormData();
+        const cv = cvList.find(c => c.id === currentCvId);
+        if (cv) {
+          cv.data = data;
+          cv.updatedAt = Date.now();
+          saveCvList();
+        }
+        renderCV();
+      }, 250);
     }
+
+    
 
     function undo() {
       if (historyIndex > 0) {
