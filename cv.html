@@ -944,8 +944,10 @@
       return `<a href="${url}" target="_blank" class="text-slate-700 hover:text-indigo-600 hover:underline transition font-medium">${display}</a>`;
     }
 
-    let cvList = [];
-    let currentCvId = null;
+    var cvList = [];
+    window.cvList = cvList;
+    var currentCvId = null;
+    window.currentCvId = currentCvId;
     let currentDashboardTab = 'active';
     let historyStack = [];
     let historyIndex = -1;
@@ -1369,12 +1371,16 @@
     function openEditor(id) {
       try {
         currentCvId = id;
-        let cv = cvList.find(c => c.id === id);
+        if (!Array.isArray(cvList)) cvList = [];
+        let cv = cvList.find(c => c && c.id === id);
         if (!cv) {
           cv = createBlankCvObject("CV Baru");
+          cv.id = id;
+          cv.isDraft = true;
           cvList.unshift(cv);
           saveCvList();
         }
+        if (typeof window !== 'undefined') window.currentCvId = currentCvId;
 
         const vDash = document.getElementById('view-dashboard');
         const vEdit = document.getElementById('view-editor');
@@ -2320,22 +2326,25 @@
     });
 
                             window.onload = function() {
-      setTimeout(() => { if (GaeksAuth.initGoogleAuth) GaeksAuth.initGoogleAuth(); }, 500);
+      if (typeof currentLang === 'undefined') { window.currentLang = 'id'; }
+      setTimeout(() => { if (window.GaeksAuth && typeof GaeksAuth.initGoogleAuth === 'function') GaeksAuth.initGoogleAuth(); }, 500);
       updateNavbarAuthStatus();
       loadCvList();
-
+      
       const urlParams = new URLSearchParams(window.location.search);
       const targetId = urlParams.get('id');
-
       if (targetId) {
         window.openEditor(targetId);
-      } else if (urlParams.get('action') === 'new') {
-        window.createNewBlankCV();
+      } else if (urlParams.get('action') === 'new' || urlParams.get('view') === 'editor') {
+        if (cvList && cvList.length > 0) {
+          window.openEditor(cvList[0].id);
+        } else {
+          window.createNewBlankCV();
+        }
       } else {
-        window.location.replace('cv-dashboard.html');
-        return;
+        showDashboardView();
       }
-      setLanguage('id');
+      setLanguage(window.currentLang || 'id');
     };
 
 </script>

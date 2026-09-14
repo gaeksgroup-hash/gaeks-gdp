@@ -1,3 +1,6 @@
+// GLOBAL LANGUAGE FALLBACK GUARD
+if (typeof window !== 'undefined') { window.currentLang = window.currentLang || 'id'; }
+
 // GAEKS DIGITAL ECOSYSTEM - MULTI-KEY PERSISTENT AUTH ENGINE
 const VIP_WHITELIST = [
   "gaeks.group@gmail.com",

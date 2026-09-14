@@ -92,8 +92,12 @@
 
   <!-- JAVASCRIPT LOGIC -->
   <script>
-    let cvList = [];
-    let currentTab = 'active';
+    var currentLang = (typeof window !== 'undefined' && window.currentLang) ? window.currentLang : 'id';
+    window.currentLang = currentLang;
+    var cvList = [];
+    window.cvList = cvList;
+    var currentTab = 'active';
+    window.currentTab = currentTab;
 
     function createBlankCvObject(title = "CV Baru Tanpa Judul") {
       return {
@@ -289,18 +293,62 @@
 
     function createNewBlankCV() {
       try {
-        const title = 'CV Baru ' + (cvList.length + 1);
-        const newCv = createBlankCvObject(title);
+        const lang = (typeof currentLang !== 'undefined' && currentLang) ? currentLang : ((typeof window !== 'undefined' && window.currentLang) ? window.currentLang : 'id');
+        const listLen = (typeof cvList !== 'undefined' && Array.isArray(cvList)) ? cvList.length : 0;
+        const title = (lang === 'en' ? 'New Resume ' : 'CV Baru ') + (listLen + 1);
+
+        const newCv = (typeof createBlankCvObject === 'function')
+          ? createBlankCvObject(title)
+          : {
+              id: 'cv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+              title: title,
+              updatedAt: Date.now(),
+              deletedAt: null,
+              data: {
+                name: "",
+                title: "",
+                email: "",
+                phone: "",
+                location: "",
+                linkedin: "",
+                portfolio: "",
+                summary: "",
+                skillGroups: [{ category: "Keahlian Teknis & Inti", skills: "" }],
+                certifications: "",
+                languages: "",
+                publications: "",
+                isPhotoEnabled: false,
+                layout: 'apex',
+                experiences: [],
+                educations: []
+              }
+            };
+
         newCv.isDraft = true;
+        newCv.updatedAt = Date.now();
+
+        if (typeof cvList === 'undefined' || !Array.isArray(cvList)) {
+          cvList = [];
+        }
         cvList.unshift(newCv);
-        saveCvList();
+
+        if (typeof saveCvList === 'function') {
+          saveCvList();
+        } else {
+          const sKey = (typeof getSessionStorageKey === 'function') ? getSessionStorageKey() : 'gaeks_cv_guest_v18';
+          localStorage.setItem(sKey, JSON.stringify(cvList));
+        }
+
         window.location.href = 'cv.html?id=' + encodeURIComponent(newCv.id);
       } catch(e) {
-        console.error("Error createNewBlankCV:", e);
-        alert("Gagal membuat resume baru: " + e.message);
+        console.error("Catatan createNewBlankCV:", e);
+        const fallbackId = 'cv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+        window.location.href = 'cv.html?id=' + encodeURIComponent(fallbackId);
       }
     }
     window.createNewBlankCV = createNewBlankCV;
+
+    
 
     function checkAdminSampleAccess() {
       try {
