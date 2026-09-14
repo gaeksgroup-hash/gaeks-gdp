@@ -1562,7 +1562,7 @@
         const data = extractFormData();
         const cv = cvList.find(c => c.id === currentCvId);
         if (cv) {
-          cv.data = data; cv.isDraft = true;
+          cv.data = data; cv.isDraft = true; cv.isDraft = true;
           cv.updatedAt = Date.now();
           saveCvList();
         }
@@ -1578,7 +1578,7 @@
         const data = JSON.parse(historyStack[historyIndex]);
         loadFormData(data);
         const cv = cvList.find(c => c.id === currentCvId);
-        if (cv) { cv.data = data; cv.isDraft = true; cv.updatedAt = Date.now(); saveCvList(); }
+        if (cv) { cv.data = data; cv.isDraft = true; cv.isDraft = true; cv.updatedAt = Date.now(); saveCvList(); }
         updateUndoRedoButtons();
         renderCV();
       }
@@ -1590,7 +1590,7 @@
         const data = JSON.parse(historyStack[historyIndex]);
         loadFormData(data);
         const cv = cvList.find(c => c.id === currentCvId);
-        if (cv) { cv.data = data; cv.isDraft = true; cv.updatedAt = Date.now(); saveCvList(); }
+        if (cv) { cv.data = data; cv.isDraft = true; cv.isDraft = true; cv.updatedAt = Date.now(); saveCvList(); }
         updateUndoRedoButtons();
         renderCV();
       }
@@ -1919,6 +1919,7 @@
       const cv = cvList.find(c => c.id === currentCvId);
       if (cv) {
         cv.data.layout = activeLayout;
+        cv.isDraft = false;
         cv.isDraft = false;
         cv.updatedAt = Date.now();
         saveCvList();
@@ -2347,15 +2348,7 @@
       const targetId = urlParams.get('id');
       if (targetId) {
         window.openEditor(targetId);
-      } else if (urlParams.get('action') === 'new' || urlParams.get('view') === 'editor') {
-        if (cvList && cvList.length > 0) {
-          window.openEditor(cvList[0].id);
-        } else {
-          window.createNewBlankCV();
-        }
-      } else {
-        showDashboardView();
-      }
+      } else showDashboardView();
       setLanguage(window.currentLang || 'id');
     };
 
