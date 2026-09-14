@@ -188,7 +188,7 @@
         <!-- ADMIN EDITOR VIEW -->
         <section id="adminView" class="hidden p-6 max-w-6xl mx-auto w-full relative z-20">
             <div class="bg-brandLight p-4 rounded-xl shadow-lg mb-6 flex flex-col md:flex-row justify-between items-center sticky top-4 z-40 gap-4">
-                <button onclick="switchView('dashboard')" class="text-white hover:text-champagne font-bold flex items-center gap-2 text-sm bg-white/10 px-4 py-2 rounded-lg transition-colors cursor-pointer">← Kembali ke List</button>
+                <button onclick="autoSaveAndReturn()" class="text-white hover:text-champagne font-bold flex items-center gap-2 text-sm bg-white/10 px-4 py-2 rounded-lg transition-colors cursor-pointer">← Kembali ke List</button>
                 <div class="flex flex-wrap gap-2">
                     <button onclick="runNativePPTXExport()" class="bg-[#d04423] hover:bg-[#b8381b] text-white px-5 py-2 rounded-lg font-bold text-sm shadow-md transition-all cursor-pointer flex items-center gap-2">📊 Download PPTX</button>
                     <button onclick="runNativePDFExport()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2 rounded-lg font-bold text-sm shadow-md transition-all cursor-pointer flex items-center gap-2">📄 Download PDF</button>
@@ -779,7 +779,7 @@
                 container.innerHTML = filteredList.map(m => `
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-xl hover:border-accent transition-all cursor-pointer relative group flex flex-col h-full" onclick="if('${mode}'==='active')openMeeting('${m.id}')">
                         ${mode === 'active' 
-                            ? `<div class="absolute top-4 right-4 flex gap-2"><button onclick="event.stopPropagation(); duplicateMeeting('${m.id}')" class="text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer">📄 Duplicate</button><button onclick="event.stopPropagation(); manageTrash('${m.id}', 'trashed')" class="text-red-500 bg-slate-50 p-2 rounded-lg hover:bg-red-50 transition-colors cursor-pointer">✕</button></div>`
+                            ? `<div class="absolute top-4 right-4 flex gap-1.5"><button onclick="event.stopPropagation(); renameMeeting('${m.id}')" class="text-slate-600 bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer flex items-center gap-1">✏️ Rename</button><button onclick="event.stopPropagation(); duplicateMeeting('${m.id}')" class="text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer">📄 Duplicate</button><button onclick="event.stopPropagation(); manageTrash('${m.id}', 'trashed')" class="text-red-500 bg-slate-50 p-2 rounded-lg hover:bg-red-50 transition-colors cursor-pointer">✕</button></div>`
                             : `<div class="absolute top-4 right-4 flex gap-2"><button onclick="event.stopPropagation(); manageTrash('${m.id}','active')" class="text-emerald-600 bg-emerald-100 text-xs px-3 py-1 rounded font-bold hover:bg-emerald-200 cursor-pointer">Restore</button><button onclick="event.stopPropagation(); manageTrash('${m.id}', 'delete_permanent')" class="text-white bg-red-500 hover:bg-red-600 text-xs px-3 py-1 rounded font-bold cursor-pointer">Delete</button></div>`
                         }
                         <div class="h-12 w-12 bg-blue-50 rounded-xl flex items-center justify-center text-accent mb-4 mt-2"><svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg></div>
@@ -1385,7 +1385,35 @@
         function nextSlide() { const maxIdx = activeMeeting.slides.length + 3; if(currentSlideIndex < maxIdx) { currentSlideIndex++; renderSlideView(currentSlideIndex); } }
         function prevSlide() { if(currentSlideIndex > 0) { currentSlideIndex--; renderSlideView(currentSlideIndex); } }
         
-                                function switchView(view) {
+                                        function autoSaveAndReturn() {
+            try {
+                if (activeMeeting) {
+                    pullDataFromForm();
+                    saveLocalMeeting(activeMeeting);
+                }
+            } catch(e) { console.warn("Auto save on return:", e); }
+            loadDashboard();
+        }
+        window.autoSaveAndReturn = autoSaveAndReturn;
+
+        function renameMeeting(id) {
+            const m = meetingsList.find(item => item.id === id);
+            if (!m) return;
+            const newName = prompt("Masukkan nama/judul baru presentasi:", m.name || m.meetingName || "Presentasi");
+            if (newName !== null && newName.trim() !== "") {
+                m.name = newName.trim();
+                m.meetingName = newName.trim();
+                const details = getLocalMeetingDetails(id);
+                if (details) {
+                    details.meetingName = newName.trim();
+                    try { localStorage.setItem(GAEKS_PRES_ITEM_KEY(id), JSON.stringify(details)); } catch(e){}
+                }
+                saveLocalMeeting(details || m);
+                loadDashboard();
+            }
+        }
+        window.renameMeeting = renameMeeting;
+        function switchView(view) {
             const vDash = document.getElementById('dashboardView');
             const vAdmin = document.getElementById('adminView');
             const vPres = document.getElementById('presentationView');

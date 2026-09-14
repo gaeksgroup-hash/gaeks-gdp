@@ -560,6 +560,18 @@
 
   <!-- SCRIPT LOGIKA UTAMA -->
   <script>
+    // SAFETY GAEKS AUTH PROXY
+    var GaeksAuth = window.GaeksAuth = window.GaeksAuth || {
+      getCurrentUser() {
+        try {
+          const raw = localStorage.getItem('gaeks_user_session_v3') || localStorage.getItem('gaeks_user_session_v2');
+          if (raw) return JSON.parse(raw);
+        } catch(e) {}
+        return null;
+      },
+      initGoogleAuth() {}
+    };
+
     let activeLayout = 'prestige';
     let currentLang = 'id';
     let pendingProTheme = null;
