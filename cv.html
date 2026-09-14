@@ -191,37 +191,54 @@
     </div>
   </header>
 
-  <!-- ================= VIEW 1: DASHBOARD LIST ================= -->
-  <section id="view-dashboard" class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex-grow">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 border-b border-slate-800 gap-4">
-      <div>
-        <h1 id="ui-dash-title" class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Manajemen Resume & CV Profesional</h1>
-        <p id="ui-dash-subtitle" class="text-xs sm:text-sm text-slate-400 mt-1">Format eksekutif dengan kepadatan informasi optimal, bebas dari elemen visual template AI.</p>
-      </div>
-      <div class="flex flex-wrap gap-2">
-        <button type="button" id="btn-create-blank-action" onclick="window.createNewBlankCV()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-500/20 flex items-center space-x-1.5 transition cursor-pointer">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-          <span id="ui-btn-create-blank">+ Buat CV Baru</span>
-        </button>
+  <!-- ================= VIEW 1: DASHBOARD LIST (ROMBAK TOTAL 1 TOMBOL) ================= -->
+  <section id="view-dashboard" class="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 flex-grow">
+    
+    <!-- HERO BANNER TUNGGAL DENGAN 1 TOMBOL UTAMA -->
+    <div class="relative overflow-hidden p-8 sm:p-10 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950/40 border border-slate-800 shadow-2xl mb-10">
+      <div class="absolute top-0 right-0 -mt-8 -mr-8 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div class="max-w-xl">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-950/80 border border-blue-800/80 text-blue-300 text-xs font-bold mb-3">
+            <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+            ATS CV Studio &bull; HRD Standard Edition
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight">
+            Pembuat Resume & CV Standar ATS
+          </h1>
+          <p class="text-sm sm:text-base text-slate-400 mt-2 leading-relaxed font-normal">
+            Susun resume profesional yang lolos skrining otomatis HRD dalam hitungan menit. Tanpa watermark, 15 tema visual eksekutif, dan ekspor langsung PDF.
+          </p>
+        </div>
+
+        <!-- SATU-SATUNYA TOMBOL UTAMA UNTUK MASUK KE FORM EDITOR -->
+        <div class="flex-shrink-0">
+          <button type="button" id="btn-create-blank-action" onclick="window.createNewBlankCV()" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-extrabold text-base shadow-xl shadow-blue-500/25 flex items-center justify-center space-x-3 transition-all duration-200 cursor-pointer border border-blue-400/30">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+            <span id="ui-btn-create-blank">+ Buat CV Baru</span>
+          </button>
+        </div>
       </div>
     </div>
 
-    <div class="flex items-center space-x-2 border-b border-slate-800 mb-6">
-      <button onclick="switchDashboardTab('active')" id="tab-dash-active" class="px-4 py-2 text-xs sm:text-sm font-bold border-b-2 border-blue-500 text-blue-400 transition flex items-center gap-2">
-        <span id="ui-tab-all-active">Semua CV Aktif</span>
-        <span id="badge-active-count" class="px-1.5 py-0.2 rounded-full text-[10px] bg-blue-950 text-blue-300 border border-blue-800">0</span>
+    <!-- TABS RESUME SAYA VS TRASH -->
+    <div class="flex items-center space-x-4 border-b border-slate-800 mb-6">
+      <button onclick="switchDashboardTab('active')" id="tab-dash-active" class="pb-3 text-sm font-bold border-b-2 border-blue-500 text-blue-400 transition flex items-center gap-2">
+        <span id="ui-tab-all-active">Daftar Resume Saya</span>
+        <span id="badge-active-count" class="px-2 py-0.5 rounded-full text-xs bg-blue-950 text-blue-300 border border-blue-800 font-bold">0</span>
       </button>
-      <button onclick="switchDashboardTab('trash')" id="tab-dash-trash" class="px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-300 transition flex items-center gap-2">
+      <button onclick="switchDashboardTab('trash')" id="tab-dash-trash" class="pb-3 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-300 transition flex items-center gap-2">
         <span id="ui-tab-trash">Tempat Sampah</span>
-        <span id="badge-trash-count" class="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-900 text-slate-400 border border-slate-800">0</span>
+        <span id="badge-trash-count" class="px-2 py-0.5 rounded-full text-xs bg-slate-900 text-slate-400 border border-slate-800 font-bold">0</span>
       </button>
     </div>
 
-    <div id="trash-notice" class="hidden mb-6 p-3.5 bg-amber-950/40 border border-amber-800/60 rounded-xl text-xs text-amber-300 flex items-center gap-2">
-      <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    <div id="trash-notice" class="hidden mb-6 p-4 bg-amber-950/40 border border-amber-800/60 rounded-2xl text-xs text-amber-300 flex items-center gap-2.5">
+      <svg class="w-4 h-4 shrink-0 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
       <span id="ui-trash-notice-text">Dokumen di tempat sampah tersimpan selama <strong>3 hari</strong> sebelum dihapus permanen oleh sistem.</span>
     </div>
 
+    <!-- GRID KARTU RESUME -->
     <div id="cv-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
   </section>
 
