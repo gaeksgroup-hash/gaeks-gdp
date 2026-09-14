@@ -181,9 +181,10 @@
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
           <span>Editor Form</span>
         </button>
-        <button id="nav-btn-dashboard" onclick="showDashboardView()" class="hidden px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 transition cursor-pointer">
+        <a href="cv-dashboard.html" id="nav-btn-dashboard" class="px-3.5 py-1.5 text-xs font-bold rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 transition flex items-center gap-1.5 cursor-pointer">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
           <span id="ui-btn-cv-list">Daftar Resume</span>
-        </button>
+        </a>
         <button id="nav-btn-print" onclick="window.print()" class="hidden px-3.5 py-1.5 text-xs font-bold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition shadow-sm flex items-center gap-1.5 cursor-pointer">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
           <span id="ui-btn-download-pdf">Download PDF</span>
@@ -2322,20 +2323,14 @@
       setTimeout(() => { if (GaeksAuth.initGoogleAuth) GaeksAuth.initGoogleAuth(); }, 500);
       updateNavbarAuthStatus();
       loadCvList();
-      
+
       const urlParams = new URLSearchParams(window.location.search);
-      const view = urlParams.get('view');
-      
-      if (view === 'dashboard') {
-        showDashboardView();
+      const targetId = urlParams.get('id');
+      if (targetId) {
+        openEditor(targetId);
       } else {
-        // DEFAULT: Buka langsung editor form CV aktif atau buat baru
-        if (cvList && cvList.length > 0) {
-          const activeCv = cvList.find(c => !c.deletedAt) || cvList[0];
-          window.openEditor(activeCv.id);
-        } else {
-          window.createNewBlankCV();
-        }
+        window.location.replace('cv-dashboard.html');
+        return;
       }
       setLanguage('id');
     };

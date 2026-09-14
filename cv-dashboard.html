@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Resume ATS | GAEKS GROUP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="auth.js?v=20260914_08"></script>
+</head>
+<body class="bg-[#0b0f19] text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
+
+  <!-- NAVBAR HEADER -->
+  <header class="border-b border-slate-800 bg-[#0f172a]/95 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="index.html" class="flex items-center space-x-2.5 group">
+          <span class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-extrabold text-white text-base shadow-lg shadow-blue-500/30 group-hover:scale-105 transition">G</span>
+          <span class="font-black text-lg tracking-tight bg-gradient-to-r from-blue-400 via-indigo-300 to-white bg-clip-text text-transparent">
+            GAEKS ATS STUDIO
+          </span>
+        </a>
+        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800 hidden sm:inline-flex items-center gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          Trial 3 Hari Aktif
+        </span>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <a href="index.html" class="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-bold transition flex items-center gap-1">
+          &larr; Beranda
+        </a>
+        <a href="presentation.html" class="hidden md:inline-flex px-3.5 py-1.5 rounded-xl bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-800 text-indigo-300 text-xs font-bold transition items-center gap-1">
+          Presentation Studio &rarr;
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN DASHBOARD CONTENT -->
+  <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex-grow">
+    <!-- HERO HEADER -->
+    <div class="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-blue-950/40 via-slate-900 to-indigo-950/30 border border-blue-900/40 mb-8 shadow-2xl relative overflow-hidden">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+        <div class="max-w-2xl">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20 mb-3">
+            <span>✨ Standar Kurikulum HRD Global & ATS Parser</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            Dashboard Manajemen Resume & CV
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-400 mt-2 leading-relaxed">
+            Kelola, edit, duplikat, dan ekspor resume berstandar internasional untuk masing-masing profil Anda. Setiap resume tersimpan aman per sesi pengguna.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <button type="button" onclick="loadSampleReferenceCV()" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs sm:text-sm font-bold transition shadow-sm cursor-pointer flex items-center gap-2">
+            <span>+ Muat Sampel CV Deny Triawan</span>
+          </button>
+          <button type="button" onclick="createNewBlankCV()" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-500/25 flex items-center gap-2 transition hover:scale-[1.02] cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <span>+ Buat Resume Baru</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABS ACTIVE VS TRASH -->
+    <div class="flex items-center space-x-3 border-b border-slate-800 mb-6">
+      <button onclick="switchTab('active')" id="tab-active" class="pb-3 text-xs sm:text-sm font-bold border-b-2 border-blue-500 text-blue-400 transition flex items-center gap-2 cursor-pointer">
+        <span>Semua Resume Aktif</span>
+        <span id="badge-active-count" class="px-2 py-0.5 rounded-full text-[11px] bg-blue-950 text-blue-300 border border-blue-800">0</span>
+      </button>
+      <button onclick="switchTab('trash')" id="tab-trash" class="pb-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-300 transition flex items-center gap-2 cursor-pointer">
+        <span>Tempat Sampah</span>
+        <span id="badge-trash-count" class="px-2 py-0.5 rounded-full text-[11px] bg-slate-900 text-slate-400 border border-slate-800">0</span>
+      </button>
+    </div>
+
+    <!-- TRASH NOTICE -->
+    <div id="trash-notice" class="hidden mb-6 p-4 bg-amber-950/40 border border-amber-800/60 rounded-2xl text-xs text-amber-300 flex items-center gap-3">
+      <svg class="w-5 h-5 shrink-0 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      <span>Dokumen di tempat sampah tersimpan selama <strong>3 hari</strong> sebelum dihapus otomatis secara permanen oleh sistem.</span>
+    </div>
+
+    <!-- RESUME CARDS GRID CONTAINER -->
+    <div id="cv-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </main>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    let cvList = [];
+    let currentTab = 'active';
+
+    function createBlankCvObject(title = "CV Baru Tanpa Judul") {
+      return {
+        id: 'cv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+        title: title,
+        updatedAt: Date.now(),
+        deletedAt: null,
+        data: {
+          name: "",
+          targetRoles: [],
+          email: "",
+          phone: "",
+          location: "",
+          linkedin: "",
+          portfolio: "",
+          summary: "",
+          skillGroups: [
+            { category: currentLang === 'en' ? 'Core Competencies' : 'Keahlian Teknis & Inti', skills: "" }
+          ],
+          certificationsList: [],
+          extrasList: [],
+          isPhotoEnabled: false,
+          layout: 'prestige',
+          experiences: [],
+          educations: []
+        }
+      };
+    }
+
+    
+
+    function getSessionStorageKey() {
+      const user = (window.GaeksAuth && GaeksAuth.getCurrentUser) ? GaeksAuth.getCurrentUser() : null;
+      if (!user) return 'gaeks_cv_guest_v18';
+      if (user && (user.email.toLowerCase() === 'triawan25@gmail.com' || user.email.toLowerCase() === 'gaeks.group@gmail.com')) {
+        return 'gaeks_cv_private_triawan_v18';
+      }
+      return 'gaeks_cv_user_' + user.id + '_v18';
+    }
+
+    function loadCvList() {
+      const sKey = getSessionStorageKey();
+      const raw = localStorage.getItem(sKey);
+      if (raw) {
+        try { cvList = JSON.parse(raw); } catch(e) { cvList = []; }
+      } else {
+        cvList = [];
+      }
+
+      if (!cvList || cvList.length === 0) {
+        const user = (window.GaeksAuth && GaeksAuth.getCurrentUser) ? GaeksAuth.getCurrentUser() : null;
+        if (user && (user.email.toLowerCase() === 'triawan25@gmail.com' || user.email.toLowerCase() === 'gaeks.group@gmail.com')) {
+          cvList = [getDenyTriawanSampleData()];
+        } else {
+          cvList = [createBlankCvObject('CV Pertama Saya')];
+        }
+        saveCvList();
+      }
+      autoPurgeTrash();
+    }
+
+    function saveCvList() {
+      const sKey = getSessionStorageKey();
+      localStorage.setItem(sKey, JSON.stringify(cvList));
+      updateCounts();
+    }
+
+    function autoPurgeTrash() {
+      const now = Date.now();
+      const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+      let changed = false;
+      cvList = cvList.filter(cv => {
+        if (cv.deletedAt && (now - cv.deletedAt > THREE_DAYS_MS)) {
+          changed = true;
+          return false;
+        }
+        return true;
+      });
+      if (changed) saveCvList();
+    }
+
+    function updateCounts() {
+      const activeCount = cvList.filter(c => !c.deletedAt).length;
+      const trashCount = cvList.filter(c => c.deletedAt).length;
+      document.getElementById('badge-active-count').innerText = activeCount;
+      document.getElementById('badge-trash-count').innerText = trashCount;
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      const tabActive = document.getElementById('tab-active');
+      const tabTrash = document.getElementById('tab-trash');
+      const trashNotice = document.getElementById('trash-notice');
+
+      if (tab === 'trash') {
+        tabTrash.className = 'pb-3 text-xs sm:text-sm font-bold border-b-2 border-amber-500 text-amber-400 transition flex items-center gap-2 cursor-pointer';
+        tabActive.className = 'pb-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-300 transition flex items-center gap-2 cursor-pointer';
+        trashNotice.classList.remove('hidden');
+      } else {
+        tabActive.className = 'pb-3 text-xs sm:text-sm font-bold border-b-2 border-blue-500 text-blue-400 transition flex items-center gap-2 cursor-pointer';
+        tabTrash.className = 'pb-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-300 transition flex items-center gap-2 cursor-pointer';
+        trashNotice.classList.add('hidden');
+      }
+      renderDashboardGrid();
+    }
+
+    function renderDashboardGrid() {
+      const container = document.getElementById('cv-grid-container');
+      container.innerHTML = '';
+      const items = cvList.filter(c => currentTab === 'trash' ? c.deletedAt : !c.deletedAt);
+
+      if (items.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-16 text-center bg-slate-900/60 border border-slate-800 rounded-3xl p-8">
+            <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-400 flex items-center justify-center mx-auto mb-4">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            </div>
+            <h3 class="text-base font-bold text-white mb-1">${currentTab === 'trash' ? 'Tempat Sampah Kosong' : 'Belum Ada Resume'}</h3>
+            <p class="text-xs text-slate-400 max-w-sm mx-auto mb-6">
+              ${currentTab === 'trash' ? 'Tidak ada resume yang sedang dihapus.' : 'Klik tombol "+ Buat Resume Baru" di atas untuk mulai menyusun CV profesional Anda.'}
+            </p>
+            ${currentTab === 'active' ? `<button onclick="createNewBlankCV()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition">+ Buat Resume Baru Sekarang</button>` : ''}
+          </div>
+        `;
+        return;
+      }
+
+      const now = Date.now();
+      const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+      items.forEach(cv => {
+        const d = cv.data || {};
+        let trashMeta = '';
+        if (cv.deletedAt) {
+          const daysLeft = Math.max(0, 3 - Math.floor((now - cv.deletedAt) / ONE_DAY_MS));
+          trashMeta = `<span class="text-[11px] text-amber-400 font-medium">Sisa ${daysLeft} hari lagi di sampah</span>`;
+        }
+
+        const isDraft = Boolean(cv.isDraft);
+        const badgeStatus = isDraft
+          ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-800 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>DRAFT</span>`
+          : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>TERSIMPAN</span>`;
+
+        container.innerHTML += `
+          <div class="p-6 bg-slate-900/90 rounded-2xl border border-slate-800 hover:border-slate-700 transition-all flex flex-col justify-between shadow-xl group">
+            <div>
+              <div class="flex items-start justify-between gap-2 mb-3">
+                <h3 class="font-bold text-white text-base truncate group-hover:text-blue-400 transition">${cv.title || 'CV Tanpa Judul'}</h3>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  ${badgeStatus}
+                  <span class="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">ATS Pro</span>
+                </div>
+              </div>
+
+              <p class="text-xs text-slate-400 font-medium line-clamp-2 mb-4 leading-relaxed">${d.title || 'Belum Mengisi Posisi Sasaran'}</p>
+
+              <div class="pt-3 border-t border-slate-800/80 text-[11px] text-slate-500 space-y-1">
+                <div>Diperbarui: ${new Date(cv.updatedAt || Date.now()).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
+                ${trashMeta}
+              </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-slate-800 flex items-center justify-between gap-2">
+              ${currentTab === 'active' ? `
+                <a href="cv.html?id=${cv.id}" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-blue-500/20">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                  <span>Buka & Edit</span>
+                </a>
+                <div class="flex items-center space-x-1.5">
+                  <button onclick="duplicateCV('${cv.id}')" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition cursor-pointer">
+                    Duplikat
+                  </button>
+                  <button onclick="moveToTrash('${cv.id}')" class="p-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-900/50 text-xs transition cursor-pointer" title="Hapus ke Tempat Sampah">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                  </button>
+                </div>
+              ` : `
+                <button onclick="restoreFromTrash('${cv.id}')" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition flex items-center gap-1 cursor-pointer">
+                  <span>↩️ Pulihkan</span>
+                </button>
+                <button onclick="deletePermanent('${cv.id}')" class="px-3 py-2 rounded-xl bg-rose-900/60 hover:bg-rose-800 text-white text-xs font-semibold transition cursor-pointer">
+                  <span>Hapus Permanen</span>
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function createNewBlankCV() {
+      const title = 'CV Baru ' + (cvList.length + 1);
+      const newCv = createBlankCvObject(title);
+      newCv.isDraft = true;
+      cvList.unshift(newCv);
+      saveCvList();
+      window.location.href = 'cv.html?id=' + newCv.id;
+    }
+
+    function loadSampleReferenceCV() {
+      const sample = getDenyTriawanSampleData();
+      sample.id = 'cv_' + Date.now();
+      sample.isDraft = false;
+      cvList.unshift(sample);
+      saveCvList();
+      renderDashboardGrid();
+      alert("Sampel CV Deny Triawan berhasil dimuat ke dashboard Anda!");
+    }
+
+    function duplicateCV(id) {
+      const src = cvList.find(c => c.id === id);
+      if (!src) return;
+      const clone = JSON.parse(JSON.stringify(src));
+      clone.id = 'cv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+      clone.title = src.title + ' (Salinan)';
+      clone.updatedAt = Date.now();
+      clone.deletedAt = null;
+      clone.isDraft = false;
+      cvList.unshift(clone);
+      saveCvList();
+      renderDashboardGrid();
+    }
+
+    function moveToTrash(id) {
+      const t = cvList.find(c => c.id === id);
+      if (t) {
+        t.deletedAt = Date.now();
+        saveCvList();
+        renderDashboardGrid();
+      }
+    }
+
+    function restoreFromTrash(id) {
+      const t = cvList.find(c => c.id === id);
+      if (t) {
+        t.deletedAt = null;
+        saveCvList();
+        renderDashboardGrid();
+      }
+    }
+
+    function deletePermanent(id) {
+      if (!confirm('Yakin ingin menghapus resume ini secara permanen?')) return;
+      cvList = cvList.filter(c => c.id !== id);
+      saveCvList();
+      renderDashboardGrid();
+    }
+
+    window.onload = function() {
+      loadCvList();
+      renderDashboardGrid();
+      updateCounts();
+    };
+  </script>
+</body>
+</html>
