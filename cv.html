@@ -1,7 +1,24 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
+  <script>
+    (function() {
+      var raw = null;
+      try {
+        raw = localStorage.getItem('gaeks_user_session_v3') || localStorage.getItem('gaeks_user_session_v2') || localStorage.getItem('gaeks_user_session');
+      } catch(e) {}
+      if (!raw) {
+        try {
+          var m = document.cookie.match(/gaeks_session_v3=([^;]+)/) || document.cookie.match(/gaeks_session=([^;]+)/);
+          if (m) raw = decodeURIComponent(m[1]);
+        } catch(e) {}
+      }
+      if (!raw) {
+        window.location.replace('login.html?redirect=cv.html');
+      }
+    })();
+  </script>
+<meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GAEKS ATS CV Studio | Executive Resume Engine</title>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -176,10 +193,6 @@
 
       <div class="flex items-center space-x-2">
         <!-- PINTASAN LANGSUNG BUKA EDITOR FORM -->
-        <button id="nav-btn-to-editor" onclick="openLastOrNewCV()" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition flex items-center gap-1.5 shadow-sm cursor-pointer">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-          <span>Editor Form</span>
-        </button>
         <button id="nav-btn-dashboard" onclick="showDashboardView()" class="hidden px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 transition cursor-pointer">
           <span id="ui-btn-cv-list">Daftar CV</span>
         </button>
@@ -214,10 +227,10 @@
         <p id="ui-dash-subtitle" class="text-xs sm:text-sm text-slate-400 mt-1">Format eksekutif dengan kepadatan informasi optimal, bebas dari elemen visual template AI.</p>
       </div>
       <div class="flex flex-wrap gap-2">
-        <button type="button" id="btn-create-blank-action" onclick="createNewBlankCV()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-500/20 flex items-center space-x-1.5 transition cursor-pointer">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-          <span id="ui-btn-create-blank">+ Buat CV Baru</span>
-        </button>
+        <button type="button" id="btn-create-blank-action" onclick="window.createNewBlankCV()" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-extrabold text-base shadow-xl shadow-blue-500/25 flex items-center justify-center space-x-3 transition-all duration-200 cursor-pointer border border-blue-400/30">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            <span id="ui-btn-create-blank">Buat CV Baru</span>
+          </button>
       </div>
     </div>
 
@@ -752,7 +765,7 @@
         btnDownloadPdf: "Download PDF",
         dashTitle: "Manajemen Resume & CV Profesional",
         dashSubtitle: "Format eksekutif dengan kepadatan informasi optimal, bebas dari elemen visual template AI.",
-        btnCreateBlank: "+ Buat CV Baru",
+        btnCreateBlank: "Buat CV Baru",
         tabAllActive: "Semua CV Aktif",
         tabTrash: "Tempat Sampah",
         trashNoticeText: "Dokumen di tempat sampah tersimpan selama <strong>3 hari</strong> sebelum dihapus permanen oleh sistem.",
@@ -814,7 +827,7 @@
         btnDownloadPdf: "Export PDF",
         dashTitle: "Professional Resume & CV Manager",
         dashSubtitle: "Executive density layout engineered for maximum page space utilization and true ATS readability.",
-        btnCreateBlank: "+ Create New Resume",
+        btnCreateBlank: "Create New Resume",
         tabAllActive: "All Active Resumes",
         tabTrash: "Trash Bin",
         trashNoticeText: "Deleted resumes remain in the trash for <strong>3 days</strong> before being permanently purged.",
@@ -1275,7 +1288,7 @@
       if (items.length === 0) {
         container.innerHTML = `
           <div class="col-span-full py-12 text-center text-slate-500 text-sm">
-            ${currentDashboardTab === 'trash' ? (currentLang === 'en' ? 'Trash bin is empty.' : 'Tempat sampah kosong.') : (currentLang === 'en' ? 'No resumes created yet. Click "+ Create New Resume" above.' : 'Belum ada CV yang dibuat. Klik "+ Buat CV Baru" di atas.')}
+            ${currentDashboardTab === 'trash' ? (currentLang === 'en' ? 'Trash bin is empty.' : 'Tempat sampah kosong.') : (currentLang === 'en' ? 'No resumes created yet. Click "Create New Resume" above.' : 'Belum ada CV yang dibuat. Klik "Buat CV Baru" di atas.')}
           </div>
         `;
         return;
@@ -2338,23 +2351,18 @@
       }
     });
 
-    window.onload = function() {
+        window.onload = function() {
+      setTimeout(() => { if (GaeksAuth.initGoogleAuth) GaeksAuth.initGoogleAuth(); }, 500);
+      const user = GaeksAuth.getCurrentUser();
+      if (!user) {
+        window.location.replace('login.html?redirect=cv.html');
+        return;
+      }
       updateNavbarAuthStatus();
       loadCvList();
-      
-      const urlParams = new URLSearchParams(window.location.search);
-      const action = urlParams.get('action');
-      const view = urlParams.get('view');
-
-      if (action === 'new') {
-        createNewBlankCV();
-      } else if (view === 'editor') {
-        openLastOrNewCV();
-      } else {
-        showDashboardView();
-      }
+      showDashboardView();
       setLanguage('id');
     };
-  </script>
+</script>
 </body>
 </html>

@@ -1,6 +1,23 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <script>
+    (function() {
+      var raw = null;
+      try {
+        raw = localStorage.getItem('gaeks_user_session_v3') || localStorage.getItem('gaeks_user_session_v2') || localStorage.getItem('gaeks_user_session');
+      } catch(e) {}
+      if (!raw) {
+        try {
+          var m = document.cookie.match(/gaeks_session_v3=([^;]+)/) || document.cookie.match(/gaeks_session=([^;]+)/);
+          if (m) raw = decodeURIComponent(m[1]);
+        } catch(e) {}
+      }
+      if (!raw) {
+        window.location.replace('login.html?redirect=presentation.html');
+      }
+    })();
+  </script>
     <!-- Guest and Authenticated access enabled -->
     <meta charset="UTF-8">
     <title>GAEKS Presentation Studio | Enterprise Pitch Deck Engine</title>
@@ -332,18 +349,28 @@
     </main>
 
     <script>
-        const GAEKS_PRES_LIST_KEY = () => {
-            let uId = 'guest';
+                const GAEKS_PRES_LIST_KEY = () => {
+            let uId = 'unauthorized';
             try {
                 const raw = localStorage.getItem('gaeks_user_session_v3') || localStorage.getItem('gaeks_user_session_v2');
                 if (raw) { const u = JSON.parse(raw); if (u && u.id) uId = u.id; }
             } catch(e) {}
-            return 'gaeks_pres_list_' + uId + '_v2';
+            if (uId === 'unauthorized') {
+                window.location.replace('login.html?redirect=presentation.html');
+            }
+            return 'gaeks_pres_user_' + uId + '_v2';
         };
 
-        const GAEKS_PRES_ITEM_KEY = (id) => 'gaeks_pres_item_' + id + '_v2';
+        const GAEKS_PRES_ITEM_KEY = (id) => {
+            let uId = 'unauthorized';
+            try {
+                const raw = localStorage.getItem('gaeks_user_session_v3') || localStorage.getItem('gaeks_user_session_v2');
+                if (raw) { const u = JSON.parse(raw); if (u && u.id) uId = u.id; }
+            } catch(e) {}
+            return 'gaeks_pres_item_' + uId + '_' + id + '_v2';
+        };
 
-        function getLocalMeetingsList() {
+function getLocalMeetingsList() {
             const raw = localStorage.getItem(GAEKS_PRES_LIST_KEY());
             let list = raw ? JSON.parse(raw) : [];
             const NOW = Date.now();
