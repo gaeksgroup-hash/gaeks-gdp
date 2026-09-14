@@ -1543,7 +1543,7 @@
         const data = extractFormData();
         const cv = cvList.find(c => c.id === currentCvId);
         if (cv) {
-          cv.data = data;
+          cv.data = data; cv.isDraft = true;
           cv.updatedAt = Date.now();
           saveCvList();
         }
@@ -1559,7 +1559,7 @@
         const data = JSON.parse(historyStack[historyIndex]);
         loadFormData(data);
         const cv = cvList.find(c => c.id === currentCvId);
-        if (cv) { cv.data = data; cv.updatedAt = Date.now(); saveCvList(); }
+        if (cv) { cv.data = data; cv.isDraft = true; cv.updatedAt = Date.now(); saveCvList(); }
         updateUndoRedoButtons();
         renderCV();
       }
@@ -1571,7 +1571,7 @@
         const data = JSON.parse(historyStack[historyIndex]);
         loadFormData(data);
         const cv = cvList.find(c => c.id === currentCvId);
-        if (cv) { cv.data = data; cv.updatedAt = Date.now(); saveCvList(); }
+        if (cv) { cv.data = data; cv.isDraft = true; cv.updatedAt = Date.now(); saveCvList(); }
         updateUndoRedoButtons();
         renderCV();
       }
@@ -1900,6 +1900,7 @@
       const cv = cvList.find(c => c.id === currentCvId);
       if (cv) {
         cv.data.layout = activeLayout;
+        cv.isDraft = false;
         cv.updatedAt = Date.now();
         saveCvList();
       }

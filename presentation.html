@@ -757,17 +757,14 @@
             } catch (err) { console.error("Upload Error: ", err); }
         }
 
-        function loadDashboard() { 
-            showLoader("Menyiapkan Ruang Kerja", "Sedang mengambil data presentasi...");
-            switchView('dashboard'); 
-            google.script.run.withSuccessHandler((list) => { 
-                hideLoader(); 
-                meetingsList = Array.isArray(list) ? list : []; 
-                renderDashboardList(meetingsList, currentTab); 
-            }).withFailureHandler(err => { 
-                hideLoader(); alert("Gagal mengambil data dashboard: " + err.message); 
-            }).getMeetingsList(); 
+        function loadDashboard() {
+            switchView("dashboard");
+            meetingsList = getLocalMeetingsList();
+            renderDashboardList(meetingsList, currentTab);
+            hideLoader();
         }
+
+        
 
         function renderDashboardList(list, mode = 'active') {
             try {
