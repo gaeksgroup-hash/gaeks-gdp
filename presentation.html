@@ -1,244 +1,1746 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <script>
-    (function() {
-      var raw = null;
-      try { raw = localStorage.getItem('gaeks_user_session_v3') || localStorage.getItem('gaeks_user_session_v2') || localStorage.getItem('gaeks_user_session'); } catch(e) {}
-      if (!raw) {
-        try {
-          var m = document.cookie.match(/gaeks_session_v3=([^;]+)/) || document.cookie.match(/gaeks_session=([^;]+)/);
-          if (m) raw = decodeURIComponent(m[1]);
-        } catch(e) {}
-      }
-      if (!raw) {
-        window.location.replace('login.html?redirect=presentation.html');
-      }
-    })();
-  </script>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GAEKS Presentation Maker | Executive Pitch Deck Studio</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="auth.js?v=20260914_07"></script>
-  <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    .slide-canvas { aspect-ratio: 16 / 9; }
-    @media print {
-      .no-print { display: none !important; }
-      body { background: white !important; color: black !important; padding: 0 !important; }
-      .slide-canvas { page-break-after: always; width: 100% !important; border: none !important; box-shadow: none !important; }
-    }
-  </style>
-</head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
-
-  <!-- TOP NAVBAR -->
-  <header class="no-print border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <a href="index.html" class="flex items-center space-x-2">
-          <span class="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-extrabold text-white text-xs">G</span>
-          <span class="font-extrabold text-sm sm:text-base tracking-tight text-white">GAEKS PRESENTATION</span>
-        </a>
-        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800 flex items-center gap-1">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-          Trial 3 Hari Aktif
-        </span>
-      </div>
-
-      <div class="flex items-center space-x-3">
-        <button onclick="window.print()" class="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition flex items-center gap-1.5">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-          <span>Export Slide PDF</span>
-        </button>
-        <a href="index.html" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-semibold transition">
-          &larr; Beranda
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <!-- MAIN WORKSPACE -->
-  <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex-grow grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <script>
+      (function() {
+        var raw = null;
+        try { raw = localStorage.getItem('gaeks_user_session_v3') || localStorage.getItem('gaeks_user_session_v2') || localStorage.getItem('gaeks_user_session'); } catch(e) {}
+        if (!raw) {
+          try {
+            var m = document.cookie.match(/gaeks_session_v3=([^;]+)/) || document.cookie.match(/gaeks_session=([^;]+)/);
+            if (m) raw = decodeURIComponent(m);
+          } catch(e) {}
+        }
+        if (!raw) {
+          window.location.replace('login.html?redirect=presentation.html');
+        }
+      })();
+    </script>
+    <meta charset="UTF-8">
+    <title>GAEKS Presentation Studio | Enterprise Pitch Deck Engine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <div class="no-print lg:col-span-4 bg-slate-900/70 border border-slate-800 rounded-2xl p-5 space-y-4 h-fit">
-      <div class="flex justify-between items-center pb-3 border-b border-slate-800">
-        <div>
-          <h2 class="text-sm font-bold text-white">Daftar Slide Pitch Deck</h2>
-          <p class="text-[11px] text-slate-400">Pilih slide untuk mengedit konten</p>
-        </div>
-        <button onclick="addNewSlide()" class="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-bold transition">
-          + Slide Baru
-        </button>
-      </div>
-
-      <div id="slide-thumb-list" class="space-y-2 max-h-[520px] overflow-y-auto pr-1">
-      </div>
-    </div>
-
-    <div class="lg:col-span-8 space-y-6">
-      
-      <div id="slide-viewport" class="slide-canvas w-full bg-gradient-to-br from-slate-900 via-slate-900 to-blue-950/60 rounded-2xl border-2 border-slate-700 shadow-2xl p-8 sm:p-12 flex flex-col justify-between relative overflow-hidden transition-all duration-300">
-        <div class="flex justify-between items-start">
-          <div class="space-y-1">
-            <span id="canvas-slide-tag" class="text-[11px] font-extrabold uppercase tracking-widest text-blue-400 font-mono">PITCH DECK</span>
-            <h1 id="canvas-slide-title" class="text-2xl sm:text-4xl font-black text-white tracking-tight">Judul Presentasi Eksekutif</h1>
-          </div>
-          <span class="w-8 h-8 rounded-lg bg-blue-600/30 border border-blue-500/40 text-blue-300 text-xs font-bold flex items-center justify-center">G</span>
-        </div>
-
-        <div id="canvas-slide-content" class="py-6 text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
-          Deskripsi masalah mendasar dan peluang pasar strategis yang ingin diselesaikan oleh ekosistem bisnis ini.
-        </div>
-
-        <div class="pt-4 border-t border-slate-800/80 flex justify-between items-center text-xs text-slate-500">
-          <span id="canvas-slide-footer">GAEKS GROUP &bull; Confidential Pitch</span>
-          <span id="canvas-slide-number" class="font-mono">Slide 1 / 1</span>
-        </div>
-      </div>
-
-      <div class="no-print bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Editor Konten Slide Aktif</h3>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/PptxGenJS/dist/pptxgen.bundle.js"></script>
+    <script src="auth.js?v=20260914_08"></script>
+    
+    <script>
+        tailwind.config = { 
+            theme: { 
+                extend: { 
+                    colors: { 
+                        brand: '#0A0F1D', 
+                        brandLight: '#1e293b',
+                        accent: '#2563eb', 
+                        corporateTeal: '#0f766e', 
+                        champagne: '#d4af37' 
+                    }, 
+                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'], serif: ['"Playfair Display"', 'serif'] } 
+                } 
+            } 
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { height: 8px; width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
         
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Tag Kategori Slide</label>
-            <input type="text" id="edit-slide-tag" oninput="updateActiveSlide()" class="w-full px-3 py-2 text-xs bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none" />
-          </div>
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Pilihan Tema Visual</label>
-            <select id="edit-slide-theme" onchange="changeSlideTheme(this.value)" class="w-full px-3 py-2 text-xs bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none">
-              <option value="theme-navy">Obsidian Navy (Standar Eksekutif)</option>
-              <option value="theme-emerald">Emerald Growth (Fintech & Supply Chain)</option>
-              <option value="theme-purple">Silicon Venture (Startup AI & Digital)</option>
-              <option value="theme-minimal">Monochrome Slate (Minimalis VC)</option>
-            </select>
-          </div>
-        </div>
+        .anim-slide-up { animation: slideUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(40px); }
+        .anim-slide-left { animation: slideLeft 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateX(-40px); }
+        .anim-zoom-in { animation: zoomIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: scale(0.92); }
+        .anim-fade-in { animation: fadeIn 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        .anim-line-grow { animation: lineGrow 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; width: 0; opacity: 0; }
+        
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideLeft { to { opacity: 1; transform: translateX(0); } }
+        @keyframes zoomIn { to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeIn { to { opacity: 1; } }
+        @keyframes lineGrow { to { width: 100%; opacity: 1; } }
 
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-400 mb-1">Judul Slide</label>
-          <input type="text" id="edit-slide-title" oninput="updateActiveSlide()" class="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white font-bold focus:border-blue-500 focus:outline-none" />
-        </div>
+        .bg-gradient-alive {
+            background: linear-gradient(-45deg, #0A0F1D, #1e1b4b, #0f766e, #0f172a);
+            background-size: 400% 400%;
+            animation: gradientFlow 10s ease-in-out infinite;
+        }
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-400 mb-1">Poin & Uraian Narasi Slide</label>
-          <textarea id="edit-slide-desc" rows="4" oninput="updateActiveSlide()" class="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-blue-500 focus:outline-none"></textarea>
-        </div>
-      </div>
+        @keyframes orbitSlow {
+            0% { transform: rotate(0deg) translateX(150px) rotate(0deg); opacity: 0.4; }
+            50% { opacity: 0.8; }
+            100% { transform: rotate(360deg) translateX(150px) rotate(-360deg); opacity: 0.4; }
+        }
+        .orb-1 { animation: orbitSlow 15s linear infinite; }
+        .orb-2 { animation: orbitSlow 18s linear infinite reverse; }
 
+        .shimmer-text {
+            background: linear-gradient(120deg, #ffffff 0%, #fef08a 25%, #d4af37 50%, #fef08a 75%, #ffffff 100%);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: shimmer 5s ease-in-out infinite;
+        }
+        @keyframes shimmer { 
+            0% { background-position: 200% center; }
+            100% { background-position: -200% center; }
+        }
+
+        .bg-grid-pattern-dark {
+            background-image: radial-gradient(#ffffff 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.04;
+        }
+        
+        .toast-enter { animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .toast-exit { animation: fadeOutRight 0.5s ease-in forwards; }
+        @keyframes slideInRight { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); } }
+        @keyframes fadeOutRight { from { transform: translateX(0); } to { transform: translateX(120%); opacity: 0; } }
+
+        .excel-table th { background-color: #0f172a; color: white; padding: 14px 20px; font-weight: 600; text-align: left; position: sticky; top: 0; z-index: 10;}
+        .excel-table td { padding: 14px 20px; border-bottom: 1px solid #e2e8f0; color: #334155; }
+        .excel-table tr:nth-child(even) { background-color: #f8fafc; }
+
+        body.exporting-mode * {
+            animation: none !important; transition: none !important;
+            opacity: 1 !important; transform: none !important;
+            animation-delay: 0ms !important;
+        }
+        .pdf-background-render {
+            position: fixed !important; top: 0 !important; left: 0 !important;
+            width: 1920px !important; height: 1080px !important;
+            z-index: -100 !important; opacity: 1 !important; 
+            pointer-events: none !important; background: #f8fafc !important;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col overflow-x-hidden selection:bg-blue-600 selection:text-white">
+
+    <div id="toastContainer" class="fixed top-6 right-6 z-[99999999] flex flex-col gap-3 pointer-events-none"></div>
+
+    <div id="globalLoader" class="fixed inset-0 z-[999999] bg-slate-900/95 backdrop-blur-xl hidden flex-col items-center justify-center transition-opacity duration-300 pointer-events-auto">
+        <div class="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin mb-6 shadow-lg"></div>
+        <h2 id="loaderTitle" class="text-3xl font-bold text-white mb-2 tracking-wide drop-shadow-md">Memproses...</h2>
+        <p id="loaderDesc" class="text-slate-300 font-medium">Mohon tunggu sebentar.</p>
     </div>
-  </main>
 
-  <script>
-    let slides = [
-      { tag: "PROBLEM & OPPORTUNITY", title: "Fragmentasi Logistik & Regulasi Ekspor-Impor", desc: "Tingginya biaya operasional dan rumitnya kepatuhan bea cukai (PIB/PEB) menghambat efisiensi bisnis. Dibutuhkan ekosistem digital terpadu untuk merampingkan seluruh rantai pasok.", theme: "theme-navy" },
-      { tag: "SOLUTION", title: "GAEKS Digital Ecosystem", desc: "Integrasi menyeluruh antara Freight Forwarding Internasional, software ERP terpusat (erp.gaeks.com), dan otomasi media pemasaran digital.", theme: "theme-emerald" },
-      { tag: "MARKET SIZE (TAM / SAM / SOM)", title: "Potensi Pasar Logistik Indonesia Rp 1.400T", desc: "Pertumbuhan ekspor-impor dan manufaktur menuntut digitalisasi rantai pasok yang cepat, transparan, dan akurat tanpa keterlambatan dokumen.", theme: "theme-purple" },
-      { tag: "BUSINESS MODEL", title: "Monetisasi Berkelanjutan & Ekosistem Layanan", desc: "Revenue stream berasal dari freight margin, subscription SaaS ERP bulanan, layanan custom website korporat, dan kursus e-book eksekutif.", theme: "theme-navy" }
-    ];
-
-    let activeIndex = 0;
-
-    function renderSlideOutline() {
-      const container = document.getElementById('slide-thumb-list');
-      container.innerHTML = '';
-
-      slides.forEach((s, idx) => {
-        const isActive = (idx === activeIndex);
-        container.innerHTML += `
-          <div onclick="selectSlide(${idx})" class="p-3 rounded-xl border transition cursor-pointer flex justify-between items-center ${isActive ? 'bg-blue-950/60 border-blue-500 text-white shadow' : 'bg-slate-950/40 border-slate-800 hover:border-slate-700 text-slate-400'}">
-            <div class="truncate max-w-[200px]">
-              <div class="text-[9px] uppercase font-mono font-bold text-blue-400">${s.tag}</div>
-              <div class="text-xs font-bold truncate">${idx + 1}. ${s.title}</div>
+    <div id="lightbox" class="fixed inset-0 z-[999999] bg-slate-900/95 backdrop-blur-xl hidden flex-col items-center justify-center overflow-hidden transition-opacity duration-300 opacity-0 pointer-events-auto" onclick="closeLightbox()">
+        <button class="absolute top-6 right-6 text-slate-300 bg-white/10 hover:bg-red-500 hover:text-white border border-white/10 rounded-full px-6 py-2.5 font-bold transition-all shadow-lg z-[9999] flex items-center gap-2 cursor-pointer">✕ Tutup</button>
+        <div id="zoomControls" class="absolute top-6 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-slate-800/90 p-2 rounded-full shadow-2xl border border-slate-600 backdrop-blur-md z-[9999] hidden" onclick="event.stopPropagation()">
+            <button onclick="changeZoom(-0.2)" class="w-10 h-10 bg-slate-700 hover:bg-accent text-white rounded-full font-bold text-xl flex items-center justify-center transition-colors">−</button>
+            <span id="zoomLevelDisplay" class="text-white font-mono text-sm w-12 text-center font-bold">100%</span>
+            <button onclick="changeZoom(0.2)" class="w-10 h-10 bg-slate-700 hover:bg-accent text-white rounded-full font-bold text-xl flex items-center justify-center transition-colors">+</button>
+            <div class="w-px h-6 bg-slate-600 mx-1"></div>
+            <button onclick="resetZoom()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-full font-bold text-xs transition-colors">Reset</button>
+        </div>
+        <figure id="lightboxFigure" class="hidden relative flex-col items-center w-full h-full pt-20 pb-32 overflow-hidden" onclick="event.stopPropagation()">
+            <div class="w-full h-full flex items-center justify-center overflow-hidden relative">
+                <img id="lightboxImg" src="" class="max-w-full max-h-full object-contain rounded shadow-2xl border border-slate-700/50" draggable="false">
             </div>
-            ${slides.length > 1 ? `<button onclick="deleteSlide(event, ${idx})" class="text-rose-400 hover:text-rose-300 text-xs px-1">&times;</button>` : ''}
-          </div>
-        `;
-      });
+            <figcaption id="lightboxCaption" class="absolute bottom-6 mx-auto w-[90%] max-w-4xl max-h-[25vh] overflow-y-auto custom-scrollbar text-slate-100 text-lg font-medium text-center leading-relaxed bg-slate-800/90 p-6 rounded-2xl border border-slate-600 shadow-2xl backdrop-blur-md hidden"></figcaption>
+        </figure>
+        <div id="lightboxHtml" class="hidden w-full max-w-7xl max-h-[85vh] overflow-auto bg-white rounded-2xl shadow-2xl p-2 md:p-6 custom-scrollbar" onclick="event.stopPropagation()"></div>
+    </div>
 
-      populateEditor();
-      renderActiveCanvas();
-    }
+    <!-- MAIN HEADER -->
+    <header id="mainHeader" class="bg-brand border-b border-slate-800 text-white px-6 py-3.5 shadow-xl flex justify-between items-center z-50 relative pointer-events-auto">
+        <div class="flex items-center space-x-4">
+            <a href="index.html" class="flex items-center space-x-2.5">
+                <span class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-extrabold text-white text-xs shadow-md shadow-blue-500/30">G</span>
+                <span class="font-extrabold text-base tracking-tight bg-gradient-to-r from-blue-400 via-indigo-300 to-white bg-clip-text text-transparent">
+                    GAEKS PRESENTATION
+                </span>
+            </a>
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800 hidden sm:inline-flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                Trial 3 Hari Aktif
+            </span>
+        </div>
 
-    function selectSlide(idx) {
-      activeIndex = idx;
-      renderSlideOutline();
-    }
+        <div class="flex items-center gap-3">
+            <div class="flex gap-1.5 bg-white/10 p-1 rounded-xl border border-white/10">
+                <button onclick="renderDashboardList(meetingsList, 'active')" id="tabActive" class="px-4 py-1.5 text-xs sm:text-sm font-bold bg-white/20 rounded-lg transition-all cursor-pointer">📂 Arsip Materi</button>
+                <button onclick="renderDashboardList(meetingsList, 'trashed')" id="tabTrash" class="px-4 py-1.5 text-xs sm:text-sm font-bold hover:bg-white/10 rounded-lg transition-all cursor-pointer">🗑️ Trash</button>
+            </div>
+            <a href="index.html" class="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-bold transition">
+                &larr; Beranda
+            </a>
+            <a href="cv.html" class="hidden md:inline-block px-3.5 py-1.5 rounded-xl bg-blue-950/80 hover:bg-blue-900 border border-blue-800 text-blue-300 text-xs font-bold transition">
+                ATS CV Studio &rarr;
+            </a>
+        </div>
+    </header>
 
-    function addNewSlide() {
-      slides.push({
-        tag: "NEW SLIDE",
-        title: "Slide Judul Baru " + (slides.length + 1),
-        desc: "Tambahkan poin narasi bisnis atau metrik pertumbuhan Anda di sini.",
-        theme: "theme-navy"
-      });
-      activeIndex = slides.length - 1;
-      renderSlideOutline();
-    }
+    <main class="flex-grow relative flex flex-col h-full z-10 pointer-events-auto">
+        <!-- DASHBOARD VIEW -->
+        <section id="dashboardView" class="p-8 max-w-7xl mx-auto w-full block relative z-20">
+            <div class="flex justify-between items-center mb-8 border-b border-slate-200 pb-4">
+                <div>
+                    <h2 id="dashboardTitle" class="text-3xl font-extrabold text-slate-800">Arsip Materi Presentasi</h2>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1">Platform pembuatan slide presentasi pitch deck investor dan materi meeting eksekutif.</p>
+                </div>
+                <button onclick="createNewMeeting()" id="btnCreateNew" class="bg-accent text-white px-6 py-2.5 rounded-lg font-bold shadow-lg hover:bg-blue-600 transition-all hover:scale-105 relative z-50 cursor-pointer">+ Buat Meeting Baru</button>
+            </div>
+            <div id="meetingListContainer" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+        </section>
 
-    function deleteSlide(e, idx) {
-      e.stopPropagation();
-      if (slides.length <= 1) return;
-      slides.splice(idx, 1);
-      if (activeIndex >= slides.length) activeIndex = slides.length - 1;
-      renderSlideOutline();
-    }
+        <!-- ADMIN EDITOR VIEW -->
+        <section id="adminView" class="hidden p-6 max-w-6xl mx-auto w-full relative z-20">
+            <div class="bg-brandLight p-4 rounded-xl shadow-lg mb-6 flex flex-col md:flex-row justify-between items-center sticky top-4 z-40 gap-4">
+                <button onclick="switchView('dashboard')" class="text-white hover:text-champagne font-bold flex items-center gap-2 text-sm bg-white/10 px-4 py-2 rounded-lg transition-colors cursor-pointer">← Kembali ke List</button>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="runNativePPTXExport()" class="bg-[#d04423] hover:bg-[#b8381b] text-white px-5 py-2 rounded-lg font-bold text-sm shadow-md transition-all cursor-pointer flex items-center gap-2">📊 Download PPTX</button>
+                    <button onclick="runNativePDFExport()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2 rounded-lg font-bold text-sm shadow-md transition-all cursor-pointer flex items-center gap-2">📄 Download PDF</button>
+                    
+                    <button onclick="switchView('presentation')" class="bg-blue-500 hover:bg-blue-400 text-white px-5 py-2 rounded-lg font-bold text-sm shadow-md transition-colors cursor-pointer ml-2">📺 Play Presentation</button>
+                    <button onclick="saveCurrentMeeting()" id="btnSave" class="bg-emerald-500 hover:bg-emerald-400 text-white px-8 py-2 rounded-lg font-bold text-sm shadow-md transition-colors cursor-pointer">💾 Simpan Progress</button>
+                </div>
+            </div>
 
-    function populateEditor() {
-      const current = slides[activeIndex];
-      document.getElementById('edit-slide-tag').value = current.tag;
-      document.getElementById('edit-slide-title').value = current.title;
-      document.getElementById('edit-slide-desc').value = current.desc;
-      document.getElementById('edit-slide-theme').value = current.theme || 'theme-navy';
-    }
+            <button onclick="addSlide()" class="fixed bottom-10 right-10 z-[100] bg-accent hover:bg-blue-600 text-white px-6 py-4 rounded-full font-extrabold shadow-[0_10px_30px_rgba(59,130,246,0.5)] transition-transform hover:scale-110 flex items-center gap-2 border-2 border-white cursor-pointer">
+                + Tambah Slide Baru
+            </button>
 
-    function updateActiveSlide() {
-      const current = slides[activeIndex];
-      current.tag = document.getElementById('edit-slide-tag').value.toUpperCase();
-      current.title = document.getElementById('edit-slide-title').value;
-      current.desc = document.getElementById('edit-slide-desc').value;
-      renderActiveCanvas();
-      
-      const thumb = document.querySelectorAll('#slide-thumb-list > div')[activeIndex];
-      if (thumb) {
-        thumb.querySelector('.text-\\[9px\\]').innerText = current.tag;
-        thumb.querySelector('.text-xs').innerText = `${activeIndex + 1}. ${current.title}`;
-      }
-    }
+            <!-- EDIT COVER SECTION -->
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6 border-b pb-4">📝 Info Cover</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10 bg-slate-50 p-6 rounded-xl border border-slate-100">
+                    <div><label class="block text-sm font-bold text-slate-600 mb-1">Judul Presentasi</label><input type="text" id="inputMeetingName" class="w-full border border-slate-300 rounded-lg p-2.5 focus:border-accent outline-none font-bold"></div>
+                    <div><label class="block text-sm font-bold text-slate-600 mb-1">Tanggal Rapat</label><input type="date" id="inputMeetingDate" class="w-full border border-slate-300 rounded-lg p-2.5 focus:border-accent outline-none"></div>
+                    <div><label class="block text-sm font-bold text-slate-600 mb-1">Penulis (Author)</label><input type="text" id="inputAuthor" class="w-full border border-slate-300 rounded-lg p-2.5 focus:border-accent outline-none"></div>
+                    <div><label class="block text-sm font-bold text-slate-600 mb-1">Perusahaan (Company)</label><input type="text" id="inputCompany" class="w-full border border-slate-300 rounded-lg p-2.5 focus:border-accent outline-none"></div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-bold text-slate-600 mb-1">Upload Logo Perusahaan</label>
+                        <div class="flex items-center gap-2">
+                            <input type="file" accept="image/*" class="text-sm file:py-1.5 file:px-4 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700 cursor-pointer" onchange="handleImageUpload(this, 'inputLogoUrl', 'statusLogoUpload')">
+                            <span id="statusLogoUpload" class="text-xs font-bold text-slate-400"></span>
+                        </div>
+                        <input type="hidden" id="inputLogoUrl">
+                        <img id="previewLogo" src="" class="h-10 mt-2 object-contain hidden border bg-white p-1 rounded">
+                    </div>
+                </div>
 
-    function changeSlideTheme(themeName) {
-      slides[activeIndex].theme = themeName;
-      renderActiveCanvas();
-    }
+                <div class="mb-4 border-b pb-2 flex justify-between items-end">
+                    <h3 id="anchorManajemenSlide" class="text-xl font-bold text-slate-800 scroll-mt-28">Manajemen Halaman (Slide)</h3>
+                    <p class="text-xs text-slate-500">*Gunakan mode 'Play Presentation' untuk menambahkan Notes MOM.</p>
+                </div>
+                <div id="slidesFormContainer" class="space-y-8 pb-20"></div>
+            </div>
+        </section>
 
-    function renderActiveCanvas() {
-      const s = slides[activeIndex];
-      const viewport = document.getElementById('slide-viewport');
+        <!-- PRESENTATION ENGINE VIEW -->
+        <section id="presentationView" class="hidden flex-grow relative bg-slate-50 select-none w-full h-screen overflow-hidden flex flex-col z-50">
+            <canvas id="presenterCanvas" class="absolute inset-0 z-[150] w-full h-full pointer-events-none"></canvas>
 
-      document.getElementById('canvas-slide-tag').innerText = s.tag;
-      document.getElementById('canvas-slide-title').innerText = s.title;
-      document.getElementById('canvas-slide-content').innerText = s.desc;
-      document.getElementById('canvas-slide-number').innerText = `Slide ${activeIndex + 1} / ${slides.length}`;
+            <div id="captureArea" class="h-full flex flex-col p-8 md:p-12 max-w-[100rem] mx-auto w-full relative z-0 bg-slate-50 pointer-events-auto transition-all duration-700">
+                
+                <div id="presHeader" class="border-b-2 border-slate-200 pb-4 mb-4 flex justify-between items-start transition-opacity anim-slide-up flex-shrink-0 z-50 bg-slate-50">
+                    <h2 id="presHeaderTitle" class="text-xl font-bold text-slate-400 tracking-tight uppercase"></h2>
+                    <img id="presHeaderLogo" src="" alt="Logo" class="h-8 object-contain drop-shadow-sm" onerror="this.style.display='none'">
+                </div>
+                
+                <div class="flex-grow flex flex-col overflow-y-auto custom-scrollbar relative pb-10 w-full" id="presContentArea">
+                    
+                    <div id="layoutCover" class="hidden w-full h-full flex flex-col items-center justify-center relative overflow-hidden bg-gradient-alive text-white">
+                        <div class="absolute inset-0 bg-grid-pattern-dark pointer-events-none z-0"></div>
+                        <div class="absolute top-[10%] left-[20%] w-[400px] h-[400px] bg-corporateTeal/30 rounded-full blur-[100px] orb-1 pointer-events-none z-0"></div>
+                        <div class="absolute bottom-[10%] right-[20%] w-[500px] h-[500px] bg-indigo-500/20 rounded-full blur-[120px] orb-2 pointer-events-none z-0"></div>
+                        
+                        <div class="z-10 flex flex-col items-center justify-center w-full max-w-5xl px-8 relative">
+                            <img id="presCoverLogo" src="" alt="Logo" class="anim-slide-up h-24 md:h-32 mb-10 object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)] brightness-110" onerror="this.style.display='none'" style="animation-delay: 200ms;">
+                            <h1 id="presCoverTitle" class="anim-slide-up text-5xl md:text-[5.5rem] font-serif font-extrabold mb-8 leading-[1.1] tracking-tight text-center text-white drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]" style="animation-delay: 400ms;"></h1>
+                            <div class="anim-line-grow h-[2px] bg-gradient-to-r from-transparent via-champagne to-transparent w-full max-w-md mb-8 shadow-[0_0_15px_rgba(212,175,55,0.6)]" style="animation-delay: 600ms;"></div>
+                            <div id="presCoverMeta" class="anim-slide-up flex flex-wrap justify-center items-center gap-x-6 gap-y-3 text-lg md:text-xl font-sans font-medium tracking-wide bg-black/30 px-8 py-3.5 rounded-full border border-white/10 backdrop-blur-md shadow-2xl" style="animation-delay: 800ms;"></div>
+                        </div>
+                    </div>
 
-      if (s.theme === 'theme-emerald') {
-        viewport.className = "slide-canvas w-full bg-gradient-to-br from-slate-950 via-emerald-950/50 to-slate-900 rounded-2xl border-2 border-emerald-700/80 shadow-2xl p-8 sm:p-12 flex flex-col justify-between relative overflow-hidden transition-all duration-300";
-      } else if (s.theme === 'theme-purple') {
-        viewport.className = "slide-canvas w-full bg-gradient-to-br from-slate-950 via-indigo-950/60 to-purple-950/40 rounded-2xl border-2 border-indigo-700/80 shadow-2xl p-8 sm:p-12 flex flex-col justify-between relative overflow-hidden transition-all duration-300";
-      } else if (s.theme === 'theme-minimal') {
-        viewport.className = "slide-canvas w-full bg-slate-900 rounded-2xl border-2 border-slate-700 shadow-2xl p-8 sm:p-12 flex flex-col justify-between relative overflow-hidden transition-all duration-300";
-      } else {
-        viewport.className = "slide-canvas w-full bg-gradient-to-br from-slate-900 via-slate-900 to-blue-950/60 rounded-2xl border-2 border-slate-700 shadow-2xl p-8 sm:p-12 flex flex-col justify-between relative overflow-hidden transition-all duration-300";
-      }
-    }
+                    <div id="layoutAgenda" class="hidden w-full flex-col h-full">
+                        <div class="anim-slide-left sticky top-0 bg-slate-50 z-40 pt-2 pb-4 mb-8">
+                            <h1 class="text-[3rem] font-extrabold text-brand border-l-8 border-accent pl-6 leading-tight">Daftar Bahasan Utama</h1>
+                            <p class="text-slate-500 mt-2 text-xl pl-8 font-medium">Kerangka pembahasan strategis presentasi.</p>
+                        </div>
+                        <div id="presAgendaGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full flex-grow content-start pb-10"></div>
+                    </div>
 
-    window.addEventListener('DOMContentLoaded', () => {
-      renderSlideOutline();
-    });
-  </script>
+                    <div id="layoutContent" class="hidden w-full flex-col h-full">
+                        <div class="sticky top-0 bg-slate-50 z-40 pt-2 pb-4 mb-8">
+                            <h1 id="presSlideTitle" class="text-[3rem] font-extrabold text-brand leading-tight w-full anim-slide-up pb-2"></h1>
+                            <div class="h-1.5 bg-gradient-to-r from-accent to-transparent w-full mb-2 anim-line-grow rounded-full" style="animation-delay: 200ms; max-width: 600px;"></div>
+                        </div>
+                        <div id="presSlideGrid" class="grid gap-12 items-start w-full flex-grow">
+                            <div id="presSlideTextCol" class="w-full">
+                                <ul id="presSlideBullets" class="w-full"></ul>
+                            </div>
+                            <div id="presSlideVisual" class="w-full hidden h-full anim-zoom-in" style="animation-delay: 300ms;"></div>
+                        </div>
+                    </div>
+
+                    <div id="layoutMOM" class="hidden w-full flex-col h-full">
+                        <div class="anim-slide-left sticky top-0 bg-slate-50 z-40 pt-2 pb-4 mb-8 border-b-2 border-slate-200">
+                            <h1 class="text-[3rem] font-serif font-bold text-corporateTeal leading-tight">Minutes of Meeting (MOM)</h1>
+                            <p class="text-slate-500 mt-1 text-xl font-medium">Rekapitulasi catatan, diskusi, dan keputusan akhir.</p>
+                        </div>
+                        <div class="w-full flex-grow overflow-y-auto custom-scrollbar pb-10 pr-4">
+                            <div id="momContentList" class="flex flex-col gap-6"></div>
+                        </div>
+                    </div>
+
+                    <div id="layoutThankYou" class="hidden w-full h-full flex flex-col items-center justify-center relative bg-brandLight overflow-hidden text-white">
+                        <div class="absolute inset-0 bg-grid-pattern-dark pointer-events-none z-0"></div>
+                        <div class="absolute top-[20%] left-[10%] w-[500px] h-[500px] bg-corporateTeal/20 rounded-full blur-[120px] orb-1 pointer-events-none z-0"></div>
+                        <div class="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] bg-champagne/15 rounded-full blur-[120px] orb-2 pointer-events-none z-0"></div>
+                        
+                        <div class="relative z-10 flex flex-col items-center justify-center p-12 w-full max-w-4xl bg-brand/40 border border-white/5 backdrop-blur-2xl rounded-[3rem] shadow-[0_30px_60px_rgba(0,0,0,0.6)]">
+                            <h1 class="anim-slide-up text-5xl md:text-[5.5rem] font-serif font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-100 to-slate-400 mb-6 tracking-tight drop-shadow-lg" style="animation-delay: 200ms;">Thank You.</h1>
+                            <div class="anim-line-grow h-1.5 bg-gradient-to-r from-transparent via-corporateTeal to-transparent w-full max-w-xs mb-8 shadow-[0_0_20px_rgba(15,118,110,0.6)] rounded-full" style="animation-delay: 400ms;"></div>
+                            <p id="dynamicClosingText" class="anim-slide-up text-base md:text-lg text-slate-300 font-medium mb-10 w-full leading-relaxed text-center font-sans tracking-wide whitespace-pre-line" style="animation-delay: 600ms;"></p>
+                            <button onclick="goToSlide(1); event.stopPropagation();" class="anim-slide-up group relative inline-flex items-center justify-center px-10 py-3.5 font-bold text-brand transition-all duration-300 bg-champagne font-sans rounded-xl hover:bg-white hover:-translate-y-1 focus:outline-none overflow-hidden cursor-pointer shadow-[0_15px_30px_rgba(212,175,55,0.4)]" style="animation-delay: 800ms;">
+                                <span class="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-30 bg-gradient-to-b from-transparent via-transparent to-black"></span>
+                                <span class="relative tracking-[0.15em] text-sm uppercase">Kembali ke Agenda</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="presFooter" class="flex justify-between items-center text-slate-400 font-bold border-t border-slate-200 pt-4 mb-4 mt-2 transition-opacity anim-slide-up delay-200 flex-shrink-0 z-50 bg-slate-50 relative">
+                    <p class="text-[11px] text-slate-400 font-semibold tracking-[0.2em] uppercase">GAEKS GROUP &bull; 2026</p>
+                    
+                    <div id="presenterNoteWidget" class="relative z-[99999] hidden flex-col items-end pointer-events-auto" onmousedown="event.stopPropagation()">
+                        <div id="noteDrawer" class="hidden absolute bottom-full right-0 mb-4 w-[450px] bg-brand/95 border border-white/10 backdrop-blur-3xl rounded-[2rem] shadow-[0_30px_60px_rgba(0,0,0,0.6)] p-7 anim-slide-up origin-bottom-right transition-all duration-300">
+                            <div class="flex justify-between items-center mb-5 border-b border-white/10 pb-4">
+                                <span class="text-xs font-extrabold uppercase tracking-widest text-white flex items-center gap-3">
+                                    <span class="w-2 h-2 rounded-full bg-corporateTeal animate-pulse shadow-[0_0_10px_rgba(15,118,110,0.8)]"></span> Catatan Diskusi Utama
+                                </span>
+                                <button onclick="toggleNoteDrawer(); event.stopPropagation();" class="text-slate-400 hover:text-white font-bold text-2xl leading-none transition-colors cursor-pointer">&times;</button>
+                            </div>
+                            <textarea id="liveNoteInput" rows="6" placeholder="Ketik hasil kesepakatan spesifik di sini..." class="w-full text-sm border border-white/20 rounded-xl p-4 outline-none focus:border-corporateTeal focus:ring-1 focus:ring-corporateTeal bg-black/40 text-slate-100 placeholder-slate-500 leading-relaxed custom-scrollbar transition-all" onmousedown="event.stopPropagation()"></textarea>
+                            <div class="flex justify-end mt-4">
+                                <button id="btnSaveLiveNote" onclick="saveLiveNote(); event.stopPropagation();" class="px-6 py-3 bg-corporateTeal hover:bg-white text-white hover:text-brand text-xs font-black uppercase tracking-widest rounded-xl cursor-pointer transition-all duration-300 shadow-[0_10px_20px_rgba(15,118,110,0.3)] hover:shadow-[0_10px_30px_rgba(255,255,255,0.4)] flex items-center gap-2">
+                                    Simpan Catatan
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="noteTriggerBtn" onclick="toggleNoteDrawer(); event.stopPropagation();" onmousedown="event.stopPropagation();" title="Klik untuk Catatan Diskusi" class="group cursor-pointer flex items-center justify-center gap-3 px-5 py-2 bg-white/80 backdrop-blur-md border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-corporateTeal hover:bg-white transition-all duration-500">
+                            <span class="text-sm font-bold text-slate-500 group-hover:text-corporateTeal transition-colors tracking-widest font-mono">
+                                <span id="widgetCurrentPage">1</span> / <span id="widgetTotalPages">1</span>
+                            </span>
+                            <div class="w-px h-4 bg-slate-300 group-hover:bg-corporateTeal/40 transition-colors"></div>
+                            <span class="text-[10px] font-black text-corporateTeal tracking-[0.2em] uppercase opacity-0 w-0 overflow-hidden group-hover:w-auto group-hover:opacity-100 group-hover:ml-1 transition-all duration-500 whitespace-nowrap">Catatan</span>
+                            <div class="w-2 h-2 rounded-full bg-slate-300 group-hover:bg-corporateTeal group-hover:shadow-[0_0_8px_rgba(15,118,110,0.6)] group-hover:animate-pulse transition-all"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const GAEKS_PRES_LIST_KEY = () => {
+            let uId = 'guest';
+            try {
+                const raw = localStorage.getItem('gaeks_user_session_v3') || localStorage.getItem('gaeks_user_session_v2');
+                if (raw) { const u = JSON.parse(raw); if (u && u.id) uId = u.id; }
+            } catch(e) {}
+            return 'gaeks_pres_list_' + uId + '_v2';
+        };
+
+        const GAEKS_PRES_ITEM_KEY = (id) => 'gaeks_pres_item_' + id + '_v2';
+
+        function getLocalMeetingsList() {
+            const raw = localStorage.getItem(GAEKS_PRES_LIST_KEY());
+            let list = raw ? JSON.parse(raw) : [];
+            const NOW = Date.now();
+            const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+            let needsUpdate = false;
+            
+            const filtered = list.filter(m => {
+                if (m.status === 'trashed') {
+                    if (NOW - m.deletedAt > THREE_DAYS_MS) {
+                        localStorage.removeItem(GAEKS_PRES_ITEM_KEY(m.id));
+                        needsUpdate = true;
+                        return false;
+                    }
+                }
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                const starter = getStarterGaeksPresentation();
+                filtered.push({ id: starter.id, name: starter.meetingName, date: starter.meetingDate, status: 'active' });
+                localStorage.setItem(GAEKS_PRES_ITEM_KEY(starter.id), JSON.stringify(starter));
+                needsUpdate = true;
+            }
+
+            if (needsUpdate) {
+                localStorage.setItem(GAEKS_PRES_LIST_KEY(), JSON.stringify(filtered));
+            }
+            return filtered;
+        }
+
+        function saveLocalMeeting(data) {
+            let list = getLocalMeetingsList();
+            if (!data.id) {
+                data.id = 'MTG_' + Date.now();
+                list.unshift({ id: data.id, name: data.meetingName, date: data.meetingDate, status: 'active' });
+            } else {
+                const idx = list.findIndex(m => m.id === data.id);
+                if (idx > -1) {
+                    list[idx].name = data.meetingName;
+                    list[idx].date = data.meetingDate;
+                } else {
+                    list.unshift({ id: data.id, name: data.meetingName, date: data.meetingDate, status: 'active' });
+                }
+            }
+            localStorage.setItem(GAEKS_PRES_LIST_KEY(), JSON.stringify(list));
+            localStorage.setItem(GAEKS_PRES_ITEM_KEY(data.id), JSON.stringify(data));
+            return { status: "success", data: data };
+        }
+
+        function getLocalMeetingDetails(id) {
+            const raw = localStorage.getItem(GAEKS_PRES_ITEM_KEY(id));
+            return raw ? JSON.parse(raw) : null;
+        }
+
+        function updateLocalMeetingStatus(id, newStatus) {
+            let list = getLocalMeetingsList();
+            const idx = list.findIndex(m => m.id === id);
+            if (idx > -1) {
+                if (newStatus === 'delete_permanent') {
+                    localStorage.removeItem(GAEKS_PRES_ITEM_KEY(id));
+                    list.splice(idx, 1);
+                } else {
+                    list[idx].status = newStatus;
+                    if (newStatus === 'trashed') list[idx].deletedAt = Date.now();
+                    else delete list[idx].deletedAt;
+                }
+                localStorage.setItem(GAEKS_PRES_LIST_KEY(), JSON.stringify(list));
+            }
+            return getLocalMeetingsList();
+        }
+
+        function getStarterGaeksPresentation() {
+            return {
+                id: 'MTG_STARTER_GAEKS',
+                meetingName: "GAEKS Digital Ecosystem - Pitch Deck Eksekutif",
+                meetingDate: new Date().toISOString().split('T')[0],
+                authorName: "Deny Triawan",
+                companyName: "GAEKS GROUP",
+                logoUrl: "",
+                slides: [
+                    {
+                        title: "Peluang & Fragmentasi Ekosistem Logistik",
+                        points: [
+                            { title: "Tingginya Biaya Operasional Ekspor-Impor", desc: "Ketidakteraturan komunikasi antar agensi kapal, trucking darat, dan pialang pabean memicu demurrage serta penalti waktu." },
+                            { title: "Kepatuhan Regulasi Bea Cukai yang Kompleks", desc: "Pemeriksaan PIB, PEB, Manifest, dan COO menuntut akurasi data tanpa celah kesalahan dokumentasi." }
+                        ],
+                        layout: "standard",
+                        momNote: "Fokus utama pada digitalisasi alur kepabeanan dan tracking peti kemas.",
+                        images: [{url:"",caption:""},{url:"",caption:""},{url:"",caption:""},{url:"",caption:""}],
+                        chartType: "bar", chartData: "", tableData: ""
+                    },
+                    {
+                        title: "Solusi Terintegrasi GAEKS Digital",
+                        points: [
+                            { title: "Freight Forwarding & Customs Clearance", desc: "Layanan logistik multimodal internasional dengan jaringan agen global terverifikasi." },
+                            { title: "ERP Forwarding Terpusat (erp.gaeks.com)", desc: "Platform cloud manajemen rantai pasok, billing terintegrasi, dan pemantauan gudang ISO 31000." },
+                            { title: "Otomasi Pemasaran & Media Digital", desc: "Portal SMM mandiri dan pembuatan materi visual berkualitas tinggi untuk pertumbuhan B2B." }
+                        ],
+                        layout: "standard",
+                        momNote: "Disepakati integrasi 3 pilar: Freight, ERP, dan Digital.",
+                        images: [{url:"",caption:""},{url:"",caption:""},{url:"",caption:""},{url:"",caption:""}],
+                        chartType: "bar", chartData: "", tableData: ""
+                    },
+                    {
+                        title: "Proyeksi Pertumbuhan & Target Volume",
+                        points: [
+                            { title: "Peningkatan Kapasitas Kargo Bulanan", desc: "Ekspansi rute laut dan udara menargetkan kenaikan TEUs sebesar 65% di Q4." }
+                        ],
+                        layout: "chart",
+                        momNote: "Target pertumbuhan didukung oleh automasi sistem ERP.",
+                        images: [{url:"",caption:""},{url:"",caption:""},{url:"",caption:""},{url:"",caption:""}],
+                        chartType: "bar",
+                        chartData: "Q1, 120\nQ2, 210\nQ3, 340\nQ4, 520",
+                        tableData: ""
+                    },
+                    {
+                        title: "Alokasi Anggaran & Rencana Tindak Lanjut",
+                        points: [
+                            { title: "Efisiensi Biaya Berkelanjutan", desc: "Matriks pembagian modal kerja untuk infrastruktur cloud dan penguatan jaringan keagenan pelabuhan." }
+                        ],
+                        layout: "table",
+                        momNote: "Alokasi anggaran disetujui pada rapat dewan.",
+                        images: [{url:"",caption:""},{url:"",caption:""},{url:"",caption:""},{url:"",caption:""}],
+                        chartType: "bar",
+                        chartData: "",
+                        tableData: "Kategori\tAlokasi (Juta)\tPersentase\tStatus\nInfrastruktur Cloud ERP\t150\t30%\tAktif\nEkspansi Jaringan Agen\t200\t40%\tBerjalan\nPemasaran Digital (SMM)\t75\t15%\tOptimal\nDana Darurat Operasional\t75\t15%\tTersimpan"
+                    }
+                ]
+            };
+        }
+
+        const google = {
+            script: {
+                run: {
+                    withSuccessHandler(successFn) {
+                        return {
+                            withFailureHandler(failFn) {
+                                return {
+                                    getMeetingsList() {
+                                        try { setTimeout(() => successFn(getLocalMeetingsList()), 30); }
+                                        catch(e) { if (failFn) failFn(e); }
+                                    },
+                                    saveMeeting(data) {
+                                        try { setTimeout(() => successFn(saveLocalMeeting(data)), 30); }
+                                        catch(e) { if (failFn) failFn(e); }
+                                    },
+                                    getMeetingDetails(id) {
+                                        try { setTimeout(() => successFn(getLocalMeetingDetails(id)), 30); }
+                                        catch(e) { if (failFn) failFn(e); }
+                                    },
+                                    updateMeetingStatus(id, status) {
+                                        try { setTimeout(() => successFn(updateLocalMeetingStatus(id, status)), 30); }
+                                        catch(e) { if (failFn) failFn(e); }
+                                    },
+                                    uploadLocalImageToDrive(filename, mimeType, base64Data) {
+                                        try { setTimeout(() => successFn({ status: 'success', url: base64Data }), 30); }
+                                        catch(e) { if (failFn) failFn(e); }
+                                    }
+                                };
+                            },
+                            getMeetingsList() { setTimeout(() => successFn(getLocalMeetingsList()), 30); },
+                            saveMeeting(data) { setTimeout(() => successFn(saveLocalMeeting(data)), 30); },
+                            getMeetingDetails(id) { setTimeout(() => successFn(getLocalMeetingDetails(id)), 30); },
+                            updateMeetingStatus(id, status) { setTimeout(() => successFn(updateLocalMeetingStatus(id, status)), 30); },
+                            uploadLocalImageToDrive(filename, mimeType, base64Data) { setTimeout(() => successFn({ status: 'success', url: base64Data }), 30); }
+                        };
+                    }
+                }
+            }
+        };
+
+        window.exportJob = { active: false, paused: false, cancelled: false, id: 'exportToastMain', percent: 0, text: '' };
+        window.imageBase64Cache = new Map();
+
+        let meetingsList = [];
+        let activeMeeting = null;
+        let currentSlideIndex = 0;
+        let currentTab = 'active';
+        let activeChart = null; 
+        const chartColors = ['#2563eb', '#0f766e', '#d4af37', '#e11d48', '#8b5cf6', '#0891b2', '#be123c', '#ea580c', '#475569'];
+
+        const presView = document.getElementById('presentationView');
+        const drawCanvas = document.getElementById('presenterCanvas');
+        const drawCtx = drawCanvas.getContext('2d');
+        let isDrawing = false;
+        let penClearTimeout = null;
+
+        function resizePenCanvas() {
+            drawCanvas.width = window.innerWidth;
+            drawCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizePenCanvas);
+
+        function getMousePos(e) {
+            const rect = drawCanvas.getBoundingClientRect();
+            return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+        }
+
+        presView.addEventListener('contextmenu', e => {
+            if(!presView.classList.contains('hidden')) e.preventDefault(); 
+        });
+
+        presView.addEventListener('mousedown', e => {
+            if(window.exportJob.active || presView.classList.contains('hidden')) return;
+            const noteWidget = document.getElementById('presenterNoteWidget');
+            if(noteWidget && noteWidget.contains(e.target)) return;
+
+            if (e.button === 2) { 
+                isDrawing = true;
+                if(penClearTimeout) clearTimeout(penClearTimeout);
+                const pos = getMousePos(e);
+                drawCtx.beginPath();
+                drawCtx.moveTo(pos.x, pos.y);
+                drawCtx.strokeStyle = '#ef4444'; 
+                drawCtx.lineWidth = 4;
+                drawCtx.lineCap = 'round';
+                drawCtx.lineJoin = 'round';
+                drawCtx.shadowBlur = 0; 
+            } else if (e.button === 0) {
+                if(e.target.closest('button') || e.target.tagName === 'IMG' || e.target.tagName === 'A' || e.target.closest('li[onclick]') || e.target.closest('.agenda-card')) return;
+                const x = e.clientX; const screenWidth = window.innerWidth;
+                if (x < screenWidth * 0.3) prevSlide(); else nextSlide();
+            }
+        });
+
+        presView.addEventListener('mousemove', e => {
+            if (!isDrawing) return;
+            const pos = getMousePos(e);
+            drawCtx.lineTo(pos.x, pos.y);
+            drawCtx.stroke();
+        });
+
+        window.addEventListener('mouseup', e => {
+            if (e.button === 2 && isDrawing) {
+                isDrawing = false;
+                drawCtx.closePath();
+                penClearTimeout = setTimeout(() => {
+                    clearPenCanvas();
+                }, 2000); 
+            }
+        });
+
+        function clearPenCanvas() {
+            if (drawCtx) drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+        }
+
+        window.togglePauseExport = function() { window.exportJob.paused = !window.exportJob.paused; updateExportToastUI(); };
+        window.cancelExport = function() { window.exportJob.cancelled = true; window.exportJob.paused = false; updateExportToastUI(); };
+
+        function updateExportToastUI() {
+            const toast = document.getElementById(window.exportJob.id);
+            if(!toast) return;
+
+            const pauseText = window.exportJob.paused ? '▶ Resume' : '⏸ Pause';
+            const pauseClass = window.exportJob.paused ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-amber-100 text-amber-700 hover:bg-amber-200';
+            const spinClass = window.exportJob.paused ? '' : 'animate-spin';
+            const statusLabel = window.exportJob.paused ? 'Menunggu (Paused)...' : 'Mengekspor Dokumen';
+
+            toast.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <span class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-indigo-500 ${spinClass}" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        ${statusLabel}
+                    </span>
+                    <span class="text-xs font-black text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded">${window.exportJob.percent}%</span>
+                </div>
+                <p class="text-[11px] text-slate-500 font-medium leading-tight">${window.exportJob.text}</p>
+                <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden mt-1 mb-1">
+                    <div class="bg-indigo-500 h-1.5 rounded-full transition-all duration-300" style="width: ${window.exportJob.percent}%"></div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="window.togglePauseExport()" class="px-3 py-1.5 text-xs font-bold rounded-md transition-colors cursor-pointer flex-1 ${pauseClass}">${pauseText}</button>
+                    <button onclick="window.cancelExport()" class="px-3 py-1.5 text-xs font-bold bg-red-100 text-red-700 hover:bg-red-200 rounded-md transition-colors cursor-pointer flex-1">✕ Cancel</button>
+                </div>
+            `;
+        }
+
+        function showExportToast(text, percent, showControls = false) {
+            window.exportJob.text = text; window.exportJob.percent = percent;
+            let toast = document.getElementById(window.exportJob.id);
+            const container = document.getElementById('toastContainer');
+            
+            if(!toast) {
+                toast = document.createElement('div'); toast.id = window.exportJob.id;
+                toast.className = 'bg-white border-l-4 border-indigo-500 shadow-[0_10px_40px_rgba(0,0,0,0.1)] rounded-r-xl p-4 w-[320px] toast-enter flex flex-col gap-2 pointer-events-auto';
+                container.appendChild(toast);
+            }
+            if (showControls) updateExportToastUI();
+            else {
+                toast.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-indigo-500 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                            Mengekspor Dokumen
+                        </span>
+                        <span class="text-xs font-black text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded">${percent}%</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 font-medium leading-tight">${text}</p>
+                    <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden mt-1">
+                        <div class="bg-indigo-500 h-1.5 rounded-full transition-all duration-300" style="width: ${percent}%"></div>
+                    </div>
+                `;
+            }
+        }
+
+        function finalizeExportToast() {
+            const toast = document.getElementById(window.exportJob.id);
+            if(toast) {
+                toast.className = 'bg-white border-l-4 border-emerald-500 shadow-[0_10px_40px_rgba(0,0,0,0.1)] rounded-r-xl p-4 w-[320px] flex flex-col gap-2 pointer-events-auto transition-colors';
+                toast.innerHTML = `<div class="flex items-center gap-2"><svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg><span class="text-sm font-bold text-slate-800">Export Berhasil</span></div><p class="text-[11px] text-slate-500 font-medium">Dokumen telah diunduh ke perangkat Anda.</p>`;
+                setTimeout(() => { toast.classList.add('toast-exit'); setTimeout(() => toast.remove(), 500); }, 3000);
+            }
+        }
+
+        function failExportToast(errorMsg) {
+            const toast = document.getElementById(window.exportJob.id);
+            if(toast) {
+                toast.className = 'bg-white border-l-4 border-red-500 shadow-[0_10px_40px_rgba(0,0,0,0.1)] rounded-r-xl p-4 w-[320px] flex flex-col gap-2 pointer-events-auto transition-colors';
+                toast.innerHTML = `<div class="flex items-center gap-2"><svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg><span class="text-sm font-bold text-slate-800">Export Dihentikan</span></div><p class="text-[11px] text-red-500 font-medium leading-tight">${errorMsg}</p>`;
+                setTimeout(() => { toast.classList.add('toast-exit'); setTimeout(() => toast.remove(), 500); }, 4000);
+            }
+        }
+
+        function showLoader(title, desc) { document.getElementById('loaderTitle').innerText = title; document.getElementById('loaderDesc').innerText = desc; document.getElementById('globalLoader').style.display = 'flex'; document.getElementById('globalLoader').classList.remove('hidden'); }
+        function hideLoader() { document.getElementById('globalLoader').style.display = 'none'; }
+
+        document.addEventListener('DOMContentLoaded', () => loadDashboard());
+
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement && !document.getElementById('presentationView').classList.contains('hidden') && !window.exportJob.active) exitPresentation();
+        });
+        
+        document.addEventListener('keydown', (e) => {
+            if (document.activeElement.tagName === 'TEXTAREA' || document.activeElement.tagName === 'INPUT') return;
+            if (document.getElementById('lightbox').classList.contains('hidden') === false) { if (e.key === 'Escape') closeLightbox(); return; }
+            if (document.getElementById('presentationView').classList.contains('hidden')) return;
+            
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+            if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+            if (e.key === 'Escape' && !window.exportJob.active) exitPresentation(); 
+        });
+
+        function exitPresentation() { 
+            try {
+                if(activeChart) { activeChart.destroy(); activeChart = null; }
+                clearPenCanvas();
+                if(document.fullscreenElement) document.exitFullscreen().catch(e=>console.log(e)); 
+                switchView('admin'); 
+                setTimeout(() => { const anchor = document.getElementById('anchorManajemenSlide'); if (anchor) anchor.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 150);
+            } catch (err) { console.error("Exit Error: ", err); }
+        }
+
+        let currentZoom = 1; let isDragging = false; let startX, startY, translateX = 0, translateY = 0; const imgEl = document.getElementById('lightboxImg');
+        function changeZoom(delta) { currentZoom += delta; currentZoom = Math.min(Math.max(1, currentZoom), 5); updateTransform(); }
+        function resetZoom() { currentZoom = 1; translateX = 0; translateY = 0; updateTransform(); }
+        function updateTransform() { imgEl.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoom})`; document.getElementById('zoomLevelDisplay').innerText = Math.round(currentZoom * 100) + '%'; }
+        imgEl.addEventListener('wheel', (e) => { e.preventDefault(); changeZoom(e.deltaY * -0.002); });
+        imgEl.addEventListener('mousedown', (e) => { if(currentZoom > 1) { isDragging = true; startX = e.clientX - translateX; startY = e.clientY - translateY; }});
+        window.addEventListener('mouseup', () => { isDragging = false; });
+        window.addEventListener('mousemove', (e) => { if(isDragging && currentZoom > 1) { e.preventDefault(); translateX = e.clientX - startX; translateY = e.clientY - startY; updateTransform(); }});
+
+        function openLightbox(type, content, caption = '') {
+            try {
+                resetZoom(); const lb = document.getElementById('lightbox'); const figEl = document.getElementById('lightboxFigure');
+                const capEl = document.getElementById('lightboxCaption'); const htmlEl = document.getElementById('lightboxHtml'); const zoomCtrls = document.getElementById('zoomControls');
+                figEl.classList.add('hidden'); htmlEl.classList.add('hidden'); capEl.classList.add('hidden'); zoomCtrls.classList.add('hidden');
+
+                if (type === 'image') { imgEl.src = content; figEl.classList.remove('hidden'); zoomCtrls.classList.remove('hidden'); if (caption && caption.trim() !== '') { capEl.innerHTML = decodeURIComponent(caption); capEl.classList.remove('hidden'); }
+                } else if (type === 'table') { const sourceElement = document.getElementById(content); if (sourceElement) { htmlEl.innerHTML = sourceElement.outerHTML; htmlEl.firstElementChild.classList.remove('max-h-[450px]'); htmlEl.classList.remove('hidden'); } }
+                lb.classList.remove('hidden'); setTimeout(() => lb.classList.remove('opacity-0'), 10);
+            } catch (err) { console.error("Lightbox Error: ", err); }
+        }
+        function closeLightbox() { const lb = document.getElementById('lightbox'); lb.classList.add('opacity-0'); setTimeout(() => { lb.classList.add('hidden'); imgEl.src = ''; document.getElementById('lightboxHtml').innerHTML = ''; }, 300); }
+
+        function handleImageUpload(inputElement, targetUrlInputId, statusId) {
+            try {
+                const file = inputElement.files[0]; if (!file) return;
+                const status = document.getElementById(statusId); status.innerText = "⏳ Memproses..."; status.className = "text-xs font-bold text-amber-500 animate-pulse";
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64Data = e.target.result;
+                    if(targetUrlInputId === 'inputLogoUrl') { document.getElementById('previewLogo').src = base64Data; document.getElementById('previewLogo').classList.remove('hidden'); } 
+                    else { document.getElementById('preview_' + targetUrlInputId).src = base64Data; document.getElementById('preview_' + targetUrlInputId).classList.remove('hidden'); }
+                    document.getElementById(targetUrlInputId).value = base64Data;
+                    status.innerText = "✓ Siap"; status.className = "text-xs font-bold text-emerald-500"; setTimeout(() => status.innerText = "", 2000);
+                }; reader.readAsDataURL(file);
+            } catch (err) { console.error("Upload Error: ", err); }
+        }
+
+        function loadDashboard() { 
+            showLoader("Menyiapkan Ruang Kerja", "Sedang mengambil data presentasi...");
+            switchView('dashboard'); 
+            google.script.run.withSuccessHandler((list) => { 
+                hideLoader(); 
+                meetingsList = Array.isArray(list) ? list : []; 
+                renderDashboardList(meetingsList, currentTab); 
+            }).withFailureHandler(err => { 
+                hideLoader(); alert("Gagal mengambil data dashboard: " + err.message); 
+            }).getMeetingsList(); 
+        }
+
+        function renderDashboardList(list, mode = 'active') {
+            try {
+                currentTab = mode; const container = document.getElementById('meetingListContainer');
+                document.getElementById('tabActive').className = mode === 'active' ? "px-4 py-1.5 text-sm font-semibold bg-white/20 rounded-md transition-all cursor-pointer" : "px-4 py-1.5 text-sm font-semibold hover:bg-white/10 rounded-md transition-all cursor-pointer";
+                document.getElementById('tabTrash').className = mode === 'trashed' ? "px-4 py-1.5 text-sm font-semibold bg-white/20 rounded-md transition-all cursor-pointer" : "px-4 py-1.5 text-sm font-semibold hover:bg-white/10 rounded-md transition-all cursor-pointer";
+                document.getElementById('dashboardTitle').innerText = mode === 'active' ? "Arsip Materi" : "Tong Sampah"; document.getElementById('btnCreateNew').style.display = mode === 'active' ? 'block' : 'none';
+
+                const filteredList = list.filter(m => m.status === mode || (mode === 'active' && !m.status));
+                if(filteredList.length === 0) { container.innerHTML = `<div class="col-span-full text-center py-16 bg-white border border-slate-200 rounded-xl shadow-sm"><p class="text-slate-500 font-bold">${mode === 'active' ? 'Belum ada presentasi.' : 'Trash kosong.'}</p></div>`; return; }
+
+                container.innerHTML = filteredList.map(m => `
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-xl hover:border-accent transition-all cursor-pointer relative group flex flex-col h-full" onclick="if('${mode}'==='active')openMeeting('${m.id}')">
+                        ${mode === 'active' 
+                            ? `<div class="absolute top-4 right-4 flex gap-2"><button onclick="event.stopPropagation(); duplicateMeeting('${m.id}')" class="text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer">📄 Duplicate</button><button onclick="event.stopPropagation(); manageTrash('${m.id}', 'trashed')" class="text-red-500 bg-slate-50 p-2 rounded-lg hover:bg-red-50 transition-colors cursor-pointer">✕</button></div>`
+                            : `<div class="absolute top-4 right-4 flex gap-2"><button onclick="event.stopPropagation(); manageTrash('${m.id}','active')" class="text-emerald-600 bg-emerald-100 text-xs px-3 py-1 rounded font-bold hover:bg-emerald-200 cursor-pointer">Restore</button><button onclick="event.stopPropagation(); manageTrash('${m.id}', 'delete_permanent')" class="text-white bg-red-500 hover:bg-red-600 text-xs px-3 py-1 rounded font-bold cursor-pointer">Delete</button></div>`
+                        }
+                        <div class="h-12 w-12 bg-blue-50 rounded-xl flex items-center justify-center text-accent mb-4 mt-2"><svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg></div>
+                        <h3 class="font-extrabold text-lg text-slate-800 mb-2 line-clamp-2 pr-6 leading-snug flex-grow">${m.name || m.meetingName || m.title || 'Tanpa Judul'}</h3>
+                        <p class="text-xs font-bold text-slate-500 bg-slate-100 inline-block px-3 py-1.5 rounded-md self-start border border-slate-200 mt-2">📅 ${m.date || m.meetingDate || '-'}</p>
+                    </div>`).join('');
+            } catch (err) { console.error("Render Dashboard Error: ", err); }
+        }
+
+        function manageTrash(id, action) {
+            if (action === 'delete_permanent' && !confirm("Yakin hapus permanen?")) return;
+            showLoader("Menghapus Data", "Sedang memperbarui status...");
+            google.script.run.withSuccessHandler(list => { hideLoader(); meetingsList = list; renderDashboardList(meetingsList, currentTab); }).withFailureHandler(err => { hideLoader(); alert("Error: " + err.message); }).updateMeetingStatus(id, action);
+        }
+
+        function duplicateMeeting(id) {
+            showLoader("Menduplikasi", "Membuat salinan dokumen...");
+            google.script.run.withSuccessHandler(data => {
+                if(!data) { hideLoader(); return; }
+                let copyData = JSON.parse(JSON.stringify(data)); copyData.id = null; copyData.meetingName = (copyData.meetingName || copyData.name || "Presentasi") + " (Copy)"; 
+                google.script.run.withSuccessHandler((res) => { hideLoader(); loadDashboard(); }).saveMeeting(copyData);
+            }).withFailureHandler(err => { hideLoader(); alert("Gagal menduplikasi: " + err.message); }).getMeetingDetails(id);
+        }
+
+        function sanitizeMeetingData(data) {
+            if (!data) throw new Error("Data presentasi rusak atau tidak ditemukan.");
+            data.meetingName = data.meetingName || data.name || data.title || "Presentasi Tanpa Judul";
+            data.slides = Array.isArray(data.slides) ? data.slides : [];
+            data.companyName = data.companyName || "";
+
+            data.slides.forEach(slide => {
+                slide.title = slide.title || ""; slide.layout = slide.layout || "standard"; slide.chartType = slide.chartType || "bar";
+                slide.chartData = slide.chartData || ""; slide.tableData = slide.tableData || "";
+                slide.momNote = slide.momNote || "";
+                
+                if (!Array.isArray(slide.points)) {
+                    let extractedPoints = [];
+                    if (typeof slide.content === 'string' && slide.content.trim() !== '') {
+                        slide.content.split('\n').filter(l => l.trim() !== '').forEach(l => {
+                            let parts = l.split('|'); extractedPoints.push({ title: parts[0].trim(), desc: parts.length > 1 ? parts.slice(1).join('|').trim() : "" });
+                        });
+                    }
+                    slide.points = extractedPoints.length > 0 ? extractedPoints : [{title: "", desc: ""}];
+                } else { slide.points = slide.points.map(pt => ({ title: pt && pt.title ? pt.title : "", desc: pt && pt.desc ? pt.desc : "" })); }
+                
+                if (!Array.isArray(slide.images)) { slide.images = [{url:"", caption:""},{url:"", caption:""},{url:"", caption:""},{url:"", caption:""}]; } 
+                else {
+                    slide.images =.map(idx => {
+                        let img = slide.images[idx];
+                        if (typeof img === 'string') return {url: img, caption: ""};
+                        if (img && typeof img === 'object') return {url: img.url || "", caption: img.caption || ""};
+                        return {url:"", caption:""};
+                    });
+                }
+            }); return data;
+        }
+
+        function createNewMeeting() {
+            try {
+                let rawData = { id: null, meetingName: "Presentasi Baru", meetingDate: new Date().toISOString().split('T')[0], authorName: "", companyName: "", logoUrl: "", slides: [{ title: "Pendahuluan", points: [{title: "Poin Pembuka", desc: "Keterangan poin..."}], layout: "standard", momNote: "", images: [{url:"", caption:""},{url:"", caption:""},{url:"", caption:""},{url:"", caption:""}], chartType: "bar", chartData: "", tableData: "" }] };
+                activeMeeting = sanitizeMeetingData(rawData); renderEditor();
+            } catch(e) { console.error("Create Meeting Error:", e); alert("Gagal menginisialisasi meeting baru."); }
+        }
+
+        function openMeeting(id) {
+            showLoader("Membuka Dokumen", "Mengekstrak dan menyesuaikan data...");
+            google.script.run
+                .withSuccessHandler(data => { try { activeMeeting = sanitizeMeetingData(data); hideLoader(); renderEditor(); } catch (err) { hideLoader(); alert("Terjadi kesalahan: " + err.message); loadDashboard(); }})
+                .withFailureHandler(err => { hideLoader(); alert("Gagal membuka: " + err.message); loadDashboard(); })
+                .getMeetingDetails(id);
+        }
+
+        function toggleNoteDrawer() {
+            const drawer = document.getElementById('noteDrawer');
+            if(drawer) {
+                if(drawer.classList.contains('hidden')) {
+                    drawer.classList.remove('hidden'); 
+                } else {
+                    drawer.classList.add('hidden'); 
+                }
+            }
+        }
+
+        function saveLiveNote() {
+            if (!activeMeeting || currentSlideIndex < 2 || currentSlideIndex >= activeMeeting.slides.length + 2) return;
+            const slideIdx = currentSlideIndex - 2;
+            const liveInput = document.getElementById('liveNoteInput');
+            if(!liveInput) return;
+            activeMeeting.slides[slideIdx].momNote = liveInput.value;
+            
+            const btn = document.getElementById('btnSaveLiveNote');
+            if(!btn) return;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "⏳..";
+            
+            google.script.run.withSuccessHandler(()=>{
+                btn.innerHTML = "✓ Tersimpan";
+                setTimeout(() => { btn.innerHTML = originalText; toggleNoteDrawer(); }, 1000);
+            }).withFailureHandler((e)=>{
+                console.error("Gagal simpan catatan: ", e);
+                btn.innerHTML = "✕ Gagal";
+                setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+            }).saveMeeting(activeMeeting);
+        }
+
+        function addSlide() { 
+            try {
+                pullDataFromForm(); 
+                if(!Array.isArray(activeMeeting.slides)) activeMeeting.slides = [];
+                activeMeeting.slides.push({ 
+                    title: "Slide Baru", 
+                    points: [{title: "", desc: ""}], 
+                    layout: "standard", 
+                    momNote: "", 
+                    images: [{url:"", caption:""},{url:"", caption:""},{url:"", caption:""},{url:"", caption:""}], 
+                    chartType: "bar", chartData: "", tableData: "" 
+                }); 
+                renderEditor(); 
+                setTimeout(() => {
+                    const newIdx = activeMeeting.slides.length - 1;
+                    const newCard = document.getElementById(`slide_card_${newIdx}`);
+                    if(newCard) newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            } catch(e) { console.error("Add Slide Error: ", e); }
+        }
+
+        function removeSlide(index) { 
+            if(!confirm("Hapus slide ini?")) return; 
+            pullDataFromForm(); 
+            activeMeeting.slides.splice(index, 1); 
+            renderEditor(); 
+        }
+
+        function addPoint(slideIndex) { pullDataFromForm(); if(!Array.isArray(activeMeeting.slides[slideIndex].points)) activeMeeting.slides[slideIndex].points = []; activeMeeting.slides[slideIndex].points.push({title: "", desc: ""}); renderEditor(); }
+        function removePoint(slideIndex, pointIndex) { pullDataFromForm(); activeMeeting.slides[slideIndex].points.splice(pointIndex, 1); renderEditor(); }
+
+        function renderEditor() {
+            try {
+                const elmName = document.getElementById('inputMeetingName'); if(elmName) elmName.value = activeMeeting.meetingName || ""; 
+                const elmDate = document.getElementById('inputMeetingDate'); if(elmDate) elmDate.value = activeMeeting.meetingDate || "";
+                const elmAuthor = document.getElementById('inputAuthor'); if(elmAuthor) elmAuthor.value = activeMeeting.authorName || ""; 
+                const elmCompany = document.getElementById('inputCompany'); if(elmCompany) elmCompany.value = activeMeeting.companyName || ""; 
+                const elmLogo = document.getElementById('inputLogoUrl'); if(elmLogo) elmLogo.value = activeMeeting.logoUrl || "";
+                
+                const preview = document.getElementById('previewLogo');
+                if (preview) {
+                    if(activeMeeting.logoUrl) { preview.src = activeMeeting.logoUrl; preview.classList.remove('hidden'); }
+                    else { preview.classList.add('hidden'); }
+                }
+                
+                const container = document.getElementById('slidesFormContainer');
+                if(!container) return; 
+                
+                container.innerHTML = activeMeeting.slides.map((slide, i) => {
+                    const imgs = Array.isArray(slide.images) ? slide.images : [{url:"", caption:""},{url:"", caption:""},{url:"", caption:""},{url:"", caption:""}];
+                    const pts = Array.isArray(slide.points) ? slide.points : [];
+                    
+                    const pointsHTML = pts.map((pt, pIdx) => `
+                        <div class="relative bg-white border border-slate-200 rounded-lg p-3 mb-3 shadow-sm group">
+                            <input type="text" id="pt_title_${i}_${pIdx}" value="${pt.title}" placeholder="Judul Poin..." class="w-full font-bold text-sm border-b border-slate-100 pb-2 mb-2 focus:border-accent outline-none">
+                            <textarea id="pt_desc_${i}_${pIdx}" rows="2" placeholder="Deskripsi penjelasan..." class="w-full text-xs text-slate-600 outline-none resize-none custom-scrollbar">${pt.desc}</textarea>
+                            ${pts.length > 1 ? `<button onclick="removePoint(${i}, ${pIdx})" class="absolute -right-2 -top-2 bg-red-100 hover:bg-red-500 text-red-600 hover:text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold transition-colors opacity-0 group-hover:opacity-100 shadow cursor-pointer">✕</button>` : ''}
+                        </div>
+                    `).join('');
+
+                    return `
+                    <div id="slide_card_${i}" class="p-6 bg-white border border-slate-200 rounded-2xl relative shadow-sm hover:shadow-md transition-shadow scroll-mt-32">
+                        <div class="flex flex-wrap justify-between items-center mb-6 border-b pb-4 gap-4">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-brand text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase">Slide ${i+1}</span>
+                                <select id="layout_${i}" onchange="toggleLayoutFields(${i})" class="text-sm border border-slate-300 rounded-lg p-1.5 font-bold text-brand bg-slate-50 outline-none cursor-pointer">
+                                    <option value="standard" ${slide.layout === 'standard' ? 'selected' : ''}>Teks Saja (Standar)</option>
+                                    <option value="image" ${slide.layout === 'image' ? 'selected' : ''}>Teks + Gambar Dinamis</option>
+                                    <option value="table" ${slide.layout === 'table' ? 'selected' : ''}>Teks + Tabel Excel</option>
+                                    <option value="chart" ${slide.layout === 'chart' ? 'selected' : ''}>Teks + Grafik Statistik</option>
+                                </select>
+                            </div>
+                            <button onclick="removeSlide(${i})" class="text-red-500 bg-red-50 font-bold text-sm hover:bg-red-100 hover:text-red-600 px-4 py-1.5 rounded-lg border border-red-200 transition-colors cursor-pointer">🗑️ Hapus Slide</button>
+                        </div>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="flex flex-col gap-3">
+                                <div><label class="block text-xs font-bold text-slate-500 mb-1">Judul Slide</label><input type="text" id="title_${i}" value="${slide.title}" class="w-full font-bold border border-slate-300 rounded-lg p-2.5 focus:border-accent outline-none"></div>
+                                <div class="flex-grow flex flex-col bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <div class="flex justify-between items-center mb-3">
+                                        <label class="block text-xs font-bold text-slate-600">Daftar Poin Pembahasan</label>
+                                        <button onclick="addPoint(${i})" class="text-[10px] bg-white border border-slate-300 px-2 py-1 rounded shadow-sm hover:border-accent font-bold text-accent cursor-pointer">+ Tambah Poin</button>
+                                    </div>
+                                    <div class="max-h-[250px] overflow-y-auto custom-scrollbar pr-2">${pointsHTML}</div>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 h-full flex flex-col">
+                                <div id="field_img_${i}" class="${slide.layout === 'image' ? 'block' : 'hidden'} space-y-3">
+                                    <label class="block text-xs font-bold text-brand border-b border-slate-300 pb-2 mb-3">Upload Gambar & Deskripsi Pop-up</label>
+                                    <div class="grid grid-cols-1 gap-2">
+                                    ${.map(imgIndex => `
+                                        <div class="flex items-center gap-2 bg-white p-2 border border-slate-200 rounded-lg relative">
+                                            <div class="flex flex-col w-20 flex-shrink-0 border-r pr-2">
+                                                <input type="file" accept="image/*" class="w-full text-[9px] file:py-1 file:px-1 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700 cursor-pointer" onchange="handleImageUpload(this, 'img_${i}_${imgIndex}', 'statusImg_${i}_${imgIndex}')">
+                                                <span id="statusImg_${i}_${imgIndex}" class="text-[9px] font-bold text-slate-400 mt-1 truncate"></span>
+                                                <input type="hidden" id="img_${i}_${imgIndex}" value="${imgs[imgIndex].url}">
+                                            </div>
+                                            <img id="preview_img_${i}_${imgIndex}" src="${imgs[imgIndex].url}" class="h-10 w-12 object-cover rounded border border-slate-200 ${imgs[imgIndex].url ? '' : 'hidden'}">
+                                            <input type="text" id="cap_${i}_${imgIndex}" value="${imgs[imgIndex].caption}" placeholder="Caption Pop-up..." class="flex-grow text-xs border border-slate-300 rounded p-1.5 outline-none focus:border-accent">
+                                            <button onclick="clearImageSlot(${i}, ${imgIndex})" class="text-red-400 hover:text-red-600 font-bold ml-1 cursor-pointer">✕</button>
+                                        </div>
+                                    `).join('')}
+                                    </div>
+                                </div>
+                                <div id="field_table_${i}" class="${slide.layout === 'table' ? 'block' : 'hidden'} flex-grow flex flex-col">
+                                    <label class="block text-xs font-bold text-emerald-600 mb-1">📋 Paste Tabel Excel/Sheets</label>
+                                    <textarea id="table_${i}" class="w-full flex-grow border border-emerald-300 rounded-lg p-2 font-mono text-xs whitespace-pre outline-none focus:border-emerald-500 min-h-[150px] bg-emerald-50/30 custom-scrollbar">${slide.tableData || ''}</textarea>
+                                </div>
+                                <div id="field_chart_${i}" class="${slide.layout === 'chart' ? 'block' : 'hidden'} flex-grow flex flex-col">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <label class="block text-xs font-bold text-blue-600">📊 Data Grafik Statistik</label>
+                                        <select id="chartType_${i}" class="text-xs border border-blue-300 rounded p-1 font-bold text-blue-700 bg-white outline-none">
+                                            <option value="bar" ${slide.chartType === 'bar' ? 'selected' : ''}>Bar Chart</option>
+                                            <option value="line" ${slide.chartType === 'line' ? 'selected' : ''}>Line Chart</option>
+                                            <option value="pie" ${slide.chartType === 'pie' ? 'selected' : ''}>Pie Chart</option>
+                                            <option value="doughnut" ${slide.chartType === 'doughnut' ? 'selected' : ''}>Doughnut Chart</option>
+                                        </select>
+                                    </div>
+                                    <p class="text-[10px] text-slate-500 mb-2">Format: Kategori, Angka</p>
+                                    <textarea id="chart_${i}" class="w-full flex-grow border border-blue-300 rounded-lg p-2 font-mono text-sm outline-none focus:border-blue-500 bg-blue-50/30 custom-scrollbar">${slide.chartData || ''}</textarea>
+                                </div>
+                                <div id="field_std_${i}" class="${slide.layout === 'standard' || !slide.layout ? 'flex' : 'hidden'} flex-grow items-center justify-center text-slate-400 text-sm font-medium bg-white rounded-lg border border-dashed border-slate-300">
+                                    Tata Letak Standar (Hanya Teks)
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                }).join('');
+                switchView('admin');
+            } catch(e) { console.error("Render Editor Error: ", e); alert("Kesalahan saat merender editor: " + e.message); }
+        }
+
+        function clearImageSlot(slideIndex, imgIndex) { 
+            const img = document.getElementById(`img_${slideIndex}_${imgIndex}`); if(img) img.value = ""; 
+            const cap = document.getElementById(`cap_${slideIndex}_${imgIndex}`); if(cap) cap.value = ""; 
+            const prev = document.getElementById(`preview_img_${slideIndex}_${imgIndex}`); if(prev) { prev.src = ""; prev.classList.add('hidden'); }
+            const st = document.getElementById(`statusImg_${slideIndex}_${imgIndex}`); if(st) st.innerText = ""; 
+        }
+
+        function toggleLayoutFields(index) {
+            const layout = document.getElementById(`layout_${index}`).value;
+            document.getElementById(`field_img_${index}`).classList.toggle('hidden', layout !== 'image');
+            document.getElementById(`field_table_${index}`).classList.toggle('hidden', layout !== 'table');
+            document.getElementById(`field_chart_${index}`).classList.toggle('hidden', layout !== 'chart');
+            document.getElementById(`field_std_${index}`).classList.toggle('hidden', layout !== 'standard');
+            if (layout === 'standard') document.getElementById(`field_std_${index}`).style.display = 'flex';
+        }
+
+        function pullDataFromForm() {
+            try {
+                if(!activeMeeting) return;
+                const elmName = document.getElementById('inputMeetingName'); if(elmName) activeMeeting.meetingName = elmName.value; 
+                const elmDate = document.getElementById('inputMeetingDate'); if(elmDate) activeMeeting.meetingDate = elmDate.value;
+                const elmAuthor = document.getElementById('inputAuthor'); if(elmAuthor) activeMeeting.authorName = elmAuthor.value; 
+                const elmCompany = document.getElementById('inputCompany'); if(elmCompany) activeMeeting.companyName = elmCompany.value; 
+                const elmLogo = document.getElementById('inputLogoUrl'); if(elmLogo) activeMeeting.logoUrl = elmLogo.value;
+                
+                if(Array.isArray(activeMeeting.slides)) {
+                    activeMeeting.slides.forEach((slide, i) => {
+                        const titleEl = document.getElementById(`title_${i}`); slide.title = titleEl ? titleEl.value : slide.title;
+                        const layoutEl = document.getElementById(`layout_${i}`); slide.layout = layoutEl ? layoutEl.value : slide.layout;
+                        const chartTypeEl = document.getElementById(`chartType_${i}`); slide.chartType = chartTypeEl ? chartTypeEl.value : slide.chartType;
+                        const chartDataEl = document.getElementById(`chart_${i}`); slide.chartData = chartDataEl ? chartDataEl.value : slide.chartData;
+                        const tableDataEl = document.getElementById(`table_${i}`); slide.tableData = tableDataEl ? tableDataEl.value : slide.tableData;
+                        
+                        let newPoints = [];
+                        for(let p=0; p < (slide.points ? slide.points.length : 0); p++) {
+                            const tEl = document.getElementById(`pt_title_${i}_${p}`); const dEl = document.getElementById(`pt_desc_${i}_${p}`);
+                            if(tEl && dEl) { newPoints.push({ title: tEl.value, desc: dEl.value }); } else if (slide.points[p]) { newPoints.push(slide.points[p]); }
+                        }
+                        slide.points = newPoints;
+                        
+                        if (document.getElementById(`img_${i}_0`)) {
+                            slide.images = [{ url: document.getElementById(`img_${i}_0`).value, caption: document.getElementById(`cap_${i}_0`).value }, { url: document.getElementById(`img_${i}_1`).value, caption: document.getElementById(`cap_${i}_1`).value }, { url: document.getElementById(`img_${i}_2`).value, caption: document.getElementById(`cap_${i}_2`).value }, { url: document.getElementById(`img_${i}_3`).value, caption: document.getElementById(`cap_${i}_3`).value }];
+                        } else { slide.images = [{url:"",caption:""},{url:"",caption:""},{url:"",caption:""},{url:"",caption:""}]; }
+                    });
+                }
+            } catch(e) { console.error("Safeguard pullDataFromForm Error: ", e); }
+        }
+
+        function saveCurrentMeeting() {
+            pullDataFromForm(); const btn = document.getElementById('btnSave'); btn.innerHTML = "⏳ Menyimpan..."; btn.disabled = true;
+            google.script.run.withSuccessHandler((res) => { activeMeeting = res.data; btn.innerHTML = "✓ Tersimpan"; btn.classList.replace('bg-emerald-500', 'bg-emerald-600'); setTimeout(() => { btn.innerHTML = "💾 Simpan Progress"; btn.classList.replace('bg-emerald-600', 'bg-emerald-500'); btn.disabled = false; }, 2000); }).withFailureHandler((err) => { alert("Koneksi bermasalah saat menyimpan: " + err.message); btn.innerHTML = "💾 Simpan Progress"; btn.disabled = false; }).saveMeeting(activeMeeting);
+        }
+
+        function linkify(text) { 
+            if(!text) return ''; 
+            const urlRegex = /(https?:\/\/[^\s]+)/g; 
+            return text.replace(urlRegex, function(url) { 
+                return `<a href="${url}" target="_blank" title="${url}" class="inline-flex items-center gap-1.5 px-3 py-1 mx-1 text-[11px] font-extrabold uppercase tracking-widest text-white bg-slate-800 hover:bg-champagne hover:text-slate-900 transition-all duration-300 rounded-md shadow-sm hover:shadow-md cursor-pointer border border-transparent hover:border-slate-400 align-middle" onclick="event.stopPropagation()"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>Source</a>`; 
+            }); 
+        }
+
+        function getSmartClosing(meetingData) {
+            if (!meetingData) return "Terima kasih atas atensi dan partisipasi Anda.";
+            
+            const title = meetingData.meetingName || meetingData.name || meetingData.title || "sesi ini";
+            const slides = meetingData.slides || [];
+            
+            let fullText = (title + " ").toLowerCase();
+            slides.forEach(s => { 
+                fullText += (s.title || "").toLowerCase() + " "; 
+                if(s.points) {
+                    s.points.forEach(p => fullText += (p.title || "").toLowerCase() + " ");
+                }
+            });
+
+            let presentationType = 'general';
+            let maxScore = 0;
+
+            const categories = {
+                alignment: {
+                    keywords: ['training', 'pelatihan', 'workshop', 'sosialisasi', 'alignment', 'sinkronisasi', 'onboarding', 'materi', 'panduan', 'edukasi'],
+                    baseText: `Terima kasih atas partisipasi aktif Anda dalam sesi penyelarasan "${title}". Semoga wawasan yang dibagikan hari ini membawa dampak positif bagi langkah kolaborasi kita.`
+                },
+                client: {
+                    keywords: ['client', 'pitch', 'proposal', 'penawaran', 'demo', 'partnership', 'kolaborasi', 'klien', 'solusi', 'layanan', 'produk', 'b2b'],
+                    baseText: `Terima kasih atas waktu dan kesempatan berharga yang diberikan. Kami berharap paparan "${title}" ini dapat menjadi awal mula kemitraan yang luar biasa.`
+                },
+                report: {
+                    keywords: ['laporan', 'report', 'evaluasi', 'review', 'q1', 'q2', 'q3', 'q4', 'kinerja', 'data', 'analisis', 'update', 'pencapaian'],
+                    baseText: `Terima kasih atas atensi Anda. Tinjauan objektif pada "${title}" ini akan menjadi fondasi kuat untuk peningkatan langkah taktis kita ke depan.`
+                },
+                strategy: {
+                    keywords: ['strategi', 'planning', 'roadmap', 'target', 'okr', 'kpi', 'rencana', 'inisiatif', 'tujuan', 'meeting', 'rapat', 'koordinasi'],
+                    baseText: `Terima kasih atas dedikasi dan pandangan strategis pada pembahasan "${title}". Mari bersama-sama mengubah rencana hari ini menjadi eksekusi nyata.`
+                }
+            };
+
+            for (const [type, data] of Object.entries(categories)) {
+                let score = 0;
+                data.keywords.forEach(kw => {
+                    const regex = new RegExp('\\b' + kw + '\\b', 'g');
+                    const matches = fullText.match(regex);
+                    if (matches) score += matches.length;
+                });
+                if (score > maxScore) {
+                    maxScore = score;
+                    presentationType = type;
+                }
+            }
+
+            let finalClosing = "";
+            if (maxScore === 0) {
+                finalClosing = `Terima kasih atas atensi dan kolaborasi Anda dalam sesi "${title}".`;
+            } else {
+                finalClosing = categories[presentationType].baseText;
+            }
+
+            let hasMOM = slides.some(s => s.momNote && s.momNote.trim() !== '');
+
+            if (hasMOM) {
+                if(presentationType === 'alignment') {
+                    finalClosing += `\n\nCatatan diskusi penting telah direkapitulasi sebagai referensi bersama agar kita senantiasa selaras dan selangkah lebih maju.`;
+                } else if (presentationType === 'client') {
+                    finalClosing += `\n\nSeluruh masukan berharga Anda telah kami catat dengan saksama untuk segera ditindaklanjuti dengan solusi terbaik.`;
+                } else {
+                    finalClosing += `\n\nKesepakatan dan poin tindak lanjut (MOM) telah dicatat secara komprehensif untuk memastikan eksekusi yang presisi.`;
+                }
+            }
+
+            return finalClosing.trim();
+        }
+
+        function renderPointsHTML(pointsArray) {
+            if(!pointsArray || pointsArray.length === 0) return '';
+            const validPoints = pointsArray.filter(p => p && typeof p.title === 'string' && p.title.trim() !== '');
+            return validPoints.map((pt, idx) => {
+                const delay = 100 + (idx * 150); 
+                let html = `<span class="block text-[1.65rem] font-bold text-slate-800 leading-tight mb-2 tracking-tight">${linkify(pt.title.trim())}</span>`;
+                if(pt.desc && typeof pt.desc === 'string' && pt.desc.trim() !== '') { const descLines = pt.desc.split('\n').map(l => `<span class="block text-[1.15rem] text-slate-500 font-medium leading-relaxed">${linkify(l.trim())}</span>`).join(''); html += descLines; }
+                return `<li class="relative bg-white p-6 rounded-xl border border-slate-100 shadow-sm anim-slide-up" style="animation-delay: ${delay}ms;"><div class="absolute left-0 top-0 bottom-0 w-1.5 bg-accent rounded-l-xl"></div><div class="pl-4">${html}</div></li>`;
+            }).join('');
+        }
+
+        function parseTableToHTML(tsvData, slideIndex) {
+            if(!tsvData || tsvData.trim() === '') return '<p class="text-slate-400 italic">Data tabel kosong.</p>';
+            const rows = tsvData.split('\n').filter(r => r.trim() !== ''); if(rows.length === 0) return '';
+            let html = `<div class="relative group w-full h-full flex flex-col justify-center">`; const tableId = `rendered_tbl_${slideIndex}`;
+            html += `<button onclick="openLightbox('table', '${tableId}', ''); event.stopPropagation();" class="absolute -top-4 -right-4 bg-brand text-white px-5 py-2 rounded-xl text-sm font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-xl z-20 flex items-center gap-2 hover:scale-105 border border-slate-600 cursor-pointer">🔍 Zoom Tabel</button>`;
+            html += `<div id="${tableId}" class="overflow-auto rounded-xl border border-slate-300 shadow-sm bg-white w-full max-h-[55vh] custom-scrollbar"><table class="w-full text-left excel-table whitespace-nowrap">`;
+            rows.forEach((row, i) => { const cols = row.split('\t'); if (i === 0) { html += `<thead><tr>${cols.map(c => `<th>${c.trim()}</th>`).join('')}</tr></thead><tbody>`; } else { html += `<tr>${cols.map(c => `<td>${c.trim()}</td>`).join('')}</tr>`; }});
+            html += `</tbody></table></div></div>`; return html;
+        }
+
+        function parseChartData(csvText) {
+            const lines = csvText.split('\n'); let labels = [], data = [];
+            lines.forEach(line => { const parts = line.split(','); if (parts.length >= 2) { labels.push(parts[0].trim()); data.push(parseFloat(parts.trim()) || 0); } }); return { labels, data };
+        }
+        
+        function goToSlide(targetIndex) { currentSlideIndex = targetIndex; renderSlideView(currentSlideIndex); }
+
+        function renderMOMView() {
+            const listContainer = document.getElementById('momContentList');
+            let html = '';
+            let hasNotes = false;
+            
+            if(activeMeeting && activeMeeting.slides) {
+                activeMeeting.slides.forEach((slide, idx) => {
+                    if(slide.momNote && slide.momNote.trim() !== '') {
+                        hasNotes = true;
+                        const delay = 100 + (idx * 150);
+                        html += `
+                        <div class="bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-sm break-inside-avoid mb-4 anim-slide-up" style="animation-delay: ${delay}ms;">
+                            <h3 class="text-xl font-bold text-accent mb-3 flex items-center gap-2">
+                                <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-md text-sm">Bagian ${idx + 1}</span> 
+                                ${slide.title}
+                            </h3>
+                            <p class="text-slate-700 text-lg leading-relaxed whitespace-pre-wrap font-medium">${slide.momNote}</p>
+                        </div>`;
+                    }
+                });
+            }
+
+            if(!hasNotes) { html = `<div class="bg-slate-100 p-10 rounded-2xl text-center text-slate-500 font-bold border border-slate-200 anim-slide-up">Tidak ada catatan (Minutes of Meeting) yang direkam pada presentasi ini.</div>`; }
+            listContainer.innerHTML = html;
+        }
+
+        function renderSlideView(index, isExportMode = false) {
+            try {
+                if(!activeMeeting) return; if (activeChart) { activeChart.destroy(); activeChart = null; }
+                clearPenCanvas(); 
+                
+                const totalPresentationSlides = activeMeeting.slides.length + 4; 
+                
+                const widgetCur = document.getElementById('widgetCurrentPage');
+                const widgetTot = document.getElementById('widgetTotalPages');
+                if (widgetCur) widgetCur.innerText = index + 1;
+                if (widgetTot) widgetTot.innerText = totalPresentationSlides;
+                
+                const captureArea = document.getElementById('captureArea');
+                const header = document.getElementById('presHeader'); 
+                const footer = document.getElementById('presFooter');
+                const layoutCover = document.getElementById('layoutCover'); 
+                const layoutAgenda = document.getElementById('layoutAgenda');
+                const layoutContent = document.getElementById('layoutContent'); 
+                const layoutMOM = document.getElementById('layoutMOM');
+                const layoutThankYou = document.getElementById('layoutThankYou'); 
+                
+                const noteWidget = document.getElementById('presenterNoteWidget');
+                const drawer = document.getElementById('noteDrawer');
+                
+                document.getElementById('presContentArea').scrollTop = 0;
+                layoutCover.classList.add('hidden'); layoutAgenda.classList.add('hidden'); 
+                layoutContent.classList.add('hidden'); layoutMOM.classList.add('hidden');
+                layoutThankYou.classList.add('hidden'); 
+                
+                if(drawer) {
+                    drawer.classList.add('hidden');
+                }
+                
+                if(index >= 2 && index < activeMeeting.slides.length + 2 && !window.exportJob.active) { 
+                    if(noteWidget) noteWidget.classList.remove('hidden'); 
+                    if(noteWidget) noteWidget.classList.add('flex'); 
+                    const liveInput = document.getElementById('liveNoteInput');
+                    if(liveInput) liveInput.value = activeMeeting.slides[index - 2].momNote || "";
+                } else {
+                    if(noteWidget) noteWidget.classList.add('hidden'); 
+                    if(noteWidget) noteWidget.classList.remove('flex'); 
+                }
+
+                const triggerReflow = (el) => {
+                    const animEls = el.querySelectorAll('.anim-slide-up, .anim-slide-left, .anim-zoom-in, .anim-fade-in, .anim-line-grow');
+                    animEls.forEach(a => { a.style.animation = 'none'; void a.offsetWidth; a.style.animation = null; });
+                };
+
+                if (index === 0 || index === totalPresentationSlides - 1) {
+                    captureArea.className = 'h-full flex flex-col w-full relative z-0 pointer-events-auto overflow-hidden transition-all duration-700 bg-brand';
+                    footer.style.display = 'none'; 
+                } else {
+                    captureArea.className = 'h-full flex flex-col p-8 md:p-12 max-w-[100rem] mx-auto w-full relative z-0 bg-slate-50 pointer-events-auto transition-all duration-700';
+                    footer.style.display = 'flex'; 
+                }
+
+                if (index === 0) {
+                    layoutCover.classList.remove('hidden'); header.style.display = 'none';
+                    if(!isExportMode) triggerReflow(layoutCover);
+                    
+                    const coverLogo = document.getElementById('presCoverLogo');
+                    if(coverLogo) {
+                        if (activeMeeting.logoUrl) { coverLogo.src = activeMeeting.logoUrl; coverLogo.style.display = 'block'; } 
+                        else { coverLogo.style.display = 'none'; }
+                    }
+                    
+                    const coverTitle = document.getElementById('presCoverTitle');
+                    if(coverTitle) coverTitle.innerText = activeMeeting.meetingName || activeMeeting.name || activeMeeting.title || "Presentasi Eksekutif";
+                    
+                    let metaHtml = `<span class="text-champagne font-bold tracking-widest uppercase text-sm md:text-base">${activeMeeting.meetingDate || 'TANGGAL BELUM DISET'}</span>`;
+                    if (activeMeeting.authorName) metaHtml += `<div class="w-1.5 h-1.5 rounded-full bg-slate-400"></div><span class="text-slate-200 font-medium">${activeMeeting.authorName}</span>`;
+                    if (activeMeeting.companyName) metaHtml += `<div class="w-1.5 h-1.5 rounded-full bg-slate-400"></div><span class="text-white font-bold tracking-wide">${activeMeeting.companyName}</span>`;
+                    
+                    const metaEl = document.getElementById('presCoverMeta');
+                    if(metaEl) metaEl.innerHTML = metaHtml;
+                } 
+                else if (index === 1) {
+                    layoutAgenda.classList.remove('hidden'); header.style.display = 'flex'; 
+                    document.getElementById('presHeaderTitle').innerText = activeMeeting.meetingName || "Presentasi";
+                    const headerLogo = document.getElementById('presHeaderLogo');
+                    if (headerLogo) {
+                        if(activeMeeting.logoUrl) { headerLogo.src=activeMeeting.logoUrl; headerLogo.style.display='block'; } else headerLogo.style.display='none';
+                    }
+                    
+                    document.getElementById('presAgendaGrid').innerHTML = activeMeeting.slides.map((s, idx) => {
+                        const delay = 150 + (idx * 100);
+                        return `
+                        <div class="agenda-card group flex flex-row items-center gap-6 p-6 border-b-2 border-slate-100 hover:border-corporateTeal transition-all duration-300 cursor-pointer bg-white/50 hover:bg-white rounded-xl shadow-sm hover:shadow-md anim-slide-up" style="animation-delay: ${delay}ms;" onclick="if(!window.exportJob.active)goToSlide(${idx + 2}); event.stopPropagation();">
+                            <div class="text-[4rem] font-serif font-black text-slate-200 group-hover:text-champagne transition-colors duration-500 leading-none w-20 text-right">
+                                ${String(idx + 1).padStart(2, '0')}.
+                            </div>
+                            <div class="flex-grow pl-4 border-l border-slate-200 group-hover:border-champagne transition-colors duration-500">
+                                <h3 class="text-3xl font-bold text-brand group-hover:text-corporateTeal transition-colors leading-tight mb-2">${s.title}</h3>
+                                <p class="text-sm font-medium text-slate-400 tracking-widest uppercase flex items-center gap-2">
+                                    <span class="w-4 h-px bg-slate-300 group-hover:bg-corporateTeal transition-colors"></span> Menuju Halaman
+                                </p>
+                            </div>
+                        </div>`;
+                    }).join('');
+                    if(!isExportMode) triggerReflow(layoutAgenda);
+                } 
+                else if (index >= 2 && index < activeMeeting.slides.length + 2) {
+                    layoutContent.classList.remove('hidden'); header.style.display = 'flex'; 
+                    document.getElementById('presHeaderTitle').innerText = activeMeeting.meetingName || "Presentasi";
+                    
+                    const dataIndex = index - 2; const slide = activeMeeting.slides[dataIndex];
+                    document.getElementById('presSlideTitle').innerText = slide.title;
+                    
+                    const validPts = (slide.points || []).filter(p => p && typeof p.title === 'string' && p.title.trim() !== '');
+                    const hasText = validPts.length > 0;
+                    
+                    const grid = document.getElementById('presSlideGrid'); const textCol = document.getElementById('presSlideTextCol'); const visualCol = document.getElementById('presSlideVisual');
+                    visualCol.innerHTML = ''; 
+
+                    if (hasText) {
+                        textCol.classList.remove('hidden'); const isStandard = slide.layout === 'standard' || !slide.layout;
+                        if (isStandard) { grid.classList.remove('xl:grid-cols-2'); grid.classList.add('grid-cols-1'); document.getElementById('presSlideBullets').className = 'grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 w-full list-none animated-list'; } 
+                        else { grid.classList.add('xl:grid-cols-2'); grid.classList.remove('grid-cols-1'); document.getElementById('presSlideBullets').className = 'flex flex-col gap-5 w-full list-none animated-list'; }
+                        document.getElementById('presSlideBullets').innerHTML = renderPointsHTML(slide.points);
+                    } else { textCol.classList.add('hidden'); grid.classList.remove('xl:grid-cols-2'); grid.classList.add('grid-cols-1'); }
+                    
+                    if (slide.layout === 'standard' || !slide.layout) { visualCol.classList.add('hidden'); } 
+                    else if (slide.layout === 'image') {
+                        const validImages = (slide.images || []).map(img => typeof img === 'string' ? {url: img, caption: ""} : img).filter(img => img && img.url && img.url.trim() !== "");
+                        if (validImages.length === 0) { visualCol.classList.add('hidden'); } 
+                        else {
+                            visualCol.classList.remove('hidden');
+                            if(!isExportMode) { visualCol.style.animation = 'none'; void visualCol.offsetWidth; visualCol.style.animation = null; }
+                            
+                            let imgGridClass;
+                            if (validImages.length === 1) imgGridClass = 'grid-cols-1 max-w-4xl mx-auto'; else if (validImages.length === 2) imgGridClass = 'grid-cols-2'; else if (validImages.length === 3) imgGridClass = 'grid-cols-2 grid-rows-2'; else imgGridClass = 'grid-cols-2 grid-rows-2'; 
+                            
+                            let imgHTML = `<div class="grid ${imgGridClass} gap-6 w-full h-full content-center pb-4">`;
+                            validImages.forEach((imgObj, idx) => {
+                                let url = typeof imgObj === 'string' ? imgObj : imgObj.url; let caption = typeof imgObj === 'string' ? '' : (imgObj.caption || "");
+                                let heightClass = !hasText ? (validImages.length === 1 ? 'h-[60vh]' : 'h-[30vh]') : 'aspect-video';
+                                let colSpan = (validImages.length === 3 && idx === 0) ? 'col-span-2' : '';
+                                let safeCaption = encodeURIComponent(caption); let renderCap = '';
+                                if(caption) { let capText = caption.split('\n').map(l => linkify(l.trim())).join('<br>'); renderCap = `<div class="absolute inset-x-0 bottom-0 p-4 pt-16 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent pointer-events-none"><p class="text-white font-semibold text-sm md:text-base drop-shadow-md leading-tight line-clamp-2">${capText}</p></div>`; }
+                                imgHTML += `<div class="${colSpan} ${heightClass} relative rounded-2xl shadow-lg border border-slate-200 overflow-hidden bg-slate-100 group cursor-zoom-in transition-transform duration-300 hover:shadow-2xl" onclick="if(!window.exportJob.active)openLightbox('image','${url}', '${safeCaption}');event.stopPropagation();"><img src="${url}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-export-img="true">${renderCap}</div>`;
+                            });
+                            imgHTML += `</div>`; visualCol.innerHTML = imgHTML;
+                        }
+                    }
+                    else if (slide.layout === 'table') { visualCol.classList.remove('hidden'); let tableWrapperClass = !hasText ? 'max-w-5xl mx-auto' : 'w-full'; visualCol.innerHTML = `<div class="${tableWrapperClass} h-full" id="rendered_table_container_${dataIndex}">${parseTableToHTML(slide.tableData, dataIndex)}</div>`; }
+                    else if (slide.layout === 'chart') {
+                        visualCol.classList.remove('hidden'); let chartWrapperClass = !hasText ? 'max-w-4xl mx-auto h-[60vh]' : 'w-full h-full';
+                        visualCol.innerHTML = `<div id="rendered_chart_container_${dataIndex}" class="bg-white p-8 rounded-2xl border border-slate-200 shadow-xl w-full flex items-center justify-center ${chartWrapperClass}"><canvas id="canvasChart" class="w-full max-h-[50vh]"></canvas></div>`;
+                        const chartData = parseChartData(slide.chartData); const cType = slide.chartType || 'bar'; const ctx = document.getElementById('canvasChart').getContext('2d');
+                        let bgColors = '#3b82f6'; if(cType === 'pie' || cType === 'doughnut') bgColors = chartColors;
+                        let animOptions = window.exportJob.active ? false : { duration: 1200, easing: 'easeOutExpo' };
+                        activeChart = new Chart(ctx, { type: cType, data: { labels: chartData.labels, datasets: [{ label: 'Statistik', data: chartData.data, backgroundColor: bgColors, borderRadius: cType === 'bar' ? 8 : 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: cType === 'pie' || cType === 'doughnut', position: 'right' } }, animation: animOptions } });
+                    }
+                    if(!isExportMode) triggerReflow(layoutContent);
+                }
+                else if (index === activeMeeting.slides.length + 2) {
+                    layoutMOM.classList.remove('hidden'); header.style.display = 'flex'; 
+                    document.getElementById('presHeaderTitle').innerText = activeMeeting.meetingName || "Presentasi";
+                    renderMOMView();
+                    if(!isExportMode) triggerReflow(layoutMOM);
+                }
+                else {
+                    layoutThankYou.classList.remove('hidden'); header.style.display = 'none'; 
+                    if(!isExportMode) {
+                        const tyCard = layoutThankYou.querySelector('.anim-zoom-in');
+                        if(tyCard) { tyCard.style.animation = 'none'; void tyCard.offsetWidth; tyCard.style.animation = null; }
+                    }
+                    
+                    document.getElementById('dynamicClosingText').innerText = getSmartClosing(activeMeeting);
+                    
+                    const tyLogo = document.getElementById('presCoverLogo'); 
+                    if (tyLogo && activeMeeting.logoUrl) {
+                        tyLogo.src = activeMeeting.logoUrl;
+                    }
+                    
+                    if(!isExportMode) triggerReflow(layoutThankYou);
+                }
+            } catch (err) { console.error("Render Slide View Error: ", err); alert("Kesalahan saat merender layar presentasi: " + err.message); }
+        }
+
+        function nextSlide() { const maxIdx = activeMeeting.slides.length + 3; if(currentSlideIndex < maxIdx) { currentSlideIndex++; renderSlideView(currentSlideIndex); } }
+        function prevSlide() { if(currentSlideIndex > 0) { currentSlideIndex--; renderSlideView(currentSlideIndex); } }
+        
+        function switchView(view) {
+            document.getElementById('dashboardView').classList.add('hidden'); document.getElementById('adminView').classList.add('hidden');
+            document.getElementById('presentationView').classList.add('hidden'); document.getElementById('mainHeader').classList.remove('hidden');
+            document.body.classList.remove('exporting-mode');
+
+            if(view === 'dashboard') { 
+                document.getElementById('dashboardView').classList.remove('hidden'); 
+                if(meetingsList.length > 0) renderDashboardList(meetingsList, currentTab); 
+            } 
+            else if(view === 'admin') { 
+                document.getElementById('mainHeader').classList.add('hidden'); 
+                document.getElementById('adminView').classList.remove('hidden'); 
+            } 
+            else if(view === 'presentation') { 
+                pullDataFromForm();
+                
+                document.getElementById('mainHeader').classList.add('hidden'); 
+                document.getElementById('presentationView').classList.remove('hidden'); 
+                resizePenCanvas(); 
+                
+                const presEl = document.documentElement;
+                if (presEl.requestFullscreen) {
+                    presEl.requestFullscreen().catch(err => {
+                        console.warn("Fullscreen diblokir otomatis oleh browser, mengabaikan... ", err);
+                    });
+                }
+                
+                currentSlideIndex = 0; 
+                renderSlideView(0); 
+            }
+        }
+
+        async function getDirectBase64(url) {
+            if(!url) return null;
+            if(url.startsWith('data:image')) return url;
+            if(window.imageBase64Cache.has(url)) return window.imageBase64Cache.get(url);
+
+            let finalUrl = url;
+            const idMatch = url.match(/id=([^&]+)/);
+            if(idMatch && idMatch) finalUrl = `https://lh3.googleusercontent.com/d/${idMatch}=w1920`;
+
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.crossOrigin = 'Anonymous';
+                img.onload = () => {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.naturalWidth || img.width; canvas.height = img.naturalHeight || img.height;
+                        canvas.getContext('2d').drawImage(img, 0, 0);
+                        const b64 = canvas.toDataURL('image/jpeg', 0.9);
+                        window.imageBase64Cache.set(url, b64);
+                        resolve(b64);
+                    } catch (e) { resolve(null); }
+                };
+                img.onerror = () => resolve(null);
+                img.src = finalUrl;
+            });
+        }
+
+        async function checkJobStatus() {
+            if (window.exportJob.cancelled) return false;
+            while (window.exportJob.paused && !window.exportJob.cancelled) { await new Promise(r => setTimeout(r, 300)); }
+            return !window.exportJob.cancelled;
+        }
+
+        async function runNativePPTXExport() {
+            if (window.exportJob.active) return;
+            window.exportJob = { active: true, paused: false, cancelled: false, id: 'toastPPTX', percent: 0, text: '' };
+
+            try {
+                pullDataFromForm();
+                showExportToast('Merakit Microsoft PowerPoint asli...', 10, true);
+                
+                let pres = new PptxGenJS();
+                pres.layout = 'LAYOUT_16x9';
+
+                document.documentElement.classList.add('exporting-mode'); document.body.classList.add('exporting-mode');
+                const presView = document.getElementById('presentationView');
+                presView.classList.remove('hidden'); presView.classList.add('pdf-background-render');
+
+                if(!(await checkJobStatus())) throw new Error("Cancelled");
+                const logoB64 = await getDirectBase64(activeMeeting.logoUrl);
+
+                if(!(await checkJobStatus())) throw new Error("Cancelled");
+                
+                let slideCover = pres.addSlide();
+                slideCover.background = { color: '0A0F1D' };
+                slideCover.addShape(pres.ShapeType.rect, { x: 0, y: 0, w: '4%', h: '100%', fill: { color: 'D4AF37' } }); 
+                if(logoB64 && logoB64.startsWith('data:')) slideCover.addImage({ data: logoB64, x: 1.0, y: 1.0, w: 2, h: 0.8, sizing: { type: 'contain' } });
+                slideCover.addText(activeMeeting.meetingName || "Presentasi", { x: 1.0, y: 2.5, w: '80%', h: 2.0, fontSize: 50, bold: true, color: 'FFFFFF', fontFace: 'Playfair Display' });
+                let metaText = activeMeeting.meetingDate || 'Tanggal Belum Diset';
+                if(activeMeeting.authorName) metaText += `   •   ${activeMeeting.authorName}`;
+                if(activeMeeting.companyName) metaText += `   •   ${activeMeeting.companyName}`;
+                slideCover.addText(metaText, { x: 1.0, y: 4.8, w: '80%', h: 0.5, fontSize: 16, color: 'D4AF37', fontFace: 'Plus Jakarta Sans', bold: true });
+
+                let slideAgenda = pres.addSlide();
+                slideAgenda.background = { color: 'FFFFFF' };
+                slideAgenda.addText("Daftar Bahasan Utama", { x: 0.5, y: 0.4, w: '90%', h: 0.8, fontSize: 32, bold: true, color: '0A0F1D', fontFace: 'Plus Jakarta Sans' });
+                slideAgenda.addShape(pres.ShapeType.rect, { x: 0.5, y: 1.3, w: 1, h: 0.05, fill: { color: '2563EB' } });
+
+                let yPosAgenda = 1.8;
+                activeMeeting.slides.forEach((s, idx) => {
+                    slideAgenda.addText(`${idx+1}. ${s.title}`, { x: 0.5, y: yPosAgenda, w: '90%', h: 0.4, fontSize: 18, color: '334155', fontFace: 'Plus Jakarta Sans' });
+                    yPosAgenda += 0.5;
+                });
+
+                for(let i = 0; i < activeMeeting.slides.length; i++) {
+                    if(!(await checkJobStatus())) throw new Error("Cancelled");
+                    const s = activeMeeting.slides[i];
+                    let slide = pres.addSlide();
+                    slide.background = { color: 'FFFFFF' };
+                    
+                    if(logoB64 && logoB64.startsWith('data:')) slide.addImage({ data: logoB64, x: '88%', y: 0.2, w: 1, h: 0.4, sizing: { type: 'contain' } });
+                    slide.addText(s.title, { x: 0.5, y: 0.4, w: '80%', h: 0.8, fontSize: 28, bold: true, color: '0A0F1D', fontFace: 'Plus Jakarta Sans' });
+                    slide.addShape(pres.ShapeType.rect, { x: 0.5, y: 1.2, w: '90%', h: 0.02, fill: { color: 'E2E8F0' } });
+                    slide.addText("GAEKS GROUP &bull; 2026", { x: 0.5, y: '93%', w: '20%', h: 0.3, fontSize: 9, color: '94A3B8', bold: true });
+
+                    const validPts = (s.points || []).filter(p => p.title.trim() !== '');
+                    let textBlocks = [];
+                    validPts.forEach(pt => {
+                        textBlocks.push({ text: pt.title, options: { bold: true, fontSize: 16, breakLine: true, color: '0A0F1D', fontFace: 'Plus Jakarta Sans' } });
+                        if(pt.desc) textBlocks.push({ text: pt.desc, options: { fontSize: 12, breakLine: true, color: '475569', fontFace: 'Plus Jakarta Sans' } });
+                        textBlocks.push({ text: " ", options: { fontSize: 8, breakLine: true } });
+                    });
+
+                    let textWidth = (s.layout === 'standard') ? '90%' : '45%';
+                    if(textBlocks.length > 0) slide.addText(textBlocks, { x: 0.5, y: 1.5, w: textWidth, h: 3.5, valign: 'top' });
+
+                    if(s.layout === 'image') {
+                        const validImgs = (s.images || []).filter(img => img.url.trim() !== '');
+                        if(validImgs.length > 0) {
+                            const slideImgB64 = await getDirectBase64(validImgs[0].url);
+                            if(slideImgB64) { slide.addImage({ data: slideImgB64, x: '52%', y: 1.5, w: '43%', h: 3.5, sizing: { type: 'contain' } }); } 
+                            else { slide.addShape(pres.ShapeType.rect, { x: '52%', y: 1.5, w: '43%', h: 3.5, fill: { color: 'F1F5F9' } }); slide.addText("Gambar gagal dimuat.", { x: '52%', y: 1.5, w: '43%', h: 3.5, align: 'center', color: '94A3B8' }); }
+                        }
+                    } else if(s.layout === 'chart' || s.layout === 'table') {
+                        renderSlideView(i + 2, true);
+                        await new Promise(r => setTimeout(r, 150));
+                        const targetEl = document.getElementById('presSlideVisual');
+                        if (targetEl) {
+                            const snapCanvas = await html2canvas(targetEl, { scale: 1.5, useCORS: true, logging: false });
+                            slide.addImage({ data: snapCanvas.toDataURL('image/jpeg', 0.9), x: '52%', y: 1.5, w: '43%', h: 3.5, sizing: { type: 'contain' } });
+                        }
+                    }
+                    showExportToast(`Merakit PPTX: Materi ${i+1}/${activeMeeting.slides.length}`, 30 + Math.round(((i+1)/activeMeeting.slides.length)*50), true);
+                }
+
+                if(!(await checkJobStatus())) throw new Error("Cancelled");
+
+                let slideMOM = pres.addSlide();
+                slideMOM.background = { color: 'F8FAFC' };
+                slideMOM.addText("Minutes of Meeting (MOM)", { x: 0.5, y: 0.5, w: '90%', h: 0.8, fontSize: 32, bold: true, color: '0F766E' });
+                let yPosMOM = 1.5; let hasMOM = false;
+                activeMeeting.slides.forEach((s, idx) => {
+                    if(s.momNote && s.momNote.trim() !== '') {
+                        hasMOM = true;
+                        slideMOM.addText(`Bagian ${idx+1}: ${s.title}`, { x: 0.5, y: yPosMOM, w: '90%', h: 0.3, fontSize: 14, bold: true, color: '2563EB' });
+                        slideMOM.addText(s.momNote, { x: 0.5, y: yPosMOM + 0.3, w: '90%', h: 0.5, fontSize: 12, color: '334155' });
+                        yPosMOM += 1.0;
+                    }
+                });
+                if(!hasMOM) slideMOM.addText("Tidak ada catatan.", { x: 0.5, y: 1.5, w: '90%', h: 1, fontSize: 16, color: '94A3B8' });
+
+                let slideTy = pres.addSlide();
+                slideTy.background = { color: '0A0F1D' }; 
+                slideTy.addText("Thank You.", { x: 0.5, y: 2.0, w: '90%', h: 1.5, align: 'center', fontSize: 56, bold: true, color: 'FFFFFF', fontFace: 'Playfair Display' });
+                slideTy.addText(getSmartClosing(activeMeeting).replace(/\n/g, ' '), { x: 1, y: 3.5, w: '80%', h: 2, align: 'center', fontSize: 16, color: '94A3B8' });
+
+                if(!(await checkJobStatus())) throw new Error("Cancelled");
+                showExportToast('Menyimpan file PPTX...', 95, false);
+                pres.writeFile({ fileName: `Presentasi_${(activeMeeting.meetingName || "Materi").replace(/[^a-zA-Z0-9]/g, '_')}.pptx` }).then(() => { finalizeExportToast(); });
+                
+            } catch (err) {
+                if(err.message === "Cancelled") failExportToast("Proses dibatalkan oleh pengguna.");
+                else failExportToast("Gagal merakit PPTX: " + err.message);
+            } finally {
+                window.exportJob.active = false; document.documentElement.classList.remove('exporting-mode'); document.body.classList.remove('exporting-mode'); document.getElementById('presentationView').classList.add('hidden'); document.getElementById('presentationView').classList.remove('pdf-background-render'); switchView('admin');
+            }
+        }
+
+        async function runNativePDFExport() {
+            if (window.exportJob.active) return;
+            window.exportJob = { active: true, paused: false, cancelled: false, id: 'toastPDF', percent: 0, text: '' };
+
+            try {
+                pullDataFromForm();
+                showExportToast('Menyusun PDF Asli...', 5, true);
+                
+                document.documentElement.classList.add('exporting-mode'); document.body.classList.add('exporting-mode');
+                const presView = document.getElementById('presentationView');
+                presView.classList.remove('hidden'); presView.classList.add('pdf-background-render');
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({ orientation: 'landscape', unit: 'px', format: [1920, 1080] });
+
+                if(!(await checkJobStatus())) throw new Error("Cancelled");
+                const logoB64 = await getDirectBase64(activeMeeting.logoUrl);
+
+                if(!(await checkJobStatus())) throw new Error("Cancelled");
+
+                function drawHeader(doc, title, logo) {
+                    doc.setFontSize(28); doc.setTextColor(148, 163, 184); doc.setFont("helvetica", "bold");
+                    doc.text((title || 'Presentasi').toUpperCase(), 96, 96);
+                    doc.setDrawColor(226, 232, 240); doc.setLineWidth(4); doc.line(96, 120, 1824, 120); 
+                    if (logo && logo.startsWith('data:')) { doc.addImage(logo, 'PNG', 1650, 70, 174, 40); }
+                }
+
+                function drawFooter(doc, pageNum, totalPages) {
+                    doc.setDrawColor(226, 232, 240); doc.setLineWidth(2); doc.line(96, 980, 1824, 980);
+                    doc.setFontSize(16); doc.setTextColor(148, 163, 184); doc.setFont("helvetica", "bold"); doc.text("GAEKS GROUP - 2026", 96, 1020);
+                    doc.text(`Halaman ${pageNum} / ${totalPages}`, 1700, 1020);
+                }
+
+                const totalSlides = activeMeeting.slides.length + 4; 
+                let currentPage = 1;
+
+                // 1. COVER SLIDE
+                doc.setFillColor(10, 15, 29); doc.rect(0, 0, 1920, 1080, 'F'); 
+                doc.setFillColor(212, 175, 55); doc.rect(0, 0, 60, 1080, 'F'); 
+                
+                if (logoB64 && logoB64.startsWith('data:')) { doc.addImage(logoB64, 'PNG', 160, 250, 200, 60); }
+                
+                doc.setFont("times", "bold"); doc.setTextColor(255, 255, 255); doc.setFontSize(100);
+                doc.text(doc.splitTextToSize(activeMeeting.meetingName || "Presentasi", 1500), 160, 480);
+
+                let metaText = activeMeeting.meetingDate || 'Tanggal Belum Diset';
+                if (activeMeeting.authorName) metaText += `   •   ${activeMeeting.authorName}`;
+                if (activeMeeting.companyName) metaText += `   •   ${activeMeeting.companyName}`;
+
+                doc.setFont("helvetica", "bold"); doc.setFontSize(26); doc.setTextColor(212, 175, 55);
+                doc.text(metaText, 160, 650);
+                currentPage++;
+
+                // 2. AGENDA SLIDE
+                doc.addPage(); doc.setFillColor(248, 250, 252); doc.rect(0, 0, 1920, 1080, 'F');
+                drawHeader(doc, activeMeeting.meetingName, logoB64); drawFooter(doc, currentPage, totalSlides);
+
+                doc.setFont("helvetica", "bold"); doc.setTextColor(10, 15, 29); doc.setFontSize(60); doc.text("Daftar Bahasan Utama", 120, 250);
+                doc.setFillColor(37, 99, 235); doc.rect(96, 190, 12, 60, 'F'); 
+                doc.setFontSize(32); doc.setTextColor(100, 116, 139); doc.text("Kerangka pembahasan strategis presentasi.", 120, 310);
+
+                let yAgenda = 450; let xAgenda = 120;
+                doc.setFontSize(36); doc.setTextColor(51, 65, 85);
+                activeMeeting.slides.forEach((s, idx) => {
+                    doc.text(`${idx+1}.  ${s.title}`, xAgenda, yAgenda);
+                    yAgenda += 70; if(yAgenda > 850) { yAgenda = 450; xAgenda += 800; }
+                });
+                currentPage++;
+
+                showExportToast('Merakit Halaman Materi...', 30, true);
+
+                // 3. CONTENT SLIDES
+                for(let i = 0; i < activeMeeting.slides.length; i++) {
+                    if(!(await checkJobStatus())) throw new Error("Cancelled");
+                    const s = activeMeeting.slides[i];
+                    
+                    doc.addPage(); doc.setFillColor(248, 250, 252); doc.rect(0, 0, 1920, 1080, 'F');
+                    drawHeader(doc, activeMeeting.meetingName, logoB64); drawFooter(doc, currentPage, totalSlides);
+
+                    doc.setFont("helvetica", "bold"); doc.setTextColor(10, 15, 29); doc.setFontSize(64); doc.text(s.title, 96, 230);
+                    doc.setDrawColor(226, 232, 240); doc.setLineWidth(3); doc.line(96, 260, 1824, 260);
+
+                    const isStandard = s.layout === 'standard';
+                    let yContent = 350; const maxTextWidth = isStandard ? 1700 : 800;
+
+                    const validPts = (s.points || []).filter(p => p.title.trim() !== '');
+                    validPts.forEach(pt => {
+                        doc.setFillColor(37, 99, 235); doc.rect(96, yContent - 30, 8, 40, 'F'); 
+                        doc.setFont("helvetica", "bold"); doc.setFontSize(38); doc.setTextColor(10, 15, 29);
+                        const ptTitleLines = doc.splitTextToSize(pt.title, maxTextWidth - 40); doc.text(ptTitleLines, 130, yContent);
+                        yContent += (ptTitleLines.length * 45);
+
+                        if(pt.desc) {
+                            doc.setFont("helvetica", "normal"); doc.setFontSize(26); doc.setTextColor(100, 116, 139);
+                            const cleanDesc = pt.desc.replace(/(https?:\/\/[^\s]+)/g, '[Link Source]');
+                            const ptDescLines = doc.splitTextToSize(cleanDesc, maxTextWidth - 40); doc.text(ptDescLines, 130, yContent);
+                            yContent += (ptDescLines.length * 35);
+                        }
+                        yContent += 50; 
+                    });
+
+                    if (!isStandard) {
+                        const visualX = 1000; const visualY = 320; const visualW = 824; const visualH = 600;
+
+                        if (s.layout === 'image') {
+                            const validImgs = (s.images || []).filter(img => img.url.trim() !== '');
+                            if (validImgs.length > 0) {
+                                const slideImgB64 = await getDirectBase64(validImgs[0].url);
+                                if (slideImgB64 && slideImgB64.startsWith('data:')) {
+                                    doc.addImage(slideImgB64, 'JPEG', visualX, visualY, visualW, visualH);
+                                } else {
+                                    doc.setFillColor(226, 232, 240); doc.rect(visualX, visualY, visualW, visualH, 'F');
+                                    doc.setFont("helvetica", "bold"); doc.setFontSize(24); doc.setTextColor(148, 163, 184);
+                                    doc.text("Gambar gagal dimuat.", visualX + (visualW/2), visualY + (visualH/2), {align:'center'});
+                                }
+                            }
+                        } else {
+                            renderSlideView(i + 2, true);
+                            await new Promise(r => setTimeout(r, 150)); 
+                            const targetEl = document.getElementById('presSlideVisual');
+                            if (targetEl) {
+                                const snapCanvas = await html2canvas(targetEl, { scale: 1.5, useCORS: true, logging: false });
+                                doc.addImage(snapCanvas.toDataURL('image/jpeg', 0.9), 'JPEG', visualX, visualY, visualW, visualH);
+                            }
+                        }
+                    }
+
+                    showExportToast(`Merakit PDF: Materi ${i+1}/${activeMeeting.slides.length}`, 30 + Math.round(((i+1)/activeMeeting.slides.length)*50), true);
+                    currentPage++;
+                }
+
+                if(!(await checkJobStatus())) throw new Error("Cancelled");
+
+                // 4. MOM SLIDE
+                doc.addPage(); doc.setFillColor(248, 250, 252); doc.rect(0, 0, 1920, 1080, 'F');
+                drawHeader(doc, activeMeeting.meetingName, logoB64); drawFooter(doc, currentPage, totalSlides);
+
+                doc.setFont("times", "bold"); doc.setTextColor(15, 118, 110); doc.setFontSize(60); doc.text("Minutes of Meeting (MOM)", 120, 250);
+                doc.setFillColor(212, 175, 55); doc.rect(96, 190, 12, 60, 'F'); 
+
+                doc.setFont("helvetica", "normal"); doc.setFontSize(32); doc.setTextColor(100, 116, 139); doc.text("Rekapitulasi catatan dan feedback presentasi.", 120, 310);
+
+                let yMOM = 420; let hasMOM = false;
+                activeMeeting.slides.forEach((s, idx) => {
+                    if(s.momNote && s.momNote.trim() !== '') {
+                        hasMOM = true;
+                        if(yMOM > 900) { doc.addPage(); yMOM = 150; } 
+                        doc.setFillColor(255, 255, 255); doc.setDrawColor(226, 232, 240); doc.rect(96, yMOM, 1728, 120, 'FD'); 
+                        doc.setFont("helvetica", "bold"); doc.setFontSize(24); doc.setTextColor(37, 99, 235); doc.text(`Bagian ${idx+1}: ${s.title}`, 130, yMOM + 45);
+                        doc.setFont("helvetica", "normal"); doc.setFontSize(22); doc.setTextColor(51, 65, 85); doc.text(doc.splitTextToSize(s.momNote, 1660), 130, yMOM + 85);
+                        yMOM += 150; 
+                    }
+                });
+                
+                if(!hasMOM) {
+                    doc.setFontSize(32); doc.setTextColor(148, 163, 184);
+                    doc.text("Tidak ada catatan (Minutes of Meeting) yang direkam pada presentasi ini.", 120, 450);
+                }
+                currentPage++;
+
+                // 5. THANK YOU SLIDE
+                doc.addPage(); doc.setFillColor(10, 15, 29); doc.rect(0, 0, 1920, 1080, 'F');
+                
+                doc.setFont("times", "bold"); doc.setTextColor(255, 255, 255); doc.setFontSize(140); doc.text("Thank You.", 1920/2, 500, {align: 'center'});
+                doc.setFillColor(15, 118, 110); doc.rect((1920/2) - 100, 560, 200, 10, 'F'); 
+                
+                doc.setFont("helvetica", "normal"); doc.setTextColor(148, 163, 184); doc.setFontSize(28); 
+                doc.text(doc.splitTextToSize(getSmartClosing(activeMeeting).replace(/\n/g, ' '), 1600), 1920/2, 650, {align: 'center'});
+                
+                if (logoB64 && logoB64.startsWith('data:')) { doc.addImage(logoB64, 'PNG', (1920-200)/2, 800, 200, 60); }
+
+                if(!(await checkJobStatus())) throw new Error("Cancelled");
+                showExportToast('Menyimpan file PDF ke perangkat...', 95, false);
+                doc.save(`Deck_${(activeMeeting.meetingName || "Materi").replace(/[^a-zA-Z0-9]/g, '_')}.pdf`);
+                finalizeExportToast();
+                
+            } catch (err) {
+                if(err.message === "Cancelled") failExportToast("Proses dibatalkan oleh pengguna.");
+                else failExportToast("Gagal menyusun PDF: " + err.message);
+            } finally {
+                window.exportJob.active = false; document.documentElement.classList.remove('exporting-mode'); document.body.classList.remove('exporting-mode'); document.getElementById('presentationView').classList.add('hidden'); document.getElementById('presentationView').classList.remove('pdf-background-render'); switchView('admin');
+            }
+        }
+    </script>
 </body>
 </html>
