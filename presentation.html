@@ -1,23 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <script>
-    (function() {
-      var raw = null;
-      try {
-        raw = localStorage.getItem('gaeks_user_session_v3') || localStorage.getItem('gaeks_user_session_v2') || localStorage.getItem('gaeks_user_session');
-      } catch(e) {}
-      if (!raw) {
-        try {
-          var m = document.cookie.match(/gaeks_session_v3=([^;]+)/) || document.cookie.match(/gaeks_session=([^;]+)/);
-          if (m) raw = decodeURIComponent(m[1]);
-        } catch(e) {}
-      }
-      if (!raw) {
-        window.location.replace('login.html?redirect=presentation.html');
-      }
-    })();
-  </script>
+  <!-- Guest access enabled -->
     <!-- Guest and Authenticated access enabled -->
     <meta charset="UTF-8">
     <title>GAEKS Presentation Studio | Enterprise Pitch Deck Engine</title>
@@ -32,21 +16,25 @@
     <script src="https://cdn.jsdelivr.net/gh/gitbrent/PptxGenJS/dist/pptxgen.bundle.js"></script>
     <script src="auth.js?v=20260914_08"></script>
     
-    <script>
-        tailwind.config = { 
-            theme: { 
-                extend: { 
-                    colors: { 
-                        brand: '#0A0F1D', 
-                        brandLight: '#1e293b',
-                        accent: '#2563eb', 
-                        corporateTeal: '#0f766e', 
-                        champagne: '#d4af37' 
-                    }, 
-                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'], serif: ['"Playfair Display"', 'serif'] } 
-                } 
-            } 
-        }
+                                <script>
+        window.tailwind = window.tailwind || {};
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: "#0A0F1D",
+                        brandLight: "#1e293b",
+                        accent: "#2563eb",
+                        corporateTeal: "#0f766e",
+                        champagne: "#d4af37"
+                    },
+                    fontFamily: {
+                        sans: ["Plus Jakarta Sans", "sans-serif"],
+                        serif: ["Playfair Display", "serif"]
+                    }
+                }
+            }
+        };
     </script>
     <style>
         .custom-scrollbar::-webkit-scrollbar { height: 8px; width: 8px; }
@@ -856,14 +844,14 @@ function getLocalMeetingsList() {
             }); return data;
         }
 
-        function createNewMeeting() {
+        window.createNewMeeting = function() {
             try {
                 let rawData = { id: null, meetingName: "Presentasi Baru", meetingDate: new Date().toISOString().split('T')[0], authorName: "", companyName: "", logoUrl: "", slides: [{ title: "Pendahuluan", points: [{title: "Poin Pembuka", desc: "Keterangan poin..."}], layout: "standard", momNote: "", images: [{url:"", caption:""},{url:"", caption:""},{url:"", caption:""},{url:"", caption:""}], chartType: "bar", chartData: "", tableData: "" }] };
                 activeMeeting = sanitizeMeetingData(rawData); renderEditor();
             } catch(e) { console.error("Create Meeting Error:", e); alert("Gagal menginisialisasi meeting baru."); }
         }
 
-        function openMeeting(id) {
+        window.openMeeting = function(id) {
             showLoader("Membuka Dokumen", "Mengekstrak dan menyesuaikan data...");
             google.script.run
                 .withSuccessHandler(data => { try { activeMeeting = sanitizeMeetingData(data); hideLoader(); renderEditor(); } catch (err) { hideLoader(); alert("Terjadi kesalahan: " + err.message); loadDashboard(); }})
@@ -1404,24 +1392,40 @@ function getLocalMeetingsList() {
         function nextSlide() { const maxIdx = activeMeeting.slides.length + 3; if(currentSlideIndex < maxIdx) { currentSlideIndex++; renderSlideView(currentSlideIndex); } }
         function prevSlide() { if(currentSlideIndex > 0) { currentSlideIndex--; renderSlideView(currentSlideIndex); } }
         
-        function switchView(view) {
-            document.getElementById('dashboardView').classList.add('hidden'); document.getElementById('adminView').classList.add('hidden');
-            document.getElementById('presentationView').classList.add('hidden'); document.getElementById('mainHeader').classList.remove('hidden');
+                        function switchView(view) {
+            const vDash = document.getElementById('dashboardView');
+            const vAdmin = document.getElementById('adminView');
+            const vPres = document.getElementById('presentationView');
+            const header = document.getElementById('mainHeader');
+
+            vDash.classList.add('hidden');
+            vDash.style.setProperty('display', 'none', 'important');
+            vAdmin.classList.add('hidden');
+            vAdmin.style.setProperty('display', 'none', 'important');
+            vPres.classList.add('hidden');
+            vPres.style.setProperty('display', 'none', 'important');
+            header.classList.remove('hidden');
+            header.style.removeProperty('display');
             document.body.classList.remove('exporting-mode');
 
             if(view === 'dashboard') { 
-                document.getElementById('dashboardView').classList.remove('hidden'); 
+                vDash.classList.remove('hidden');
+                vDash.style.setProperty('display', 'block', 'important');
                 if(meetingsList.length > 0) renderDashboardList(meetingsList, currentTab); 
             } 
             else if(view === 'admin') { 
-                document.getElementById('mainHeader').classList.add('hidden'); 
-                document.getElementById('adminView').classList.remove('hidden'); 
+                header.classList.add('hidden');
+                header.style.setProperty('display', 'none', 'important');
+                vAdmin.classList.remove('hidden');
+                vAdmin.style.setProperty('display', 'block', 'important');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             } 
             else if(view === 'presentation') { 
                 pullDataFromForm();
-                
-                document.getElementById('mainHeader').classList.add('hidden'); 
-                document.getElementById('presentationView').classList.remove('hidden'); 
+                header.classList.add('hidden');
+                header.style.setProperty('display', 'none', 'important');
+                vPres.classList.remove('hidden');
+                vPres.style.setProperty('display', 'flex', 'important');
                 resizePenCanvas(); 
                 
                 const presEl = document.documentElement;
@@ -1430,7 +1434,6 @@ function getLocalMeetingsList() {
                         console.warn("Fullscreen diblokir otomatis oleh browser, mengabaikan... ", err);
                     });
                 }
-                
                 currentSlideIndex = 0; 
                 renderSlideView(0); 
             }
