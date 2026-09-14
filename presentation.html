@@ -349,20 +349,18 @@
     </main>
 
     <script>
-                const GAEKS_PRES_LIST_KEY = () => {
-            let uId = 'unauthorized';
+                        // ISOLASI STORAGE PRESENTATION PER AKUN EMAIL
+        function getPresAccountScope() {
+            let uEmail = 'guest';
             try {
-                const raw = localStorage.getItem('gaeks_user_session_v3') || localStorage.getItem('gaeks_user_session_v2');
-                if (raw) { const u = JSON.parse(raw); if (u && u.id) uId = u.id; }
+                const raw = localStorage.getItem('gaeks_user_session_v3') || localStorage.getItem('gaeks_user_session_v2') || localStorage.getItem('gaeks_user_session');
+                if (raw) { const u = JSON.parse(raw); if (u && u.email) uEmail = u.email.toLowerCase().trim(); }
             } catch(e) {}
-            if (uId === 'unauthorized') {
-                window.location.replace('login.html?redirect=presentation.html');
-            }
-            return 'gaeks_pres_user_' + uId + '_v2';
-        };
+            return 'user_' + uEmail.replace(/[^a-z0-9]/g, '_');
+        }
 
-        const GAEKS_PRES_ITEM_KEY = (id) => {
-            let uId = 'unauthorized';
+        const GAEKS_PRES_LIST_KEY = () => 'gaeks_pres_vault_v25_' + getPresAccountScope();
+        const GAEKS_PRES_ITEM_KEY = (id) => 'gaeks_pres_item_v25_' + getPresAccountScope() + '_' + id;
             try {
                 const raw = localStorage.getItem('gaeks_user_session_v3') || localStorage.getItem('gaeks_user_session_v2');
                 if (raw) { const u = JSON.parse(raw); if (u && u.id) uId = u.id; }

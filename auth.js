@@ -125,17 +125,16 @@ const GaeksAuth = {
     return user ? (user.email.toLowerCase().trim() === SUPER_ADMIN_EMAIL) : false;
   },
 
-  logout() {
+    logout() {
     try {
       localStorage.removeItem('gaeks_user_session_v3');
       localStorage.removeItem('gaeks_user_session_v2');
       localStorage.removeItem('gaeks_user_session');
-    } catch(e) {}
-    try {
+      sessionStorage.clear();
       document.cookie = "gaeks_session_v3=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
       document.cookie = "gaeks_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     } catch(e) {}
-    window.location.replace(window.location.origin + '/index.html');
+    window.location.replace(window.location.origin + '/login.html');
   },
 
   toggleUserPlan(email) {

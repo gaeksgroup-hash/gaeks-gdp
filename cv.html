@@ -1,23 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <script>
-    (function() {
-      var raw = null;
-      try {
-        raw = localStorage.getItem('gaeks_user_session_v3') || localStorage.getItem('gaeks_user_session_v2') || localStorage.getItem('gaeks_user_session');
-      } catch(e) {}
-      if (!raw) {
-        try {
-          var m = document.cookie.match(/gaeks_session_v3=([^;]+)/) || document.cookie.match(/gaeks_session=([^;]+)/);
-          if (m) raw = decodeURIComponent(m[1]);
-        } catch(e) {}
-      }
-      if (!raw) {
-        window.location.replace('login.html?redirect=cv.html');
-      }
-    })();
-  </script>
+  <!-- Guest mode & user session enabled -->
 <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GAEKS ATS CV Studio | Executive Resume Engine</title>
@@ -193,6 +177,10 @@
 
       <div class="flex items-center space-x-2">
         <!-- PINTASAN LANGSUNG BUKA EDITOR FORM -->
+        <button id="nav-btn-to-editor" onclick="window.openLastOrNewCV()" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition flex items-center gap-1.5 shadow-sm">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+          <span>Editor Form</span>
+        </button>
         <button id="nav-btn-dashboard" onclick="showDashboardView()" class="hidden px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 transition cursor-pointer">
           <span id="ui-btn-cv-list">Daftar CV</span>
         </button>
@@ -227,10 +215,10 @@
         <p id="ui-dash-subtitle" class="text-xs sm:text-sm text-slate-400 mt-1">Format eksekutif dengan kepadatan informasi optimal, bebas dari elemen visual template AI.</p>
       </div>
       <div class="flex flex-wrap gap-2">
-        <button type="button" id="btn-create-blank-action" onclick="window.createNewBlankCV()" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-extrabold text-base shadow-xl shadow-blue-500/25 flex items-center justify-center space-x-3 transition-all duration-200 cursor-pointer border border-blue-400/30">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-            <span id="ui-btn-create-blank">Buat CV Baru</span>
-          </button>
+        <button type="button" id="btn-create-blank-action" onclick="window.createNewBlankCV()" class="px-6 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-extrabold text-sm sm:text-base shadow-xl shadow-blue-500/25 flex items-center justify-center space-x-2.5 transition-all duration-200 cursor-pointer border border-blue-400/30">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+          <span id="ui-btn-create-blank">+ Buat CV Baru</span>
+        </button>
       </div>
     </div>
 
@@ -1231,35 +1219,7 @@
       if (badgeTrash) badgeTrash.innerText = cvList.filter(c => c.deletedAt).length;
     }
 
-    function showDashboardView() {
-      const vDash = document.getElementById('view-dashboard');
-      const vEdit = document.getElementById('view-editor');
-      const btnDash = document.getElementById('nav-btn-dashboard');
-      const btnToEdit = document.getElementById('nav-btn-to-editor');
-      const btnPrint = document.getElementById('nav-btn-print');
-
-      if (vDash) {
-        vDash.classList.remove('hidden');
-        vDash.style.setProperty('display', 'block', 'important');
-      }
-      if (vEdit) {
-        vEdit.classList.add('hidden');
-        vEdit.style.setProperty('display', 'none', 'important');
-      }
-      if (btnDash) {
-        btnDash.classList.add('hidden');
-        btnDash.style.setProperty('display', 'none', 'important');
-      }
-      if (btnToEdit) {
-        btnToEdit.classList.remove('hidden');
-        btnToEdit.style.setProperty('display', 'inline-flex', 'important');
-      }
-      if (btnPrint) {
-        btnPrint.classList.add('hidden');
-        btnPrint.style.setProperty('display', 'none', 'important');
-      }
-      renderDashboardGrid();
-    }
+    
 
     function switchDashboardTab(tab) {
       currentDashboardTab = tab;
@@ -2351,16 +2311,19 @@
       }
     });
 
-        window.onload = function() {
-      setTimeout(() => { if (GaeksAuth.initGoogleAuth) GaeksAuth.initGoogleAuth(); }, 500);
-      const user = GaeksAuth.getCurrentUser();
-      if (!user) {
-        window.location.replace('login.html?redirect=cv.html');
-        return;
-      }
+            window.onload = function() {
+      setTimeout(() => { if (window.GaeksAuth && GaeksAuth.initGoogleAuth) GaeksAuth.initGoogleAuth(); }, 500);
       updateNavbarAuthStatus();
       loadCvList();
-      showDashboardView();
+      
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('action') === 'new') {
+        window.createNewBlankCV();
+      } else if (urlParams.get('view') === 'editor') {
+        window.openLastOrNewCV();
+      } else {
+        showDashboardView();
+      }
       setLanguage('id');
     };
 </script>
