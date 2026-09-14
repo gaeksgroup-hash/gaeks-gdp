@@ -129,12 +129,29 @@
 
     
 
+        function calculateCvCompleteness(cv) {
+      if (!cv) return 0;
+      const d = cv.data || cv;
+      let score = 0;
+      if (d.name && d.name.trim().length >= 2) score += 15;
+      if (d.title && d.title.trim().length >= 2) score += 10;
+      if (d.email && d.email.includes('@')) score += 10;
+      if (d.phone && d.phone.trim().length >= 5) score += 5;
+      if (d.location && d.location.trim().length >= 2) score += 5;
+      if (d.summary && d.summary.trim().length >= 20) score += 15;
+      if (Array.isArray(d.experiences) && d.experiences.length > 0 && d.experiences.some(e => (e.company && e.company.trim()) || (e.position && e.position.trim()))) score += 20;
+      if (Array.isArray(d.educations) && d.educations.length > 0 && d.educations.some(ed => (ed.school && ed.school.trim()) || (ed.degree && ed.degree.trim()))) score += 10;
+      const hasSkills = (Array.isArray(d.skillGroups) && d.skillGroups.some(g => g.skills && g.skills.trim())) || (typeof d.skills === 'string' && d.skills.trim().length > 0);
+      if (hasSkills) score += 10;
+      return Math.min(100, Math.round(score));
+    }
+    window.calculateCvCompleteness = calculateCvCompleteness;
     function getSessionStorageKey() {
       const user = (window.GaeksAuth && GaeksAuth.getCurrentUser) ? GaeksAuth.getCurrentUser() : null;
-      if (!user) return 'gaeks_cv_guest_v18';
-      if (user && (user.email.toLowerCase() === 'triawan25@gmail.com' || user.email.toLowerCase() === 'gaeks.group@gmail.com')) {
-        return 'gaeks_cv_private_triawan_v18';
-      }
+      if (!user || !user.email) return 'gaeks_cv_guest_v19';
+      const cleanEmail = user.email.toLowerCase().trim().replace(/[^a-z0-9]/g, '_');
+      return 'gaeks_cv_user_' + cleanEmail + '_v19';
+    }
       return 'gaeks_cv_user_' + user.id + '_v18';
     }
 
@@ -239,10 +256,13 @@
           trashMeta = `<span class="text-[11px] text-amber-400 font-medium">Sisa ${daysLeft} hari lagi di sampah</span>`;
         }
 
-        const isDraft = Boolean(cv.isDraft);
+        const comp = calculateCvCompleteness(cv);
+        const isDraft = (comp <= 30);
+        cv.isDraft = isDraft;
+        cv.completeness = comp;
         const badgeStatus = isDraft
-          ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-800 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>DRAFT</span>`
-          : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>TERSIMPAN</span>`;
+          ? `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-800 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>DRAFT (${comp}%)</span>`
+          : `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>SIAP (${comp}%)</span>`;
 
         container.innerHTML += `
           <div class="p-6 bg-slate-900/90 rounded-2xl border border-slate-800 hover:border-slate-700 transition-all flex flex-col justify-between shadow-xl group">
@@ -270,7 +290,7 @@
                   <span>Buka & Edit</span>
                 </a>
                 <div class="flex items-center space-x-1.5">
-                  <button onclick="duplicateCV('${cv.id}')" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition cursor-pointer">
+                  <button onclick="renameCV('${cv.id}')" class="px-2.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition cursor-pointer flex items-center gap-1" title="Ubah Nama"><span>✏️ Rename</span></button><button onclick="duplicateCV('${cv.id}')" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition cursor-pointer">
                     Duplikat
                   </button>
                   <button onclick="moveToTrash('${cv.id}')" class="p-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-900/50 text-xs transition cursor-pointer" title="Hapus ke Tempat Sampah">
@@ -375,6 +395,19 @@
       renderDashboardGrid();
       alert("Sampel CV Deny Triawan berhasil dimuat ke dashboard Anda!");
     }
+
+    function renameCV(id) {
+      const cv = cvList.find(c => c.id === id);
+      if (!cv) return;
+      const newTitle = prompt("Masukkan nama/judul baru resume:", cv.title || "CV Tanpa Judul");
+      if (newTitle !== null && newTitle.trim() !== "") {
+        cv.title = newTitle.trim();
+        cv.updatedAt = Date.now();
+        saveCvList();
+        renderDashboardGrid();
+      }
+    }
+    window.renameCV = renameCV;
 
     function duplicateCV(id) {
       const src = cvList.find(c => c.id === id);

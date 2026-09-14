@@ -13,7 +13,14 @@ const GOOGLE_CLIENT_ID = "41832472270-6r8iudma1eho6kn3q6rs4rl7b9ank7n4.apps.goog
 const AUTH_STORAGE_KEY = 'gaeks_user_session_v3';
 const USERS_DB_KEY = 'gaeks_users_db_v3';
 
-const GaeksAuth = {
+function getDeterministicUserId(email) {
+  const clean = (email || '').toLowerCase().trim();
+  return 'usr_' + clean.replace(/[^a-z0-9]/g, '_');
+}
+if (typeof window !== 'undefined') window.getDeterministicUserId = getDeterministicUserId;
+
+var GaeksAuth = window.GaeksAuth = {
+  getDeterministicUserId(email) { return getDeterministicUserId(email); },
   getUsersDb() {
     let raw = null;
     try { raw = localStorage.getItem(USERS_DB_KEY); } catch(e) {}
@@ -155,3 +162,5 @@ const GaeksAuth = {
     return null;
   }
 };
+
+if (typeof window !== 'undefined') { window.GaeksAuth = GaeksAuth; }
