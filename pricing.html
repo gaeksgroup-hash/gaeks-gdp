@@ -1,109 +1,57 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pilihan Paket & Berlangganan | GAEKS Digital</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Rencana paket Free dan GAEKS PRO untuk CV Maker dan Presentation Maker.">
+  <title>Paket dan Harga — GAEKS Digital</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="auth.js"></script>
-  <style> body { font-family: 'Plus Jakarta Sans', sans-serif; } </style>
+  <link rel="stylesheet" href="public/assets/css/landing.css?v=20260915-1">
+  <script src="auth.js?v=20260914_09" defer></script>
+  <script src="public/assets/js/landing.js?v=20260915-1" defer></script>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white">
-
-  <header class="sticky top-0 z-50 w-full backdrop-blur-md bg-slate-950/90 border-b border-slate-800">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <a href="index.html" class="text-xs sm:text-sm font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 py-1 px-2 rounded-lg hover:bg-slate-900 transition">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-          <span>Beranda</span>
-        </a>
-        <span class="text-slate-700">|</span>
-        <a href="cv.html" class="text-xs sm:text-sm font-semibold text-slate-400 hover:text-white transition">ATS CV Studio</a>
-      </div>
-
-      <div class="flex items-center space-x-3">
-        <a href="profile.html" id="nav-user-profile-btn" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-300 hover:text-white transition">
-          Profil Saya
-        </a>
+<body>
+  <a class="skip-link" href="#main-content">Lewati ke konten</a>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5z"/></svg></span><span class="brand-copy">GAEKS Digital<small>Paket produk</small></span></a>
+      <nav class="nav-links" data-nav-links aria-label="Navigasi utama"><a href="index.html#products">Produk</a><a href="index.html#how-it-works">Cara kerja</a><a href="#plans">Harga</a><a href="index.html#faq">Bantuan</a></nav>
+      <div class="nav-actions">
+        <a class="user-pill" data-user-pill href="profile.html"><img class="user-avatar" data-user-avatar src="https://api.dicebear.com/7.x/initials/svg?seed=User" alt=""><span data-user-name>Akun saya</span></a>
+        <a class="button button-secondary" data-login-link href="login.html?redirect=pricing.html">Masuk</a>
+        <a class="button button-primary" href="index.html#products">Mulai membuat</a>
+        <button class="menu-button" data-menu-button type="button" aria-expanded="false" aria-label="Buka menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
       </div>
     </div>
   </header>
 
-  <main class="max-w-5xl mx-auto w-full px-4 sm:px-6 py-12 flex-grow space-y-12">
-    <div class="text-center max-w-2xl mx-auto space-y-3">
-      <span class="text-xs font-bold uppercase tracking-widest text-blue-400 bg-blue-950/80 px-3 py-1 rounded-full border border-blue-800/80">Rencana Berlangganan</span>
-      <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Investasi Terbaik untuk Karier Impian Anda</h1>
-      <p class="text-xs sm:text-sm text-slate-400">Pilih paket yang sesuai dengan kebutuhan persiapan seleksi kerja dan eksekutif Anda.</p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch max-w-4xl mx-auto">
-      <!-- FREE TIER -->
-      <div class="p-8 bg-slate-900/80 rounded-2xl border border-slate-800 flex flex-col justify-between shadow-xl">
-        <div class="space-y-4">
-          <div class="flex justify-between items-center">
-            <h3 class="text-lg font-bold text-white">Free Starter</h3>
-            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400">Gratis Selamanya</span>
-          </div>
-          <div class="flex items-baseline gap-1">
-            <span class="text-3xl font-extrabold text-white">Rp 0</span>
-            <span class="text-xs text-slate-400">/ selamanya</span>
-          </div>
-          <p class="text-xs text-slate-400">Cocok untuk fresh graduate atau pembuatan 1 resume cepat standar dasar.</p>
-          
-          <div class="pt-4 border-t border-slate-800 space-y-3 text-xs text-slate-300">
-            <div class="flex items-center gap-2"><span>✓</span><span>Akses 5 Tema Visual Terbuka</span></div>
-            <div class="flex items-center gap-2"><span>✓</span><span>Pencarian 520+ Profesi ATS</span></div>
-            <div class="flex items-center gap-2"><span>✓</span><span>Format A4 Anti-Terpotong</span></div>
-            <div class="flex items-center gap-2 text-slate-500"><span>✕</span><span>10 Tema Eksklusif Bermain Warna</span></div>
-            <div class="flex items-center gap-2 text-slate-500"><span>✕</span><span>Dukungan Konsultasi Prioritas</span></div>
-          </div>
-        </div>
-
-        <div class="pt-8">
-          <a href="cv.html" class="block w-full py-2.5 text-center text-xs font-bold rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition">
-            Gunakan Versi Gratis
-          </a>
+  <main id="main-content">
+    <section class="section" id="plans">
+      <div class="container">
+        <div class="section-heading reveal"><span class="kicker">Paket sederhana</span><h1 style="margin:0;font-size:clamp(38px,5vw,60px);line-height:1.08;letter-spacing:-.05em">Mulai gratis, beralih ketika Anda siap.</h1><p>Paket PRO dirancang untuk membuka seluruh fitur pada CV Maker dan Presentation Maker dalam satu akun.</p></div>
+        <div class="product-grid" style="max-width:950px;margin:auto">
+          <article class="product-card reveal" style="min-height:430px">
+            <div class="product-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16v12H4zM8 7V5h8v2M8 12h8"/></svg></div>
+            <span class="kicker">Free</span><h2 style="margin:0;font-size:38px;letter-spacing:-.04em">Rp0</h2><p>Gunakan fungsi dasar kedua aplikasi selama masa stabilisasi produk.</p>
+            <ul class="feature-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg>Akses editor dasar</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg>Template gratis yang tersedia</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg>Kuota final akan diumumkan sebelum billing aktif</li></ul>
+            <a class="button button-secondary button-wide" href="index.html#products">Pilih aplikasi</a>
+          </article>
+          <article class="product-card reveal" style="min-height:430px;border-color:#8db4f4;box-shadow:0 28px 80px rgba(37,99,235,.18)">
+            <div class="product-icon violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3 2.2 4.5L19 8.2l-3.5 3.4.8 4.8-4.3-2.3-4.3 2.3.8-4.8L5 8.2l4.8-.7z"/></svg></div>
+            <span class="kicker">GAEKS PRO Monthly</span><h2 style="margin:0;font-size:38px;letter-spacing:-.04em">Rp33.000 <small style="font-size:12px;color:#728198;font-weight:600">/ bulan</small></h2><p>Harga dasar belum termasuk pajak. Satu paket untuk membuka semua fitur kedua aplikasi.</p>
+            <ul class="feature-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg>Seluruh tema dan fitur yang dirilis</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg>Format ekspor yang tersedia</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg>Berlaku untuk CV dan presentasi</li></ul>
+            <p class="coming-soon">Midtrans belum aktif. Tombol pembayaran akan tersedia setelah fungsi inti dan keamanan lulus pengujian.</p>
+            <button class="button button-primary button-wide" type="button" disabled aria-disabled="true" style="opacity:.62;cursor:not-allowed;transform:none">Pembayaran segera hadir</button>
+          </article>
         </div>
       </div>
+    </section>
 
-      <!-- PRO TIER -->
-      <div class="p-8 bg-gradient-to-b from-blue-950/40 to-slate-900/90 rounded-2xl border-2 border-blue-500 flex flex-col justify-between shadow-2xl relative">
-        <div class="absolute -top-3.5 right-6 px-3 py-0.5 bg-blue-600 rounded-full text-[10px] font-extrabold text-white uppercase tracking-wider">
-          Paling Populer
-        </div>
-
-        <div class="space-y-4">
-          <div class="flex justify-between items-center">
-            <h3 class="text-lg font-bold text-white">GAEKS PRO Member</h3>
-            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">Akses Penuh</span>
-          </div>
-          <div class="flex items-baseline gap-1">
-            <span class="text-3xl font-extrabold text-white">Rp 49.000</span>
-            <span class="text-xs text-slate-400">/ bulan (atau Rp 299.000/thn)</span>
-          </div>
-          <p class="text-xs text-slate-300">Untuk profesional dan eksekutif yang menginginkan impresi visual berkelas dunia.</p>
-          
-          <div class="pt-4 border-t border-slate-800 space-y-3 text-xs text-slate-200 font-medium">
-            <div class="flex items-center gap-2 text-emerald-400"><span>✓</span><span>Buka Seluruh 15 Tema Visual Eksekutif</span></div>
-            <div class="flex items-center gap-2 text-emerald-400"><span>✓</span><span>Desain Bermain Warna (Ivory, Emerald, Linen, Azure)</span></div>
-            <div class="flex items-center gap-2 text-emerald-400"><span>✓</span><span>Kartu Identitas Dua Warna (Two-Tone Header Card)</span></div>
-            <div class="flex items-center gap-2 text-emerald-400"><span>✓</span><span>Simpan Banyak Resume di Cloud Storage Per Akun</span></div>
-            <div class="flex items-center gap-2 text-emerald-400"><span>✓</span><span>Dukungan WhatsApp Prioritas untuk Konsultasi</span></div>
-          </div>
-        </div>
-
-        <div class="pt-8 space-y-2">
-          <a href="https://wa.me/6285608561745?text=Halo%20Admin%20GAEKS%2C%20saya%20ingin%20upgrade%20ke%20GAEKS%20PRO%20Rp49.000%2Fbulan" target="_blank" class="block w-full py-3 text-center text-xs font-bold rounded-xl bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/30 transition">
-            💬 Upgrade ke GAEKS PRO Sekarang
-          </a>
-        </div>
-      </div>
-    </div>
+    <section class="section section-soft"><div class="container"><div class="section-heading reveal"><span class="kicker">Transparan sejak awal</span><h2>Harga jelas sebelum checkout.</h2><p>Ketika pembayaran diaktifkan, halaman checkout akan menampilkan harga dasar, pajak, total, periode, dan status pembayaran sebelum akses PRO diberikan.</p></div><div class="steps"><article class="step reveal"><span class="step-number">01</span><h3>Pilih PRO</h3><p>Anda melihat ringkasan paket dan nilai yang harus dibayar.</p></article><article class="step reveal"><span class="step-number">02</span><h3>Bayar melalui Midtrans</h3><p>Status checkout diproses melalui gateway yang direncanakan.</p></article><article class="step reveal"><span class="step-number">03</span><h3>Verifikasi server</h3><p>Akses PRO aktif setelah pembayaran diverifikasi oleh server.</p></article></div></div></section>
   </main>
 
-  <footer class="border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
-    <p>&copy; 2026 GAEKS DIGITAL PRODUCT. Standard ATS Resume Engine.</p>
-  </footer>
+  <footer class="site-footer"><div class="container footer-row"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5z"/></svg></span><span class="brand-copy">GAEKS Digital<small>CV &amp; Presentation workspace</small></span></a><div class="footer-links"><a href="index.html#products">Produk</a><a href="index.html#faq">Bantuan</a><a href="login.html">Masuk</a></div><div class="footer-copy">&copy; 2026 GAEKS Digital Products</div></div></footer>
 </body>
 </html>
