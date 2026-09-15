@@ -5,6 +5,7 @@ RewriteBase /
 RewriteRule ^(?:app|config|database|docs|scripts|tests|private-runtime)(?:/|$) - [F,L,NC]
 RewriteRule ^(?:\.gdp_backups|\.gdp_task[^/]*)(?:/|$) - [F,L,NC]
 RewriteRule ^api/data(?:/|$) - [F,L,NC]
+RewriteRule ^api/(?:bootstrap|config|db|mailer)\.php$ - [F,L,NC]
 
 <FilesMatch "(?i)(^\.env|\.(?:sql|sqlite|sqlite3|log|bak|sh|py|md)$)">
   Require all denied

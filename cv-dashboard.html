@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="auth.js?v=20260914_08"></script>
+  <script src="auth.js?v=20260915_01"></script>
 </head>
 <body class="bg-[#0b0f19] text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
 
@@ -146,39 +146,31 @@
       return Math.min(100, Math.round(score));
     }
     window.calculateCvCompleteness = calculateCvCompleteness;
-    function getSessionStorageKey() {
-      const user = (window.GaeksAuth && GaeksAuth.getCurrentUser) ? GaeksAuth.getCurrentUser() : null;
-      if (!user || !user.email) return 'gaeks_cv_guest_v19';
-      const cleanEmail = user.email.toLowerCase().trim().replace(/[^a-z0-9]/g, '_');
-      return 'gaeks_cv_user_' + cleanEmail + '_v19';
+    async function cvApi(action, payload = null, query = '') {
+      return GaeksAuth.api('/api/cv.php?action=' + encodeURIComponent(action) + query, {
+        method: payload ? 'POST' : 'GET',
+        body: payload
+      });
     }
 
-    function loadCvList() {
-      const sKey = getSessionStorageKey();
-      const raw = localStorage.getItem(sKey);
-      if (raw) {
-        try { cvList = JSON.parse(raw); } catch(e) { cvList = []; }
-      } else {
-        cvList = [];
+    async function loadCvList() {
+      const user = await GaeksAuth.requireAuth('cv-dashboard.html');
+      if (!user) return;
+      try {
+        const [active, trash] = await Promise.all([
+          cvApi('list', null, '&tab=active'),
+          cvApi('list', null, '&tab=trash')
+        ]);
+        cvList = [...active, ...trash];
+        window.cvList = cvList;
+        updateCounts();
+      } catch (error) {
+        console.error(error);
+        alert('Gagal memuat resume: ' + error.message);
       }
-
-      if (!cvList || cvList.length === 0) {
-        const user = (window.GaeksAuth && GaeksAuth.getCurrentUser) ? GaeksAuth.getCurrentUser() : null;
-        if (user && (user.email.toLowerCase() === 'triawan25@gmail.com' || user.email.toLowerCase() === 'gaeks.group@gmail.com')) {
-          cvList = [getDenyTriawanSampleData()];
-        } else {
-          cvList = [createBlankCvObject('CV Pertama Saya')];
-        }
-        saveCvList();
-      }
-      autoPurgeTrash();
     }
 
-    function saveCvList() {
-      const sKey = getSessionStorageKey();
-      localStorage.setItem(sKey, JSON.stringify(cvList));
-      updateCounts();
-    }
+    function saveCvList() { updateCounts(); }
 
     function autoPurgeTrash() {
       const now = Date.now();
@@ -191,7 +183,7 @@
         }
         return true;
       });
-      if (changed) saveCvList();
+      if (changed) updateCounts();
     }
 
     function updateCounts() {
@@ -309,7 +301,7 @@
       });
     }
 
-    function createNewBlankCV() {
+    async function createNewBlankCV() {
       try {
         const lang = (typeof currentLang !== 'undefined' && currentLang) ? currentLang : ((typeof window !== 'undefined' && window.currentLang) ? window.currentLang : 'id');
         const listLen = (typeof cvList !== 'undefined' && Array.isArray(cvList)) ? cvList.length : 0;
@@ -345,23 +337,11 @@
         newCv.isDraft = true;
         newCv.updatedAt = Date.now();
 
-        if (typeof cvList === 'undefined' || !Array.isArray(cvList)) {
-          cvList = [];
-        }
-        cvList.unshift(newCv);
-
-        if (typeof saveCvList === 'function') {
-          saveCvList();
-        } else {
-          const sKey = (typeof getSessionStorageKey === 'function') ? getSessionStorageKey() : 'gaeks_cv_guest_v18';
-          localStorage.setItem(sKey, JSON.stringify(cvList));
-        }
-
-        window.location.href = 'cv.html?id=' + encodeURIComponent(newCv.id) + '&action=edit';
+        const saved = await cvApi('save', { cv: newCv });
+        window.location.href = 'cv.html?id=' + encodeURIComponent(saved.id) + '&action=edit';
       } catch(e) {
         console.error("Catatan createNewBlankCV:", e);
-        const fallbackId = 'cv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
-        window.location.href = 'cv.html?id=' + encodeURIComponent(fallbackId) + '&action=edit';
+        alert('Resume belum dapat dibuat: ' + e.message);
       }
     }
     window.createNewBlankCV = createNewBlankCV;
@@ -384,30 +364,32 @@
 
     
 
-    function loadSampleReferenceCV() {
+    function getDenyTriawanSampleData() {
+      const sample=createBlankCvObject('Contoh CV Product Manager');
+      sample.data={...sample.data,name:'Alya Pratama',title:'Product & Operations Lead',email:'alya@example.com',phone:'+62 812 0000 0000',location:'Jakarta, Indonesia',summary:'Pemimpin produk dan operasional dengan pengalaman membangun proses lintas fungsi, meningkatkan kualitas layanan, dan menerjemahkan data menjadi keputusan bisnis.',experiences:[{position:'Product Lead',role:'Product Lead',company:'Perusahaan Teknologi Indonesia',period:'2023–Sekarang',location:'Jakarta',desc:'Memimpin roadmap produk dan kolaborasi tim engineering, design, serta operations.'}],educations:[{school:'Universitas Indonesia',degree:'Sarjana Manajemen',period:'2018–2022'}],skillGroups:[{category:'Keahlian Inti',skills:'Product Strategy, Operations, Data Analysis, Stakeholder Management'}]};
+      sample.completeness=90;sample.isDraft=false;return sample;
+    }
+
+    async function loadSampleReferenceCV() {
       const sample = getDenyTriawanSampleData();
       sample.id = 'cv_' + Date.now();
       sample.isDraft = false;
-      cvList.unshift(sample);
-      saveCvList();
-      renderDashboardGrid();
-      alert("Sampel CV Deny Triawan berhasil dimuat ke dashboard Anda!");
+      try { const saved=await cvApi('save',{cv:sample});cvList.unshift(saved);updateCounts();renderDashboardGrid();alert("Sampel CV berhasil dimuat ke workspace Anda."); } catch(error) { alert('Gagal memuat sampel: '+error.message); }
     }
 
-    function renameCV(id) {
+    async function renameCV(id) {
       const cv = cvList.find(c => c.id === id);
       if (!cv) return;
       const newTitle = prompt("Masukkan nama/judul baru resume:", cv.title || "CV Tanpa Judul");
       if (newTitle !== null && newTitle.trim() !== "") {
         cv.title = newTitle.trim();
         cv.updatedAt = Date.now();
-        saveCvList();
-        renderDashboardGrid();
+        try { const saved=await cvApi('save',{cv});Object.assign(cv,saved);renderDashboardGrid(); } catch(error) { alert('Gagal mengubah nama: '+error.message); }
       }
     }
     window.renameCV = renameCV;
 
-    function duplicateCV(id) {
+    async function duplicateCV(id) {
       const src = cvList.find(c => c.id === id);
       if (!src) return;
       const clone = JSON.parse(JSON.stringify(src));
@@ -416,34 +398,26 @@
       clone.updatedAt = Date.now();
       clone.deletedAt = null;
       clone.isDraft = false;
-      cvList.unshift(clone);
-      saveCvList();
-      renderDashboardGrid();
+      cvApi('save',{cv:clone}).then(saved=>{cvList.unshift(saved);updateCounts();renderDashboardGrid();}).catch(error=>alert('Gagal menduplikasi: '+error.message));
     }
 
-    function moveToTrash(id) {
+    async function moveToTrash(id) {
       const t = cvList.find(c => c.id === id);
       if (t) {
-        t.deletedAt = Date.now();
-        saveCvList();
-        renderDashboardGrid();
+        try { await cvApi('delete',{id});t.deletedAt=Date.now();updateCounts();renderDashboardGrid(); } catch(error) { alert('Gagal menghapus: '+error.message); }
       }
     }
 
-    function restoreFromTrash(id) {
+    async function restoreFromTrash(id) {
       const t = cvList.find(c => c.id === id);
       if (t) {
-        t.deletedAt = null;
-        saveCvList();
-        renderDashboardGrid();
+        try { await cvApi('restore',{id});t.deletedAt=null;updateCounts();renderDashboardGrid(); } catch(error) { alert('Gagal memulihkan: '+error.message); }
       }
     }
 
-    function deletePermanent(id) {
+    async function deletePermanent(id) {
       if (!confirm('Yakin ingin menghapus resume ini secara permanen?')) return;
-      cvList = cvList.filter(c => c.id !== id);
-      saveCvList();
-      renderDashboardGrid();
+      try { await cvApi('delete_permanent',{id});cvList=cvList.filter(c=>c.id!==id);window.cvList=cvList;updateCounts();renderDashboardGrid(); } catch(error) { alert('Gagal menghapus permanen: '+error.message); }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -457,8 +431,8 @@
       checkAdminSampleAccess();
     });
 
-    window.onload = function() {
-      loadCvList();
+    window.onload = async function() {
+      await loadCvList();
       renderDashboardGrid();
       updateCounts();
       checkAdminSampleAccess();

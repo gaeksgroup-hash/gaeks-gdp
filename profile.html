@@ -1,27 +1,12 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <script>
-    (function() {
-      var raw = null;
-      try { raw = localStorage.getItem('gaeks_user_session_v3') || localStorage.getItem('gaeks_user_session_v2') || localStorage.getItem('gaeks_user_session'); } catch(e) {}
-      if (!raw) {
-        try {
-          var m = document.cookie.match(/gaeks_session_v3=([^;]+)/) || document.cookie.match(/gaeks_session=([^;]+)/);
-          if (m) raw = decodeURIComponent(m[1]);
-        } catch(e) {}
-      }
-      if (!raw) {
-        window.location.replace('login.html?redirect=profile.html');
-      }
-    })();
-  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Profil Akun & Berlangganan | GAEKS Digital</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="auth.js?v=20260914_07"></script>
+  <script src="auth.js?v=20260915_01"></script>
   <style> body { font-family: 'Plus Jakarta Sans', sans-serif; } </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white">
@@ -141,8 +126,8 @@
   </footer>
 
   <script>
-    function renderProfile() {
-      const user = GaeksAuth.getCurrentUser();
+    async function renderProfile() {
+      const user = await GaeksAuth.ready;
       if (!user) {
         window.location.replace('login.html?redirect=profile.html');
         return;
@@ -170,7 +155,6 @@
       }
     }
 
-    renderProfile();
     window.addEventListener('DOMContentLoaded', renderProfile);
     window.addEventListener('pageshow', renderProfile);
   </script>

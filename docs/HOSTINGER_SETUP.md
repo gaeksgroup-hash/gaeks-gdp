@@ -1,117 +1,162 @@
-# Setup Hostinger Web Hosting Unlimited — GAEKS GDP
+# Production Runbook — Hostinger GDP
 
-Dokumen ini memisahkan dua kegiatan:
+Target: `https://gdp.gaeks.com` pada Hostinger Web Hosting, PHP 8.3, MySQL.
+Staging tetap dipertahankan sebagai fallback, tetapi instruksi ini mengikuti
+keputusan pemilik untuk cutover langsung ke production.
 
-1. **Deploy tampilan/fondasi repository sekarang** — halaman depan baru dan folder arsitektur.
-2. **Aktivasi database/auth baru nanti** — dilakukan setelah backend implementasi tersedia dan migration diuji di staging.
+## 0. Gate keamanan wajib
 
-Jangan memasukkan credential ke Git, `prd.md`, tiket publik, atau file di dalam `public_html`.
+Password yang pernah dikirim atau tersimpan di repository publik dianggap bocor.
+Sebelum aplikasi live:
 
-## A. Sebelum deploy source terbaru
+1. Ubah password user database production di hPanel dan simpan nilai baru di
+   password manager.
+2. Ubah password mailbox SMTP yang lama. Jangan gunakan password yang sama dengan
+   database.
+3. Rotasi Turnstile secret melalui Cloudflare karena secret lama pernah dibagikan
+   dalam percakapan. Site key boleh tetap publik; secret key tidak boleh masuk Git.
+4. Buat backup penuh file website dan database yang sedang live.
 
-1. Masuk ke hPanel dan buka website GDP.
-2. Catat domain yang benar, document root, versi PHP, serta apakah Git Deployment digunakan. Kode saat ini mengindikasikan `gdp.gaeks.com`, tetapi domain final harus dipastikan.
-3. Buat backup penuh dari file website dan database/data aktual. Unduh salinannya ke lokasi privat.
-4. Rotasi password SMTP yang pernah tertulis di repository. Setelah rotasi, jangan menaruh password baru pada `api/config.php` atau file Git.
-5. Jangan menjalankan script root bernama `safe_deploy.sh`, `deploy_*`, `update_*`, atau `run_deploy_fix.py`; beberapa menimpa source dan melakukan force-push.
+Jangan memakai kembali nilai lama dan jangan menaruh nilai baru di source, commit,
+issue, atau chat.
 
-## B. Menampilkan landing page baru
+## 1. Siapkan OAuth Google dan Turnstile
 
-### Jika memakai Git Deployment hPanel
+Di Google Cloud Console, pada OAuth Web Client yang digunakan:
 
-1. Buka **Websites → Manage → Git**.
-2. Pastikan repository adalah `https://github.com/gaeksgroup-hash/gaeks-gdp` dan branch `main`.
-3. Pastikan deploy path menunjuk ke document root GDP saja, bukan root website lain.
-4. Pull/deploy commit terbaru setelah backup selesai.
-5. Pastikan file berikut tersedia dari browser:
-   - `/index.html`
-   - `/pricing.html`
-   - `/public/assets/css/landing.css`
-   - `/public/assets/js/landing.js`
-6. Buka halaman dalam private/incognito window dan lakukan hard refresh.
+- Authorized JavaScript origin: `https://gdp.gaeks.com`
+- Authorized JavaScript origin opsional: `https://staging-gdp.gaeks.com`
 
-### Jika memakai File Manager/SFTP
+Google Identity Services pada aplikasi mengirim ID token ke backend. Backend
+memeriksa audience, issuer, expiry, status email, dan subject sebelum membuat sesi.
 
-1. Unduh source dari commit yang akan dirilis.
-2. Upload hanya file runtime yang diperlukan. Untuk tahap transisi ini, pertahankan halaman `.html`, `auth.js`, folder `api`, folder `public/assets`, dan `.htaccess`.
-3. Jangan upload `.git`, `.env`, `prd.md`, `app`, `config`, `database`, `docs`, `scripts`, `tests`, backup, dump, atau file log ke area publik.
-4. Verifikasi permission file normal dan jangan membuat directory runtime world-writable.
+Di Cloudflare Turnstile, izinkan hostname:
 
-## C. Membuat staging
+- `gdp.gaeks.com`
+- `staging-gdp.gaeks.com` bila staging masih digunakan
 
-1. Buat subdomain staging, misalnya `staging-gdp.gaeks.com`, pada website/directory yang terpisah. Nama final boleh berbeda.
-2. Aktifkan SSL dan paksa HTTPS.
-3. Buat database dan user staging terpisah dari production.
-4. Gunakan akun/email testing. Jangan mengirim OTP kepada daftar pengguna production selama uji.
-5. Atur origin Google dan hostname CAPTCHA untuk staging setelah backend auth baru tersedia.
-6. Lindungi staging dari indexing dan akses umum sesuai fasilitas hPanel. Jangan memakai HTTP Basic Auth pada endpoint webhook Midtrans ketika fase billing diuji karena webhook harus dapat dijangkau provider.
+Masukkan hanya site key ke frontend. Secret hasil rotasi hanya masuk konfigurasi
+privat server.
 
-## D. Membuat database MySQL/MariaDB
+## 2. Import database production
 
-1. Buka **Websites → Manage → Databases → Management** (nama menu dapat berubah di hPanel).
-2. Buat database `gdp_staging` dan user kuat khusus staging; hPanel biasanya menambahkan prefix akun.
-3. Buat database production terpisah, misalnya `gdp_production`, hanya setelah staging lulus.
-4. Simpan host, port, nama database, username, dan password pada password manager. Jangan mengirimkannya melalui Git.
-5. Periksa versi MySQL/MariaDB dan dukungan InnoDB, foreign key, `utf8mb4`, `DATETIME(6)`, serta PDO MySQL.
-6. Buka phpMyAdmin untuk database staging, pilih database yang benar, lalu import `database/migrations/001_initial_schema.sql`.
-7. Verifikasi tabel dibuat dan `schema_migrations` berisi `001_initial_schema`.
-8. Jangan import migration ke production sampai backend auth baru tersedia, backup/restore diuji, dan data lama diinventaris.
+1. Buka **Websites → gdp.gaeks.com → Databases → phpMyAdmin**.
+2. Pilih database production yang sudah dibuat. Pastikan bukan database staging.
+3. Ambil backup/export sebelum mengubah schema.
+4. Import `database/migrations/001_initial_schema.sql`.
+5. Import `database/migrations/002_auth_passwords.sql`.
+6. Pastikan tabel berikut tersedia: `users`, `auth_identities`, `sessions`,
+   `otp_challenges`, `rate_limit_buckets`, `cvs`, `presentations`,
+   `document_revisions`, `audit_events`, serta tabel billing.
+7. Pastikan `schema_migrations` memuat `001_initial_schema` dan
+   `002_auth_passwords`.
 
-## E. Konfigurasi privat server
+Migration menggunakan `CREATE TABLE IF NOT EXISTS` dan kolom password memakai
+`ADD COLUMN IF NOT EXISTS`, tetapi backup tetap wajib.
 
-1. Gunakan `.env.example` hanya sebagai daftar nama variabel.
-2. Simpan nilai sebenarnya di luar document root. Jika paket tidak menyediakan environment variables, gunakan file PHP privat sebagai sibling `public_html` dan permission minimum; jangan menyimpannya di Git.
-3. Isi `APP_URL`, database, SMTP hasil rotasi, Google client ID, serta Turnstile site/secret key.
-4. Pertahankan `BILLING_ENABLED=false` dan `FREE_LIMITS_ENABLED=false`.
-5. Jangan isi/aktifkan Midtrans production sebelum modul billing dan sandbox selesai.
-6. Pastikan error display mati di production dan log berada di lokasi privat.
+## 3. Buat konfigurasi privat
 
-## F. Pemeriksaan PHP yang diperlukan
+Buat file `.env` satu tingkat di atas document root. Jika document root adalah
+`.../public_html`, tempatkan file di direktori induknya, bukan di `public_html`.
+Gunakan `.env.example` sebagai daftar variabel dan isi:
 
-Pilih versi PHP yang masih mendapat security updates dan didukung aplikasi. Aktifkan/periksa:
+```dotenv
+APP_ENV=production
+APP_URL=https://gdp.gaeks.com
+APP_SESSION_COOKIE=__Host-gaeks_session
+APP_SESSION_TTL_SECONDS=604800
+SESSION_SECRET=<random-minimum-32-bytes>
 
-- PDO dan `pdo_mysql`
-- OpenSSL
-- cURL
-- mbstring
-- fileinfo
-- JSON
-- GD atau Imagick untuk validasi/re-encode gambar pada fase media
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=<production-database>
+DB_USER=<production-user>
+DB_PASSWORD=<rotated-production-password>
 
-Catat `memory_limit`, `max_execution_time`, `post_max_size`, `upload_max_filesize`, batas database, inode, cron, dan proses. Label paket “Unlimited” tidak berarti resource komputasi tanpa batas.
+SMTP_HOST=smtp.hostinger.com
+SMTP_PORT=465
+SMTP_USER=<mailbox-sender>
+SMTP_PASSWORD=<rotated-mailbox-password>
+MAIL_TRANSPORT=auto
+SMTP_FROM_NAME=GAEKS Digital Products
+REPLY_TO_EMAIL=gdp@gaeks.com
+ADMIN_NOTIFICATION_EMAIL=gdp@gaeks.com
 
-## G. Google, OTP, dan CAPTCHA
+GOOGLE_CLIENT_ID=<google-web-client-id>
+TURNSTILE_SITE_KEY=<public-site-key>
+TURNSTILE_SECRET_KEY=<rotated-secret-key>
 
-Bagian ini dijalankan setelah endpoint auth server baru selesai.
+BILLING_ENABLED=false
+FREE_LIMITS_ENABLED=false
+```
 
-1. Google Cloud Console: tambahkan origin HTTPS staging dan production yang tepat ke OAuth/GIS client yang digunakan.
-2. Pastikan consent screen dan status publishing cocok untuk pengguna target.
-3. Backend harus memverifikasi ID token Google; callback browser tidak boleh langsung membuat session.
-4. Buat Turnstile widget untuk domain staging/production. Site key boleh ke frontend; secret key hanya di server.
-5. Verifikasi token Turnstile melalui server pada permintaan OTP dan Google login.
-6. SMTP: gunakan akun hasil rotasi dan periksa SPF, DKIM, DMARC, sender, serta batas pengiriman.
-7. Uji OTP salah, expired, replay, resend, throttling, dan kegagalan SMTP.
-8. Uji login Google valid dan token dengan audience/expiry salah.
+Gunakan generator password manager untuk `SESSION_SECRET`. Jangan menyalin teks
+placeholder. Permission file privat disarankan `600` bila File Manager mendukung.
 
-## H. Checklist sesudah deploy tampilan
+## 4. Konfigurasi PHP 8.3
 
-- [ ] HTTPS aktif dan tidak ada mixed content.
-- [ ] Landing dan pricing memuat CSS/JS baru tanpa 404.
-- [ ] Navigasi desktop/mobile dan focus keyboard bekerja.
-- [ ] Tombol CV/presentasi mengarah ke login saat belum masuk.
-- [ ] Halaman tidak menampilkan tombol pembayaran aktif.
-- [ ] URL lama CV dan presentasi masih dapat dibuka.
-- [ ] Request langsung ke `/app`, `/config`, `/database`, `/docs`, `/scripts`, `/tests`, backup tersembunyi, `.sql`, `.env`, dan file log menghasilkan 403/404.
-- [ ] Endpoint mail tester tidak digunakan pada production.
-- [ ] Error log diperiksa tanpa membocorkan credential atau data pengguna.
+Aktifkan atau pastikan tersedia: `pdo_mysql`, `openssl`, `curl`, `mbstring`,
+`fileinfo`, dan `json`.
 
-## I. Data/production cutover berikutnya
+Nilai 2 GB yang saat ini dipakai untuk upload/post terlalu besar untuk aplikasi
+ini dan memperbesar risiko kehabisan resource. Baseline production:
 
-1. Inventaris database/file production aktual sebelum migrasi.
-2. Implementasikan auth server, API document, dan migrator di branch terpisah.
-3. Uji dua akun pada staging: akun B harus gagal membuka ID/media akun A.
-4. Uji save, refresh, logout/login, dan browser kedua untuk kedua aplikasi.
-5. Jalankan backup/restore rehearsal.
-6. Lakukan cutover dengan maintenance singkat, migration yang kompatibel, session lama dicabut, lalu smoke test.
+- `memory_limit`: 256M atau 512M
+- `max_execution_time`: 120
+- `max_input_time`: 120
+- `max_input_vars`: 5000
+- `post_max_size`: 32M
+- `upload_max_filesize`: 25M
+- `max_file_uploads`: 20
+- `session.cookie_samesite`: Lax
 
-Ikuti detail gate dan acceptance test di `prd.md`. Jangan menyatakan cloud save/auth aman hanya karena tabel sudah dibuat.
+Aplikasi menggunakan session token sendiri di database; PHP session file bukan
+sumber otoritas login. HTTPS wajib agar cookie `__Host-` dikirim dengan aman.
+
+## 5. Upload runtime
+
+Upload ke document root production hanya:
+
+- semua halaman `.html` runtime dan `auth.js`;
+- folder `api/`;
+- folder `public/assets/`;
+- `.htaccess`;
+- asset runtime lain yang benar-benar direferensikan halaman.
+
+Jangan upload `.git`, `.env`, `prd.md`, `database`, `docs`, `tests`, `config`,
+backup, dump, log, atau script deployment lama. Deployment lewat Git hPanel harus
+memiliki aturan exclude yang setara; konfigurasi `.env` tetap berada di luar
+checkout/document root.
+
+## 6. Smoke test setelah cutover
+
+1. Buka `https://gdp.gaeks.com/api/health.php`; status harus sukses dan database
+   harus `connected`.
+2. Buka incognito, daftar dengan email test, selesaikan Turnstile dan OTP.
+3. Pastikan email OTP dan welcome masuk ke pengguna.
+4. Pastikan notifikasi pengguna baru masuk ke `gdp@gaeks.com`.
+5. Logout, lalu login menggunakan password.
+6. Uji Google Sign-In pada domain production.
+7. Buat CV, refresh, logout/login, lalu pastikan data tetap ada.
+8. Buat presentasi, edit, refresh, export PDF/PPTX, dan pastikan data tetap ada.
+9. Uji dua akun: akun kedua harus menerima 404 saat meminta ID dokumen akun pertama.
+10. Uji sampah, restore, dan hapus permanen pada kedua aplikasi.
+11. Pastikan `/api/config.php`, `/api/bootstrap.php`, `.env`, `.sql`, `/database`,
+    `/docs`, dan `/tests` menghasilkan 403/404.
+12. Periksa error log tanpa menyalin credential ke tiket atau chat.
+
+Jika health check, OTP, login, atau isolasi dua akun gagal, kembalikan file dari
+backup dan hentikan pendaftaran sampai penyebab diperbaiki.
+
+## 7. Email deliverability
+
+Gunakan mailbox sender khusus, lalu pastikan SPF, DKIM, dan DMARC domain aktif.
+Alamat admin notification default adalah `gdp@gaeks.com`. Endpoint mail tester
+lama dinonaktifkan; pengujian dilakukan melalui pendaftaran test yang nyata.
+
+## 8. Billing belum diaktifkan
+
+Schema untuk paket Free dan PRO bulanan Rp33.000 sebelum pajak sudah tersedia.
+Pertahankan `BILLING_ENABLED=false` dan `FREE_LIMITS_ENABLED=false` sampai Midtrans
+sandbox, signature webhook, idempotency, refund, expiry, pajak, dan entitlement
+lulus pengujian. Jangan memasukkan Server Key Midtrans production sekarang.

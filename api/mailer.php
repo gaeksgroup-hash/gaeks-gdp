@@ -1,109 +1,90 @@
 <?php
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
+declare(strict_types=1);
 
 require_once __DIR__ . '/config.php';
 
-function sendHostingerSmtp($toEmail, $toName, $subject, $htmlContent) {
-    $socket = @fsockopen("ssl://" . SMTP_HOST, SMTP_PORT, $errno, $errstr, 15);
-    if (!$socket) {
-        $headers  = "MIME-Version: 1.0\r\nContent-Type: text/html; charset=UTF-8\r\nFrom: " . SMTP_FROM_NAME . " <" . SMTP_USER . ">\r\nReply-To: " . REPLY_TO_EMAIL . "\r\n";
-        @mail($toEmail, $subject, $htmlContent, $headers);
-        return ["status" => "warning", "message" => "Sent via native fallback"];
-    }
+function gaeks_mail_header(string $value): string
+{
+    return str_replace(["\r", "\n"], '', $value);
+}
 
-    $read = function($sock) {
-        $res = "";
-        while ($line = fgets($sock, 515)) {
-            $res .= $line;
-            if (substr($line, 3, 1) == " ") break;
+function gaeks_send_mail(string $toEmail, string $toName, string $subject, string $html): array
+{
+    if (!filter_var($toEmail, FILTER_VALIDATE_EMAIL)) return ['ok' => false, 'error' => 'invalid_recipient'];
+    if (APP_ENV === 'test' && MAIL_TRANSPORT === 'test') return ['ok' => true, 'transport' => 'test'];
+    $toName = gaeks_mail_header($toName);
+    $subject = gaeks_mail_header($subject);
+    $from = SMTP_USER !== '' ? SMTP_USER : 'no-reply@gaeks.com';
+
+    if (SMTP_USER !== '' && SMTP_PASSWORD !== '') {
+        $socket = @fsockopen('ssl://' . SMTP_HOST, SMTP_PORT, $errno, $errstr, 15);
+        if ($socket) {
+            $read = static function ($stream): string { $out=''; while(($line=fgets($stream,515))!==false){$out.=$line;if(strlen($line)>3&&$line[3]===' ')break;} return $out; };
+            $command = static function ($stream, callable $read, string $value, array $expected): string { fwrite($stream,$value."\r\n");$result=$read($stream);if(!in_array(substr($result,0,3),$expected,true))throw new RuntimeException('smtp_rejected_'.substr($result,0,3));return $result; };
+            try {
+                $read($socket);
+                $command($socket,$read,'EHLO '.($_SERVER['SERVER_NAME']??'gdp.gaeks.com'),['250']);
+                $command($socket,$read,'AUTH LOGIN',['334']);
+                $command($socket,$read,base64_encode(SMTP_USER),['334']);
+                $command($socket,$read,base64_encode(SMTP_PASSWORD),['235']);
+                $command($socket,$read,'MAIL FROM:<'.$from.'>',['250']);
+                $command($socket,$read,'RCPT TO:<'.$toEmail.'>',['250','251']);
+                $command($socket,$read,'DATA',['354']);
+                $headers = [
+                    'MIME-Version: 1.0',
+                    'Content-Type: text/html; charset=UTF-8',
+                    'From: =?UTF-8?B?'.base64_encode(SMTP_FROM_NAME).'?= <'.$from.'>',
+                    'To: =?UTF-8?B?'.base64_encode($toName).'?= <'.$toEmail.'>',
+                    'Reply-To: <'.REPLY_TO_EMAIL.'>',
+                    'Subject: =?UTF-8?B?'.base64_encode($subject).'?=',
+                    'Message-ID: <'.bin2hex(random_bytes(12)).'@gaeks.com>',
+                    'Date: '.date(DATE_RFC2822),
+                ];
+                $safeBody = preg_replace('/(?m)^\./', '..', implode("\r\n",$headers)."\r\n\r\n".$html);
+                fwrite($socket,$safeBody."\r\n.\r\n");
+                $result=$read($socket);
+                fwrite($socket,"QUIT\r\n");
+                fclose($socket);
+                if(substr($result,0,3)==='250')return ['ok'=>true,'transport'=>'smtp'];
+            } catch (Throwable $e) {
+                fclose($socket);
+                error_log('SMTP delivery failed: '.$e->getMessage());
+            }
         }
-        return $res;
-    };
-
-    $read($socket);
-    fputs($socket, "EHLO " . gethostname() . "\r\n"); $read($socket);
-    fputs($socket, "AUTH LOGIN\r\n"); $read($socket);
-    fputs($socket, base64_encode(SMTP_USER) . "\r\n"); $read($socket);
-    fputs($socket, base64_encode(SMTP_PASS) . "\r\n");
-    $authRes = $read($socket);
-
-    if (substr($authRes, 0, 3) != "235") {
-        fclose($socket);
-        return ["status" => "error", "message" => "Autentikasi SMTP Gagal: $authRes"];
     }
 
-    fputs($socket, "MAIL FROM: <" . SMTP_USER . ">\r\n"); $read($socket);
-    fputs($socket, "RCPT TO: <" . $toEmail . ">\r\n"); $read($socket);
-    fputs($socket, "DATA\r\n"); $read($socket);
+    $headers = implode("\r\n",[
+        'MIME-Version: 1.0',
+        'Content-Type: text/html; charset=UTF-8',
+        'From: '.gaeks_mail_header(SMTP_FROM_NAME).' <'.$from.'>',
+        'Reply-To: '.REPLY_TO_EMAIL,
+    ]);
+    $ok = @mail($toEmail, $subject, $html, $headers);
+    return ['ok'=>$ok,'transport'=>'php_mail','error'=>$ok?null:'delivery_failed'];
+}
 
-    $headers  = "MIME-Version: 1.0\r\n";
-    $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-    $headers .= "From: =?UTF-8?B?" . base64_encode(SMTP_FROM_NAME) . "?= <" . SMTP_USER . ">\r\n";
-    $headers .= "To: =?UTF-8?B?" . base64_encode($toName) . "?= <" . $toEmail . ">\r\n";
-    $headers .= "Reply-To: <" . REPLY_TO_EMAIL . ">\r\n";
-    $headers .= "Subject: =?UTF-8?B?" . base64_encode($subject) . "?=\r\n";
-    $headers .= "X-Mailer: GAEKS Executive Mailer\r\n";
+function gaeks_email_shell(string $title, string $body): string
+{
+    return '<!doctype html><html><body style="margin:0;background:#f4f7fb;font-family:Arial,sans-serif;color:#14213d"><div style="max-width:600px;margin:32px auto;background:#fff;border:1px solid #dfe7f3;border-radius:18px;overflow:hidden"><div style="padding:24px 28px;background:#112047;color:#fff"><strong style="font-size:20px">GAEKS Digital Products</strong></div><div style="padding:30px 28px"><h1 style="font-size:22px;margin:0 0 16px">'.$title.'</h1>'.$body.'</div><div style="padding:16px 28px;background:#f7f9fc;color:#6b7890;font-size:12px">Email otomatis dari sistem GAEKS Digital Products.</div></div></body></html>';
+}
 
-    $body = $headers . "\r\n" . $htmlContent . "\r\n.\r\n";
-    fputs($socket, $body);
-    $sendRes = $read($socket);
-    fputs($socket, "QUIT\r\n");
-    fclose($socket);
+function gaeks_send_otp_email(string $email, string $name, string $otp): array
+{
+    $safeName=htmlspecialchars($name,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');$safeOtp=htmlspecialchars($otp,ENT_QUOTES,'UTF-8');
+    $body='<p>Halo <strong>'.$safeName.'</strong>,</p><p>Gunakan kode berikut untuk menyelesaikan pendaftaran:</p><div style="font-size:32px;font-weight:800;letter-spacing:8px;text-align:center;padding:18px;background:#eef4ff;border-radius:12px">'.$safeOtp.'</div><p style="color:#6b7890">Kode berlaku 10 menit. Jangan berikan kode ini kepada siapa pun.</p>';
+    return gaeks_send_mail($email,$name,'Kode verifikasi GAEKS Digital: '.$otp,gaeks_email_shell('Verifikasi email Anda',$body));
+}
 
-    if (substr($sendRes, 0, 3) == "250") {
-        return ["status" => "success", "message" => "Email berhasil dikirim ke " . $toEmail];
-    } else {
-        return ["status" => "error", "message" => "Gagal kirim: " . $sendRes];
-    }
+function gaeks_send_new_user_notifications(array $user, string $provider): array
+{
+    $name=(string)$user['name'];$email=(string)$user['email'];$safeName=htmlspecialchars($name,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');$safeEmail=htmlspecialchars($email,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');
+    $welcome=gaeks_email_shell('Selamat datang, '.$safeName.'!','<p>Akun Anda telah aktif dan siap digunakan untuk membuat CV serta presentasi.</p><p><a href="'.APP_URL.'/index.html" style="display:inline-block;padding:12px 20px;border-radius:10px;background:#2463eb;color:#fff;text-decoration:none;font-weight:700">Buka workspace GAEKS</a></p>');
+    $admin=gaeks_email_shell('Pengguna baru terdaftar','<p><strong>Nama:</strong> '.$safeName.'</p><p><strong>Email:</strong> '.$safeEmail.'</p><p><strong>Provider:</strong> '.htmlspecialchars($provider,ENT_QUOTES,'UTF-8').'</p><p><strong>Waktu UTC:</strong> '.gmdate('Y-m-d H:i:s').'</p>');
+    return ['welcome'=>gaeks_send_mail($email,$name,'Selamat datang di GAEKS Digital Products',$welcome),'admin'=>gaeks_send_mail(ADMIN_NOTIFICATION_EMAIL,'GDP Admin','Pengguna baru GDP: '.$email,$admin)];
 }
 
 if (realpath(__FILE__) === realpath($_SERVER['SCRIPT_FILENAME'] ?? '')) {
-    $rawInput = file_get_contents('php://input');
-    $data = json_decode($rawInput, true) ?? [];
-
-    if (empty($data)) {
-        $data = array_merge($_GET, $_POST);
-    }
-
-    $action  = $data['action'] ?? 'welcome';
-    $toEmail = filter_var($data['email'] ?? $data['to'] ?? 'gaeks.group@gmail.com', FILTER_VALIDATE_EMAIL);
-    $toName  = htmlspecialchars($data['name'] ?? 'Pengguna GAEKS');
-
-    if ($action === 'welcome') {
-        $subject = "Selamat Datang di GAEKS Digital Products - Akun Anda Telah Aktif";
-        $html = "
-        <div style='max-width:600px;margin:auto;font-family:Arial,sans-serif;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;background:#ffffff;'>
-          <div style='background:#0f172a;padding:24px;text-align:center;'>
-            <h2 style='color:#ffffff;margin:0;font-size:20px;'>GAEKS DIGITAL PRODUCTS</h2>
-            <p style='color:#94a3b8;margin:4px 0 0 0;font-size:12px;'>Executive ATS CV Studio & Corporate Solutions</p>
-          </div>
-          <div style='padding:28px 24px;color:#1e293b;line-height:1.6;'>
-            <h3 style='margin-top:0;'>Halo, {$toName}!</h3>
-            <p>Terima kasih telah bergabung di <strong>GAEKS Digital Products</strong>. Akun Anda telah aktif menggunakan email: <strong>{$toEmail}</strong>.</p>
-            <p>Anda dapat langsung menyusun resume ATS berstandar internasional dengan 520+ bank profesi.</p>
-            <p style='text-align:center;margin:24px 0;'>
-              <a href='https://gdp.gaeks.com/cv.html' style='display:inline-block;padding:12px 28px;background:#2563eb;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:bold;font-size:13px;'>Buka ATS CV Studio &rarr;</a>
-            </p>
-            <p style='font-size:12px;color:#64748b;'>Balas email ini jika ada pertanyaan atau hubungi WhatsApp di <a href='https://wa.me/6285608561745' style='color:#2563eb;'>+62 856-0856-1745</a>.</p>
-          </div>
-          <div style='background:#f1f5f9;padding:16px;text-align:center;font-size:11px;color:#64748b;'>
-            &copy; " . date('Y') . " GAEKS Group. All rights reserved.
-          </div>
-        </div>";
-    } else {
-        $subject = htmlspecialchars($data['subject'] ?? 'Pemberitahuan dari GAEKS Digital');
-        $content = nl2br(htmlspecialchars($data['message'] ?? 'Terima kasih telah menggunakan layanan GAEKS.'));
-        $html = "<p>{$content}</p>";
-    }
-
-    echo json_encode(sendHostingerSmtp($toEmail, $toName, $subject, $html));
-    exit;
+    http_response_code(404);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['ok'=>false,'message'=>'Not found']);
 }

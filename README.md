@@ -9,16 +9,22 @@ Dokumen produk dan urutan implementasi ada di [`prd.md`](prd.md). Panduan persia
 
 ## Status
 
-Landing page dan halaman pricing baru telah disiapkan. Database schema, authentication server-side, isolasi data pengguna, dan billing masih harus diterapkan bertahap sesuai PRD sebelum production dianggap siap.
+Landing page, pricing, authentication server-side, OTP email, Google Sign-In,
+Turnstile, penyimpanan CV/presentasi, session HttpOnly, CSRF, versioning, dan
+isolasi data pengguna sudah diterapkan. Infrastruktur tabel billing disiapkan,
+namun pembayaran dan limitasi tetap dinonaktifkan sampai implementasi Midtrans
+sandbox selesai.
 
-## Menjalankan frontend lokal
+## Menjalankan aplikasi lokal
 
-Gunakan web server statis dari root repository. Contoh:
+Gunakan PHP 8.3 dengan PDO MySQL dan isi `.env` privat berdasarkan `.env.example`.
+Contoh server development:
 
 ```powershell
-python -m http.server 8765
+php -S 127.0.0.1:8765
 ```
 
 Kemudian buka `http://127.0.0.1:8765/`.
 
-Jangan gunakan server PHP bawaan atau menjalankan script maintenance legacy pada data production sebelum containment dan backup selesai.
+Jangan menjalankan server development PHP sebagai server production. Panduan
+cutover Hostinger ada di [`docs/HOSTINGER_SETUP.md`](docs/HOSTINGER_SETUP.md).

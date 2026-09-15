@@ -1,166 +1,114 @@
-// GLOBAL LANGUAGE FALLBACK GUARD
-if (typeof window !== 'undefined') { window.currentLang = window.currentLang || 'id'; }
+(function () {
+  'use strict';
+  window.currentLang = window.currentLang || 'id';
 
-// GAEKS DIGITAL ECOSYSTEM - MULTI-KEY PERSISTENT AUTH ENGINE
-const VIP_WHITELIST = [
-  "gaeks.group@gmail.com",
-  "triawan25@gmail.com",
-  "ranesath@gmail.com"
-];
-const SUPER_ADMIN_EMAIL = "gaeks.group@gmail.com";
-const GOOGLE_CLIENT_ID = "41832472270-6r8iudma1eho6kn3q6rs4rl7b9ank7n4.apps.googleusercontent.com";
+  const SNAPSHOT_KEY = 'gaeks_authenticated_user';
+  const GOOGLE_CLIENT_ID = '41832472270-6r8iudma1eho6kn3q6rs4rl7b9ank7n4.apps.googleusercontent.com';
+  let currentUser = null;
 
-const AUTH_STORAGE_KEY = 'gaeks_user_session_v3';
-const USERS_DB_KEY = 'gaeks_users_db_v3';
+  try {
+    const cached = sessionStorage.getItem(SNAPSHOT_KEY);
+    currentUser = cached ? JSON.parse(cached) : null;
+  } catch (_) {}
 
-function getDeterministicUserId(email) {
-  const clean = (email || '').toLowerCase().trim();
-  return 'usr_' + clean.replace(/[^a-z0-9]/g, '_');
-}
-if (typeof window !== 'undefined') window.getDeterministicUserId = getDeterministicUserId;
-
-var GaeksAuth = window.GaeksAuth = {
-  getDeterministicUserId(email) { return getDeterministicUserId(email); },
-  getUsersDb() {
-    let raw = null;
-    try { raw = localStorage.getItem(USERS_DB_KEY); } catch(e) {}
-    if (!raw) {
-      try { raw = localStorage.getItem('gaeks_users_db_v2'); } catch(e) {}
-    }
-    if (!raw) {
-      const initial = [
-        { id: 'usr_adm_1', email: 'gaeks.group@gmail.com', name: 'GAEKS Group (Admin)', provider: 'google', plan: 'PRO_VIP', registeredAt: Date.now() - 86400000 * 5, lastLoginAt: Date.now() },
-        { id: 'usr_vip_2', email: 'triawan25@gmail.com', name: 'Deny Triawan', provider: 'google', plan: 'PRO_VIP', registeredAt: Date.now() - 86400000 * 4, lastLoginAt: Date.now() },
-        { id: 'usr_vip_3', email: 'ranesath@gmail.com', name: 'Ranesath', provider: 'google', plan: 'PRO_VIP', registeredAt: Date.now() - 86400000 * 3, lastLoginAt: Date.now() }
-      ];
-      try { localStorage.setItem(USERS_DB_KEY, JSON.stringify(initial)); } catch(e) {}
-      return initial;
-    }
-    try { return JSON.parse(raw); } catch(e) { return []; }
-  },
-
-  saveUsersDb(db) {
-    try { localStorage.setItem(USERS_DB_KEY, JSON.stringify(db)); } catch(e) {}
-  },
-
-  recordUserRegistration(userObj) {
-    const db = this.getUsersDb();
-    const existingIndex = db.findIndex(u => u.email.toLowerCase() === userObj.email.toLowerCase());
-    if (existingIndex >= 0) {
-      db[existingIndex].lastLoginAt = Date.now();
-      if (userObj.name) db[existingIndex].name = userObj.name;
-    } else {
-      db.unshift({
-        id: userObj.id || 'usr_' + Date.now(),
-        email: userObj.email,
-        name: userObj.name || userObj.email.split('@')[0],
-        provider: userObj.provider || 'email',
-        plan: userObj.plan || 'FREE',
-        registeredAt: Date.now(),
-        lastLoginAt: Date.now()
-      });
-      this.sendEmailNotification('welcome', userObj.email, userObj.name);
-    }
-    this.saveUsersDb(db);
-  },
-
-  sendEmailNotification(actionType, email, name, extraData = {}) {
-    try {
-      fetch('/api/mailer.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: actionType,
-          email: email,
-          name: name,
-          ...extraData
-        })
-      }).catch(() => {});
-    } catch(e) {}
-  },
-
-  getCurrentUser() {
-    let raw = null;
-    try { raw = localStorage.getItem('gaeks_user_session_v3'); } catch(e) {}
-    if (!raw) {
-      try { raw = localStorage.getItem('gaeks_user_session_v2'); } catch(e) {}
-    }
-    if (!raw) {
-      try { raw = localStorage.getItem('gaeks_user_session'); } catch(e) {}
-    }
-    if (!raw) {
-      try {
-        const m = document.cookie.match(/gaeks_session_v3=([^;]+)/);
-        if (m) raw = decodeURIComponent(m[1]);
-      } catch(e) {}
-    }
-    if (!raw) {
-      try {
-        const m = document.cookie.match(/gaeks_session=([^;]+)/);
-        if (m) raw = decodeURIComponent(m[1]);
-      } catch(e) {}
-    }
-
-    if (!raw) return null;
-
-    try {
-      const user = JSON.parse(raw);
-      if (user && user.email) {
-        const clean = user.email.toLowerCase().trim();
-        user.isAdmin = (clean === SUPER_ADMIN_EMAIL);
-        if (VIP_WHITELIST.includes(clean)) {
-          user.isPro = true;
-          user.plan = 'PRO_VIP';
-          user.planLabel = (clean === SUPER_ADMIN_EMAIL) ? 'SUPER ADMIN (Akses Penuh)' : 'GAEKS PRO VIP (Akses Penuh)';
-        }
-        try {
-          localStorage.setItem('gaeks_user_session_v3', JSON.stringify(user));
-          document.cookie = "gaeks_session_v3=" + encodeURIComponent(JSON.stringify(user)) + "; path=/; max-age=2592000; SameSite=Lax";
-        } catch(e) {}
-        return user;
-      }
-    } catch(e) {
-      return null;
-    }
-    return null;
-  },
-
-  isProUser() {
-    const user = this.getCurrentUser();
-    return user ? !!user.isPro : false;
-  },
-
-  isAdmin() {
-    const user = this.getCurrentUser();
-    return user ? (user.email.toLowerCase().trim() === SUPER_ADMIN_EMAIL) : false;
-  },
-
-    logout() {
-    try {
-      localStorage.removeItem('gaeks_user_session_v3');
-      localStorage.removeItem('gaeks_user_session_v2');
-      localStorage.removeItem('gaeks_user_session');
-      sessionStorage.clear();
-      document.cookie = "gaeks_session_v3=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-      document.cookie = "gaeks_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    } catch(e) {}
-    window.location.replace(window.location.origin + '/login.html');
-  },
-
-  toggleUserPlan(email) {
-    const db = this.getUsersDb();
-    const target = db.find(u => u.email.toLowerCase() === email.toLowerCase());
-    if (target) {
-      const willBePro = (target.plan !== 'PRO' && target.plan !== 'PRO_VIP');
-      target.plan = willBePro ? 'PRO' : 'FREE';
-      this.saveUsersDb(db);
-      if (willBePro) {
-        this.sendEmailNotification('purchase', target.email, target.name, { plan_name: 'GAEKS PRO Member' });
-      }
-      return target.plan;
-    }
-    return null;
+  function cookie(name) {
+    const match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/[.$?*|{}()[\]\\/+^]/g, '\\$&') + '=([^;]*)'));
+    return match ? decodeURIComponent(match[1]) : '';
   }
-};
 
-if (typeof window !== 'undefined') { window.GaeksAuth = GaeksAuth; }
+  function saveSnapshot(user) {
+    currentUser = user || null;
+    try {
+      if (currentUser) sessionStorage.setItem(SNAPSHOT_KEY, JSON.stringify(currentUser));
+      else sessionStorage.removeItem(SNAPSHOT_KEY);
+      ['gaeks_user_session_v3', 'gaeks_user_session_v2', 'gaeks_user_session'].forEach(k => localStorage.removeItem(k));
+    } catch (_) {}
+    window.dispatchEvent(new CustomEvent('gaeks-auth-change', { detail: currentUser }));
+    return currentUser;
+  }
+
+  async function api(path, options) {
+    const opts = Object.assign({ credentials: 'same-origin', headers: {} }, options || {});
+    opts.headers = Object.assign({ Accept: 'application/json' }, opts.headers || {});
+    if (opts.body && typeof opts.body !== 'string') {
+      opts.headers['Content-Type'] = 'application/json';
+      opts.body = JSON.stringify(opts.body);
+    }
+    const csrf = cookie('gaeks_csrf');
+    if (csrf && opts.method && opts.method.toUpperCase() !== 'GET') opts.headers['X-CSRF-Token'] = csrf;
+    const response = await fetch(path, opts);
+    let payload;
+    try { payload = await response.json(); } catch (_) { payload = { ok: false, message: 'Respons server tidak valid.' }; }
+    if (response.status === 401) saveSnapshot(null);
+    if (!response.ok || payload.ok === false || payload.status === 'error') {
+      const error = new Error(payload.error?.message || payload.message || 'Permintaan gagal.');
+      error.code = payload.error?.code || 'request_failed';
+      error.status = response.status;
+      error.fields = payload.error?.fields || {};
+      throw error;
+    }
+    return payload.data;
+  }
+
+  const GaeksAuth = {
+    GOOGLE_CLIENT_ID,
+    api,
+    getCurrentUser() { return currentUser; },
+    isProUser() { return !!currentUser?.isPro; },
+    isAdmin() { return !!currentUser?.isAdmin; },
+    getUsersDb() { return []; },
+    saveUsersDb() {},
+    recordUserRegistration() {},
+    toggleUserPlan() { return null; },
+    getDeterministicUserId(email) { return 'server_' + String(email || '').toLowerCase().replace(/[^a-z0-9]/g, '_'); },
+    async refreshSession() {
+      try {
+        const data = await api('/api/auth.php?action=me', { method: 'GET' });
+        return saveSnapshot(data.user);
+      } catch (error) {
+        if (error.status !== 401) console.error('Session check failed:', error);
+        return saveSnapshot(null);
+      }
+    },
+    async requireAuth(redirect) {
+      const user = await this.ready;
+      if (!user) {
+        const target = redirect || (location.pathname.split('/').pop() + location.search);
+        location.replace('/login.html?redirect=' + encodeURIComponent(target));
+        return null;
+      }
+      return user;
+    },
+    async login(email, password, captchaToken) {
+      const data = await api('/api/auth.php', { method: 'POST', body: { action: 'login', email, password, captchaToken } });
+      saveSnapshot(data.user);
+      return data.user;
+    },
+    async requestRegistrationOtp(name, email, captchaToken) {
+      return api('/api/auth.php', { method: 'POST', body: { action: 'register_request', name, email, captchaToken } });
+    },
+    async verifyRegistration(name, email, code, password) {
+      const data = await api('/api/auth.php', { method: 'POST', body: { action: 'register_verify', name, email, code, password } });
+      saveSnapshot(data.user);
+      return data.user;
+    },
+    async loginWithGoogle(credential, captchaToken) {
+      const data = await api('/api/auth.php', { method: 'POST', body: { action: 'google', credential, captchaToken } });
+      saveSnapshot(data.user);
+      return data.user;
+    },
+    async logout() {
+      try { await api('/api/auth.php', { method: 'POST', body: { action: 'logout' } }); } catch (_) {}
+      saveSnapshot(null);
+      location.replace('/login.html');
+    },
+    sendEmailNotification() { return Promise.resolve(); }
+  };
+
+  GaeksAuth.ready = GaeksAuth.refreshSession().then(user => {
+    window.dispatchEvent(new CustomEvent('gaeks-auth-ready', { detail: user }));
+    return user;
+  });
+  window.GaeksAuth = GaeksAuth;
+  window.getDeterministicUserId = GaeksAuth.getDeterministicUserId;
+}());

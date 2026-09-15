@@ -16,9 +16,10 @@
     return allowed.indexOf(value) >= 0 ? value : "index.html";
   }
 
-  function openProduct(target) {
+  async function openProduct(target) {
     var destination = safeInternalTarget(target);
-    if (currentUser()) {
+    var user = window.GaeksAuth && window.GaeksAuth.ready ? await window.GaeksAuth.ready : currentUser();
+    if (user) {
       window.location.assign(destination);
       return;
     }
@@ -92,4 +93,5 @@
     updateAccountUI();
   });
   window.addEventListener("pageshow", updateAccountUI);
+  window.addEventListener("gaeks-auth-change", updateAccountUI);
 }());

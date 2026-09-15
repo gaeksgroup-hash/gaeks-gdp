@@ -1,188 +1,24 @@
 <?php
-// GAEKS PRESENTATION API - STRICT BACKEND OWNERSHIP & PERSISTENCE
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Gaeks-Auth');
+declare(strict_types=1);
+require_once __DIR__ . '/bootstrap.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(200); exit; }
+$pdo=gaeks_db();$user=gaeks_current_user();$uid=(string)$user['id'];$input=$_SERVER['REQUEST_METHOD']==='POST'?gaeks_input(8388608):[];$action=(string)($_GET['action']??$input['action']??'list');if($_SERVER['REQUEST_METHOD']==='POST')gaeks_require_csrf($user);
+function pres_id(string $id): string { if(!preg_match('/^[A-Za-z0-9_-]{1,36}$/',$id))gaeks_error('invalid_id','ID presentasi tidak valid.',422);return $id; }
+function pres_ms(?string $v): ?int { return $v?strtotime($v)*1000:null; }
+function pres_result(array $r,bool $detail=false): array { $data=$detail?(json_decode((string)$r['data_json'],true)?:[]):[];$data['id']=$r['id'];$data['meetingName']=$r['name'];$data['name']=$r['name'];$data['meetingDate']=$r['meeting_date'];$data['date']=$r['meeting_date'];$data['status']=$r['deleted_at']?'trashed':'active';$data['version']=(int)$r['version'];$data['updatedAt']=pres_ms($r['updated_at']);$data['deletedAt']=pres_ms($r['deleted_at']);return $data; }
 
-require_once __DIR__ . '/db.php';
+if($action==='list'){$s=$pdo->prepare('SELECT * FROM presentations WHERE user_id=:uid ORDER BY updated_at DESC');$s->execute([':uid'=>$uid]);gaeks_ok(array_map(static fn($r)=>pres_result($r,false),$s->fetchAll()));}
+if($action==='get'){$id=pres_id((string)($_GET['id']??$input['id']??''));$s=$pdo->prepare('SELECT * FROM presentations WHERE id=:id AND user_id=:uid LIMIT 1');$s->execute([':id'=>$id,':uid'=>$uid]);$r=$s->fetch();if(!$r)gaeks_error('not_found','Presentasi tidak ditemukan.',404);gaeks_ok(pres_result($r,true));}
 
-$user = getAuthenticatedUser();
-if (!$user) {
-    http_response_code(401);
-    echo json_encode(["status" => "error", "message" => "Unauthorized: Sesi tidak valid atau telah berakhir."]);
-    exit;
+if($action==='save'){
+    $pres=$input['data']??$input;$id=!empty($pres['id'])?pres_id((string)$pres['id']):gaeks_uuid();$name=trim((string)($pres['meetingName']??$pres['name']??'Presentasi Baru'));if($name==='')$name='Presentasi Baru';$name=substr($name,0,255);$date=(string)($pres['meetingDate']??$pres['date']??date('Y-m-d'));if(!preg_match('/^\d{4}-\d{2}-\d{2}$/',$date))$date=date('Y-m-d');$pres['id']=$id;$pres['meetingName']=$name;$pres['meetingDate']=$date;$json=json_encode($pres,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_INVALID_UTF8_SUBSTITUTE);
+    $pdo->beginTransaction();try{$s=$pdo->prepare('SELECT * FROM presentations WHERE id=:id'.(gaeks_is_sqlite($pdo)?'':' FOR UPDATE'));$s->execute([':id'=>$id]);$old=$s->fetch();if($old&&$old['user_id']!==$uid){$pdo->rollBack();gaeks_error('not_found','Presentasi tidak ditemukan.',404);}if($old){$expected=isset($pres['version'])?(int)$pres['version']:null;if($expected!==null&&$expected!==(int)$old['version']){$pdo->rollBack();gaeks_error('version_conflict','Presentasi telah berubah di perangkat lain.',409);}$revisionSql=(gaeks_is_sqlite($pdo)?'INSERT OR IGNORE':'INSERT IGNORE')." INTO document_revisions (id,document_type,document_id,user_id,version,data_json) VALUES (:rid,'presentation',:doc,:uid,:version,:data)";$pdo->prepare($revisionSql)->execute([':rid'=>gaeks_uuid(),':doc'=>$id,':uid'=>$uid,':version'=>$old['version'],':data'=>$old['data_json']]);$pdo->prepare('UPDATE presentations SET name=:name,meeting_date=:date,data_json=:data,version=version+1,deleted_at=NULL WHERE id=:id AND user_id=:uid')->execute([':name'=>$name,':date'=>$date,':data'=>$json,':id'=>$id,':uid'=>$uid]);}else{$pdo->prepare('INSERT INTO presentations (id,user_id,name,meeting_date,data_json) VALUES (:id,:uid,:name,:date,:data)')->execute([':id'=>$id,':uid'=>$uid,':name'=>$name,':date'=>$date,':data'=>$json]);}$pdo->commit();}catch(Throwable $e){if($pdo->inTransaction())$pdo->rollBack();throw $e;}
+    $s=$pdo->prepare('SELECT * FROM presentations WHERE id=:id AND user_id=:uid');$s->execute([':id'=>$id,':uid'=>$uid]);gaeks_audit($pdo,$uid,'presentation.saved','presentation',$id);gaeks_ok(pres_result($s->fetch(),true),$old?200:201,'Presentasi tersimpan di server.');
 }
 
-$authUserId = $user['id'];
-$pdo = getPdoConnection();
-$raw = file_get_contents('php://input');
-$postData = json_decode($raw, true) ?? [];
-$action = $_GET['action'] ?? $postData['action'] ?? 'list';
-
-if ($action === 'list') {
-    $results = [];
-    if ($pdo) {
-        $stmt = $pdo->prepare("SELECT id, name, date, status, updated_at, deleted_at FROM presentations WHERE user_id = :uid ORDER BY updated_at DESC");
-        $stmt->execute([':uid' => $authUserId]);
-        foreach ($stmt->fetchAll() as $r) {
-            $results[] = [
-                'id' => $r['id'], 'name' => $r['name'], 'date' => $r['date'],
-                'status' => $r['status'], 'updatedAt' => (int)$r['updated_at'],
-                'deletedAt' => $r['deleted_at'] ? (int)$r['deleted_at'] : null
-            ];
-        }
-    } else {
-        $store = getJsonStore($presStoreFile);
-        foreach ($store[$authUserId] ?? [] as $p) {
-            $results[] = [
-                'id' => $p['id'], 'name' => $p['meetingName'] ?? $p['name'] ?? 'Presentasi',
-                'date' => $p['meetingDate'] ?? $p['date'] ?? date('Y-m-d'),
-                'status' => $p['status'] ?? 'active', 'updatedAt' => $p['updatedAt'] ?? time() * 1000,
-                'deletedAt' => $p['deletedAt'] ?? null
-            ];
-        }
-        usort($results, fn($a, $b) => ($b['updatedAt'] ?? 0) <=> ($a['updatedAt'] ?? 0));
-    }
-    echo json_encode(["status" => "success", "data" => $results]);
-    exit;
+if($action==='status'){
+    $id=pres_id((string)($input['id']??$_GET['id']??''));$status=(string)($input['status']??$_GET['status']??'trashed');if(!in_array($status,['active','trashed','delete_permanent'],true))gaeks_error('invalid_status','Status tidak valid.',422);$s=$pdo->prepare('SELECT id FROM presentations WHERE id=:id AND user_id=:uid');$s->execute([':id'=>$id,':uid'=>$uid]);if(!$s->fetch())gaeks_error('not_found','Presentasi tidak ditemukan.',404);
+    if($status==='delete_permanent'){$pdo->beginTransaction();try{$pdo->prepare("DELETE FROM document_revisions WHERE document_type='presentation' AND document_id=:id AND user_id=:uid")->execute([':id'=>$id,':uid'=>$uid]);$pdo->prepare('DELETE FROM presentations WHERE id=:id AND user_id=:uid')->execute([':id'=>$id,':uid'=>$uid]);$pdo->commit();}catch(Throwable $e){if($pdo->inTransaction())$pdo->rollBack();throw $e;}}
+    elseif($status==='trashed')$pdo->prepare('UPDATE presentations SET deleted_at=UTC_TIMESTAMP(),updated_at=UTC_TIMESTAMP() WHERE id=:id AND user_id=:uid')->execute([':id'=>$id,':uid'=>$uid]);else $pdo->prepare('UPDATE presentations SET deleted_at=NULL,updated_at=UTC_TIMESTAMP() WHERE id=:id AND user_id=:uid')->execute([':id'=>$id,':uid'=>$uid]);gaeks_audit($pdo,$uid,'presentation.'.$status,'presentation',$id);gaeks_ok(null,200,'Status presentasi diperbarui.');
 }
-
-if ($action === 'get') {
-    $id = $_GET['id'] ?? $postData['id'] ?? '';
-    if (!$id) { http_response_code(400); echo json_encode(["status" => "error", "message" => "ID diperlukan."]); exit; }
-
-    if ($pdo) {
-        $checkStmt = $pdo->prepare("SELECT user_id FROM presentations WHERE id = :id");
-        $checkStmt->execute([':id' => $id]);
-        $ownerRow = $checkStmt->fetch();
-        if ($ownerRow) {
-            if ($ownerRow['user_id'] !== $authUserId) {
-                http_response_code(403);
-                echo json_encode(["status" => "error", "message" => "Forbidden: Anda tidak memiliki akses ke presentasi ini."]);
-                exit;
-            }
-            $stmt = $pdo->prepare("SELECT * FROM presentations WHERE id = :id AND user_id = :uid");
-            $stmt->execute([':id' => $id, ':uid' => $authUserId]);
-            $r = $stmt->fetch();
-            if ($r) {
-                $pres = json_decode($r['data_json'], true) ?? [];
-                $pres['id'] = $r['id']; $pres['meetingName'] = $r['name'];
-                $pres['meetingDate'] = $r['date']; $pres['status'] = $r['status'];
-                echo json_encode(["status" => "success", "data" => $pres]);
-                exit;
-            }
-        }
-    } else {
-        $store = getJsonStore($presStoreFile);
-        foreach ($store as $otherUid => $otherList) {
-            if ($otherUid !== $authUserId) {
-                foreach ($otherList as $op) {
-                    if ($op['id'] === $id) {
-                        http_response_code(403);
-                        echo json_encode(["status" => "error", "message" => "Forbidden: Anda tidak memiliki akses ke presentasi ini."]);
-                        exit;
-                    }
-                }
-            }
-        }
-        foreach ($store[$authUserId] ?? [] as $p) {
-            if ($p['id'] === $id) { echo json_encode(["status" => "success", "data" => $p]); exit; }
-        }
-    }
-    http_response_code(404);
-    echo json_encode(["status" => "error", "message" => "Presentasi tidak ditemukan."]);
-    exit;
-}
-
-if ($action === 'save') {
-    $pres = $postData['data'] ?? $postData;
-    if (empty($pres['id'])) { $pres['id'] = 'MTG_' . round(microtime(true) * 1000); }
-    $id = $pres['id'];
-    $name = $pres['meetingName'] ?? $pres['name'] ?? 'Presentasi Baru';
-    $date = $pres['meetingDate'] ?? $pres['date'] ?? date('Y-m-d');
-    $status = $pres['status'] ?? 'active';
-    $now = round(microtime(true) * 1000);
-    $dataJson = json_encode($pres);
-
-    if ($pdo) {
-        $checkStmt = $pdo->prepare("SELECT user_id FROM presentations WHERE id = :id");
-        $checkStmt->execute([':id' => $id]);
-        $existing = $checkStmt->fetch();
-        if ($existing && $existing['user_id'] !== $authUserId) {
-            http_response_code(403);
-            echo json_encode(["status" => "error", "message" => "Forbidden."]);
-            exit;
-        }
-        if ($existing) {
-            $updateStmt = $pdo->prepare("UPDATE presentations SET name = :name, date = :date, status = :status, data_json = :data, updated_at = :now WHERE id = :id AND user_id = :uid");
-            $updateStmt->execute([':name' => $name, ':date' => $date, ':status' => $status, ':data' => $dataJson, ':now' => $now, ':id' => $id, ':uid' => $authUserId]);
-        } else {
-            $insertStmt = $pdo->prepare("INSERT INTO presentations (id, user_id, name, date, status, data_json, created_at, updated_at) VALUES (:id, :uid, :name, :date, :status, :data, :created, :updated)");
-            $insertStmt->execute([':id' => $id, ':uid' => $authUserId, ':name' => $name, ':date' => $date, ':status' => $status, ':data' => $dataJson, ':created' => $now, ':updated' => $now]);
-        }
-    } else {
-        $store = getJsonStore($presStoreFile);
-        foreach ($store as $otherUid => $otherList) {
-            if ($otherUid !== $authUserId) {
-                foreach ($otherList as $op) {
-                    if ($op['id'] === $id) {
-                        http_response_code(403);
-                        echo json_encode(["status" => "error", "message" => "Forbidden."]);
-                        exit;
-                    }
-                }
-            }
-        }
-        if (!isset($store[$authUserId])) $store[$authUserId] = [];
-        $idx = -1;
-        foreach ($store[$authUserId] as $i => $p) { if ($p['id'] === $id) { $idx = $i; break; } }
-        $pres['id'] = $id; $pres['updatedAt'] = $now;
-        if ($idx >= 0) $store[$authUserId][$idx] = $pres;
-        else array_unshift($store[$authUserId], $pres);
-        saveJsonStore($presStoreFile, $store);
-    }
-    echo json_encode(["status" => "success", "message" => "Presentasi berhasil disimpan di database.", "data" => $pres]);
-    exit;
-}
-
-if ($action === 'status') {
-    $id = $postData['id'] ?? $_GET['id'] ?? '';
-    $status = $postData['status'] ?? $_GET['status'] ?? 'trashed';
-    $now = round(microtime(true) * 1000);
-    if ($pdo) {
-        $checkStmt = $pdo->prepare("SELECT user_id FROM presentations WHERE id = :id");
-        $checkStmt->execute([':id' => $id]);
-        $existing = $checkStmt->fetch();
-        if ($existing && $existing['user_id'] !== $authUserId) {
-            http_response_code(403);
-            echo json_encode(["status" => "error", "message" => "Forbidden."]);
-            exit;
-        }
-        if ($status === 'delete_permanent') {
-            $stmt = $pdo->prepare("DELETE FROM presentations WHERE id = :id AND user_id = :uid");
-            $stmt->execute([':id' => $id, ':uid' => $authUserId]);
-        } else {
-            $delAt = ($status === 'trashed') ? $now : null;
-            $stmt = $pdo->prepare("UPDATE presentations SET status = :status, deleted_at = :del, updated_at = :now WHERE id = :id AND user_id = :uid");
-            $stmt->execute([':status' => $status, ':del' => $delAt, ':now' => $now, ':id' => $id, ':uid' => $authUserId]);
-        }
-    } else {
-        $store = getJsonStore($presStoreFile);
-        if (isset($store[$authUserId])) {
-            if ($status === 'delete_permanent') {
-                $store[$authUserId] = array_values(array_filter($store[$authUserId], fn($p) => $p['id'] !== $id));
-            } else {
-                foreach ($store[$authUserId] as &$p) {
-                    if ($p['id'] === $id) { $p['status'] = $status; $p['deletedAt'] = ($status === 'trashed') ? $now : null; break; }
-                }
-            }
-            saveJsonStore($presStoreFile, $store);
-        }
-    }
-    echo json_encode(["status" => "success", "message" => "Status presentasi diperbarui."]);
-    exit;
-}
-echo json_encode(["status" => "error", "message" => "Aksi tidak dikenal."]);
+gaeks_error('unknown_action','Aksi presentasi tidak dikenal.',404);

@@ -1,430 +1,131 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Masuk / Daftar Akun | GAEKS Digital</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Masuk atau daftar ke workspace CV dan presentasi GAEKS Digital.">
+  <title>Masuk atau Daftar — GAEKS Digital</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="public/assets/css/landing.css?v=20260915">
+  <link rel="stylesheet" href="public/assets/css/auth.css?v=20260915">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="auth.js?v=20260914_07"></script>
-  <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    .cursor-pointer { cursor: pointer; }
-  </style>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <script src="auth.js?v=20260915_01" defer></script>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4 selection:bg-blue-600 selection:text-white">
+<body class="auth-page">
+  <a class="skip-link" href="#auth-main">Lewati ke formulir</a>
+  <main id="auth-main" class="auth-shell">
+    <section class="auth-story" aria-labelledby="story-title">
+      <a class="brand auth-brand" href="index.html"><span class="brand-mark" aria-hidden="true">G</span><span class="brand-copy">GAEKS Digital<small>Productivity workspace</small></span></a>
+      <div class="auth-story-copy">
+        <span class="eyebrow"><span></span>Satu akun untuk dua aplikasi</span>
+        <h1 id="story-title">Dokumen profesional, tersimpan di workspace pribadi.</h1>
+        <p>Buat CV dan presentasi dari browser, lalu lanjutkan kembali menggunakan akun yang sama.</p>
+        <ul class="auth-benefits">
+          <li><span>✓</span> Session aman dan terenkripsi</li>
+          <li><span>✓</span> Dokumen terisolasi per pengguna</li>
+          <li><span>✓</span> Login Google atau verifikasi email</li>
+        </ul>
+      </div>
+      <p class="auth-legal">© 2026 GAEKS Group</p>
+    </section>
 
-  <div class="max-w-4xl w-full bg-slate-900 rounded-3xl border border-slate-800 shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[580px]">
-    
-    <!-- LEFT SIDEBAR -->
-    <div class="lg:col-span-5 bg-gradient-to-br from-slate-900 via-blue-950/40 to-slate-950 p-8 sm:p-10 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-800">
-      <div class="space-y-6">
-        <a href="index.html" class="flex items-center space-x-2.5">
-          <span class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-extrabold text-white text-sm shadow-md shadow-blue-500/30">G</span>
-          <span class="font-extrabold text-lg bg-gradient-to-r from-blue-400 via-indigo-300 to-white bg-clip-text text-transparent">
-            GAEKS DIGITAL
-          </span>
-        </a>
-
-        <div class="space-y-2 pt-4">
-          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-950 text-blue-300 border border-blue-800">Satu Akun Terpadu</span>
-          <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight leading-snug">
-            Akses Seluruh Solusi Karier & SaaS Eksekutif
-          </h2>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            Kelola pembuatan Resume ATS standar internasional, materi presentasi eksekutif, dan arsitektur bisnis modern.
-          </p>
-        </div>
-
-        <div class="space-y-2.5 pt-2 text-xs text-slate-300">
-          <div class="flex items-center gap-2">
-            <span class="text-emerald-400 font-bold">✓</span>
-            <span>ATS CV Studio dengan 520+ bank profesi</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="text-emerald-400 font-bold">✓</span>
-            <span>15 Varian tema visual eksekutif</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="text-emerald-400 font-bold">✓</span>
-            <span>Verifikasi email resmi dari no-reply@gaeks.com</span>
-          </div>
-        </div>
+    <section class="auth-panel" aria-labelledby="auth-title">
+      <div class="auth-panel-head"><span class="kicker">Workspace access</span><h2 id="auth-title">Selamat datang kembali.</h2><p>Masuk untuk melanjutkan pekerjaan Anda.</p></div>
+      <div class="auth-tabs" role="tablist" aria-label="Pilih metode akun">
+        <button id="tab-login" type="button" role="tab" aria-selected="true" aria-controls="login-panel">Masuk</button>
+        <button id="tab-register" type="button" role="tab" aria-selected="false" aria-controls="register-panel">Daftar</button>
       </div>
 
-      <div class="pt-8 text-[11px] text-slate-500">
-        &copy; 2026 GAEKS Group. All rights reserved.
+      <div id="auth-alert" class="auth-alert" role="status" aria-live="polite" hidden></div>
+
+      <div class="google-area">
+        <div id="google-button" aria-label="Masuk dengan Google"></div>
       </div>
-    </div>
+      <div class="auth-divider"><span>atau gunakan email</span></div>
 
-    <!-- RIGHT PANEL -->
-    <div class="lg:col-span-7 p-8 sm:p-10 flex flex-col justify-between bg-slate-900/60">
-      
-      <div>
-        <!-- TAB SWITCHER -->
-        <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800 mb-6 text-xs font-bold">
-          <button type="button" id="tab-login" onclick="setAuthTab('login')" class="flex-1 py-2.5 rounded-lg bg-blue-600 text-white transition cursor-pointer">
-            Masuk ke Akun
-          </button>
-          <button type="button" id="tab-register" onclick="setAuthTab('register')" class="flex-1 py-2.5 rounded-lg text-slate-400 hover:text-white transition cursor-pointer">
-            Daftar Akun Baru
-          </button>
-        </div>
-
-        <!-- 1 TOMBOL RESMI GOOGLE -->
-        <div id="google-auth-wrapper" class="w-full flex justify-center mb-5">
-          <div id="g_id_onload"
-               data-client_id="41832472270-6r8iudma1eho6kn3q6rs4rl7b9ank7n4.apps.googleusercontent.com"
-               data-callback="handleCredentialResponse"
-               data-auto_prompt="false">
-          </div>
-          <div class="g_id_signin" 
-               data-type="standard" 
-               data-size="large" 
-               data-theme="outline" 
-               data-text="continue_with" 
-               data-shape="pill" 
-               data-logo_alignment="left" 
-               data-width="360">
-          </div>
-        </div>
-
-        <div class="flex items-center gap-3 text-slate-600 text-xs mb-5">
-          <hr class="flex-grow border-slate-800" />
-          <span class="text-[11px] text-slate-400">atau dengan alamat email</span>
-          <hr class="flex-grow border-slate-800" />
-        </div>
-
-        <div id="status-alert" class="hidden p-3.5 rounded-xl text-xs mb-4"></div>
-
-        <!-- FORM LOGIN -->
-        <form id="form-login" onsubmit="submitLogin(event)" class="space-y-3.5">
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Alamat Email</label>
-            <input type="email" id="login-email" required placeholder="nama@email.com" class="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:border-blue-500 focus:outline-none transition" />
-          </div>
-          <div>
-            <div class="flex justify-between items-center mb-1">
-              <label class="text-[11px] font-semibold text-slate-400">Kata Sandi</label>
-              <a href="https://wa.me/6285608561745?text=Halo%20Admin%20GAEKS%2C%20saya%20butuh%20bantuan%20reset%20kata%20sandi" target="_blank" class="text-[10px] text-blue-400 hover:underline">Lupa sandi?</a>
-            </div>
-            <input type="password" id="login-pass" required placeholder="••••••••" class="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:border-blue-500 focus:outline-none transition" />
-          </div>
-          <button type="submit" id="btn-submit-login" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm rounded-xl transition shadow-lg shadow-blue-500/20 cursor-pointer">
-            Masuk ke Akun Saya &rarr;
-          </button>
+      <section id="login-panel" role="tabpanel" aria-labelledby="tab-login">
+        <form id="login-form" class="auth-form">
+          <label>Email<input id="login-email" type="email" autocomplete="email" maxlength="254" required placeholder="nama@email.com"></label>
+          <label>Kata sandi<input id="login-password" type="password" autocomplete="current-password" minlength="8" maxlength="128" required placeholder="Minimal 8 karakter"></label>
+          <button id="login-submit" class="button button-primary button-wide" type="submit">Masuk ke workspace</button>
         </form>
+      </section>
 
-        <!-- FORM DAFTAR DENGAN OTP EMAIL -->
-        <div id="form-register" class="hidden space-y-4">
-          <div id="reg-step-request" class="space-y-3.5">
-            <div>
-              <label class="block text-[11px] font-semibold text-slate-400 mb-1">Nama Lengkap</label>
-              <input type="text" id="reg-name" required placeholder="Alexander Pratama" class="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:border-blue-500 focus:outline-none transition" />
-            </div>
-            <div>
-              <label class="block text-[11px] font-semibold text-slate-400 mb-1">Alamat Email</label>
-              <input type="email" id="reg-email" required placeholder="nama@email.com" class="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:border-blue-500 focus:outline-none transition" />
-              <p class="text-[10px] text-slate-500 mt-1">Kode 6 digit akan dikirimkan resmi dari <strong>no-reply@gaeks.com</strong>.</p>
-            </div>
-            <button type="button" id="btn-send-otp" onclick="requestOtpCode()" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm rounded-xl transition shadow-lg shadow-blue-500/20 cursor-pointer">
-              Kirim 6 Digit Kode Verifikasi ke Email &rarr;
-            </button>
-          </div>
+      <section id="register-panel" role="tabpanel" aria-labelledby="tab-register" hidden>
+        <form id="register-request-form" class="auth-form">
+          <label>Nama lengkap<input id="register-name" type="text" autocomplete="name" minlength="2" maxlength="160" required placeholder="Nama Anda"></label>
+          <label>Email<input id="register-email" type="email" autocomplete="email" maxlength="254" required placeholder="nama@email.com"></label>
+          <button id="otp-request-submit" class="button button-primary button-wide" type="submit">Kirim kode verifikasi</button>
+        </form>
+        <form id="register-verify-form" class="auth-form" hidden>
+          <p class="otp-note">Kode dikirim ke <strong id="otp-target"></strong> dan berlaku selama 10 menit.</p>
+          <label>Kode 6 digit<input id="register-code" class="otp-input" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required placeholder="000000"></label>
+          <label>Buat kata sandi<input id="register-password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required placeholder="Minimal 8 karakter"></label>
+          <button id="otp-verify-submit" class="button button-primary button-wide" type="submit">Verifikasi dan masuk</button>
+          <button id="otp-back" class="text-button" type="button">Ganti email</button>
+        </form>
+      </section>
 
-          <div id="reg-step-verify" class="hidden space-y-3.5">
-            <div class="p-3 bg-blue-950/40 border border-blue-800/60 rounded-xl text-xs text-blue-300">
-              Kode verifikasi telah dikirimkan ke <strong id="target-email-badge" class="text-white"></strong>.
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-center text-slate-300 mb-1">Masukkan 6 Digit Kode Verifikasi</label>
-              <input type="text" id="reg-otp-code" maxlength="6" placeholder="123456" class="w-full px-3 py-3 text-center text-xl tracking-[10px] font-mono font-black bg-slate-950 border border-blue-500 rounded-xl text-white focus:outline-none shadow-inner" />
-            </div>
-            <div>
-              <label class="block text-[11px] font-semibold text-slate-400 mb-1">Buat Kata Sandi Akun</label>
-              <input type="password" id="reg-password" placeholder="Minimal 6 karakter" class="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:border-blue-500 focus:outline-none transition" />
-            </div>
-            <button type="button" id="btn-submit-verify" onclick="submitOtpVerification()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm rounded-xl transition shadow-lg shadow-emerald-500/20 cursor-pointer">
-              Verifikasi Kode & Masuk Sekarang &rarr;
-            </button>
-            <div class="text-center pt-1">
-              <button type="button" onclick="backToStep1()" class="text-xs text-slate-400 hover:text-blue-400 transition cursor-pointer">&larr; Ganti email atau kirim ulang kode</button>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="pt-6 border-t border-slate-800 flex justify-between items-center text-xs text-slate-500">
-        <a id="link-back-origin" href="index.html" class="hover:text-slate-300 transition">&larr; Kembali</a>
-        <a href="pricing.html" class="hover:text-slate-300 transition">Lihat Paket & Layanan</a>
-      </div>
-
-    </div>
-
-  </div>
+      <div class="captcha-wrap"><div class="cf-turnstile" data-sitekey="0x4AAAAAAE2AZ__M_sjh20MY" data-theme="light" data-callback="onCaptchaVerified" data-expired-callback="onCaptchaExpired"></div><p>CAPTCHA diperlukan untuk login, pendaftaran, dan Google Sign-In.</p></div>
+      <div class="auth-footer"><a id="back-link" href="index.html">← Kembali</a><a href="pricing.html">Lihat paket</a></div>
+    </section>
+  </main>
 
   <script>
-    function getRedirectTarget() {
-      const p = new URLSearchParams(window.location.search);
-      const r = p.get('redirect');
-      if (r) return decodeURIComponent(r);
-      return 'index.html';
+    let captchaToken = '';
+    let pendingEmail = '';
+    let pendingName = '';
+    window.onCaptchaVerified = token => { captchaToken = token; };
+    window.onCaptchaExpired = () => { captchaToken = ''; };
+
+    function destination() {
+      const raw = new URLSearchParams(location.search).get('redirect') || 'index.html';
+      let value;
+      try { value = decodeURIComponent(raw); } catch (_) { value = 'index.html'; }
+      return /^(?:index|profile|cv|cv-dashboard|presentation|pricing)\.html(?:[?#].*)?$/.test(value) ? value : 'index.html';
     }
+    function alertMessage(message, success) {
+      const box=document.getElementById('auth-alert');box.hidden=false;box.textContent=message;box.className='auth-alert '+(success?'is-success':'is-error');
+    }
+    function clearAlert(){const box=document.getElementById('auth-alert');box.hidden=true;box.textContent='';}
+    function requireCaptcha(){if(captchaToken)return true;alertMessage('Selesaikan verifikasi CAPTCHA terlebih dahulu.');return false;}
+    function resetCaptcha(){captchaToken='';if(window.turnstile)turnstile.reset();}
+    function setBusy(button,busy,label){button.disabled=busy;button.textContent=busy?'Memproses…':label;}
+    function go(){location.replace('/'+destination().replace(/^\//,''));}
+    function setTab(tab){
+      const login=tab==='login';document.getElementById('login-panel').hidden=!login;document.getElementById('register-panel').hidden=login;
+      document.getElementById('tab-login').setAttribute('aria-selected',String(login));document.getElementById('tab-register').setAttribute('aria-selected',String(!login));
+      document.getElementById('auth-title').textContent=login?'Selamat datang kembali.':'Buat workspace pribadi Anda.';clearAlert();
+    }
+    document.getElementById('tab-login').addEventListener('click',()=>setTab('login'));
+    document.getElementById('tab-register').addEventListener('click',()=>setTab('register'));
+    document.getElementById('back-link').href=destination();
 
-    (function() {
-      try {
-        const u = GaeksAuth.getCurrentUser();
-        if (u && u.email) {
-          const dest = getRedirectTarget();
-          window.location.replace(window.location.origin + '/' + dest.replace(/^\//, ''));
-        }
-      } catch(e) {}
-    })();
-
-    window.addEventListener('DOMContentLoaded', () => {
-      const target = getRedirectTarget();
-      const backLink = document.getElementById('link-back-origin');
-      if (backLink) {
-        backLink.href = target;
-        backLink.innerHTML = "&larr; Kembali ke " + (target.includes('cv.html') ? 'Studio CV' : 'Beranda');
-      }
-
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('tab') === 'register') {
-        setAuthTab('register');
-      }
+    document.getElementById('login-form').addEventListener('submit',async event=>{
+      event.preventDefault();if(!requireCaptcha())return;const button=document.getElementById('login-submit');setBusy(button,true,'Masuk ke workspace');clearAlert();
+      try{await GaeksAuth.login(document.getElementById('login-email').value.trim(),document.getElementById('login-password').value,captchaToken);alertMessage('Login berhasil. Membuka workspace…',true);go();}catch(error){alertMessage(error.message);resetCaptcha();}finally{setBusy(button,false,'Masuk ke workspace');}
     });
+    document.getElementById('register-request-form').addEventListener('submit',async event=>{
+      event.preventDefault();if(!requireCaptcha())return;pendingName=document.getElementById('register-name').value.trim();pendingEmail=document.getElementById('register-email').value.trim();const button=document.getElementById('otp-request-submit');setBusy(button,true,'Kirim kode verifikasi');clearAlert();
+      try{await GaeksAuth.requestRegistrationOtp(pendingName,pendingEmail,captchaToken);document.getElementById('otp-target').textContent=pendingEmail;document.getElementById('register-request-form').hidden=true;document.getElementById('register-verify-form').hidden=false;alertMessage('Kode verifikasi berhasil dikirim.',true);resetCaptcha();document.getElementById('register-code').focus();}catch(error){alertMessage(error.message);resetCaptcha();}finally{setBusy(button,false,'Kirim kode verifikasi');}
+    });
+    document.getElementById('register-verify-form').addEventListener('submit',async event=>{
+      event.preventDefault();const button=document.getElementById('otp-verify-submit');setBusy(button,true,'Verifikasi dan masuk');clearAlert();
+      try{await GaeksAuth.verifyRegistration(pendingName,pendingEmail,document.getElementById('register-code').value.trim(),document.getElementById('register-password').value);alertMessage('Akun berhasil dibuat. Membuka workspace…',true);go();}catch(error){alertMessage(error.message);}finally{setBusy(button,false,'Verifikasi dan masuk');}
+    });
+    document.getElementById('otp-back').addEventListener('click',()=>{document.getElementById('register-verify-form').hidden=true;document.getElementById('register-request-form').hidden=false;clearAlert();});
 
-    function setAuthTab(tab) {
-      const tabL = document.getElementById('tab-login');
-      const tabR = document.getElementById('tab-register');
-      const formL = document.getElementById('form-login');
-      const formR = document.getElementById('form-register');
-      hideAlert();
-
-      if (tab === 'login') {
-        tabL.className = "flex-1 py-2.5 rounded-lg bg-blue-600 text-white transition cursor-pointer";
-        tabR.className = "flex-1 py-2.5 rounded-lg text-slate-400 hover:text-white transition cursor-pointer";
-        formL.classList.remove('hidden');
-        formR.classList.add('hidden');
-      } else {
-        tabR.className = "flex-1 py-2.5 rounded-lg bg-blue-600 text-white transition cursor-pointer";
-        tabL.className = "flex-1 py-2.5 rounded-lg text-slate-400 hover:text-white transition cursor-pointer";
-        formR.classList.remove('hidden');
-        formL.classList.add('hidden');
-      }
-    }
-
-    function showAlert(msg, isSuccess = false) {
-      const box = document.getElementById('status-alert');
-      box.classList.remove('hidden');
-      if (isSuccess) {
-        box.className = "p-3.5 rounded-xl text-xs bg-emerald-950/80 border border-emerald-800 text-emerald-300 font-medium mb-4";
-      } else {
-        box.className = "p-3.5 rounded-xl text-xs bg-rose-950/80 border border-rose-800 text-rose-300 font-medium mb-4";
-      }
-      box.innerHTML = msg;
-    }
-
-    function hideAlert() {
-      document.getElementById('status-alert').classList.add('hidden');
-    }
-
-    function processLoginSuccess(email, name, avatar, provider, targetUrl) {
-      const cleanEmail = (email || '').toLowerCase().trim();
-      const vipList = [
-        "gaeks.group@gmail.com",
-        "triawan25@gmail.com",
-        "ranesath@gmail.com"
-      ];
-      const isVip = vipList.includes(cleanEmail);
-      const isSuperAdmin = (cleanEmail === "gaeks.group@gmail.com");
-      const displayName = name || cleanEmail.split('@')[0];
-
-      const user = {
-        id: 'usr_' + (provider === 'google' ? 'goog_' : '') + Math.random().toString(36).substr(2, 9),
-        email: cleanEmail,
-        name: displayName,
-        avatar: avatar || ('https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(displayName)),
-        provider: provider || 'email',
-        isPro: isVip,
-        isAdmin: isSuperAdmin,
-        plan: isVip ? 'PRO_VIP' : 'FREE',
-        planLabel: isVip ? (isSuperAdmin ? 'SUPER ADMIN' : 'GAEKS PRO VIP') : 'Free Tier',
-        loginAt: Date.now()
-      };
-
-      try {
-        localStorage.setItem('gaeks_user_session_v3', JSON.stringify(user));
-      } catch(e) {}
-      
-      try {
-        document.cookie = "gaeks_session_v3=" + encodeURIComponent(JSON.stringify(user)) + "; path=/; max-age=2592000; SameSite=Lax";
-      } catch(e) {}
-
-      try {
-        if (window.GaeksAuth && typeof GaeksAuth.recordUserRegistration === 'function') {
-          GaeksAuth.recordUserRegistration(user);
-        }
-      } catch(e) {}
-
-      let dest = targetUrl;
-      if (!dest) {
-        const p = new URLSearchParams(window.location.search);
-        dest = p.get('redirect') || 'index.html';
-      }
-      dest = decodeURIComponent(dest).replace(/^\//, '');
-      const finalUrl = window.location.origin + '/' + dest;
-      window.location.replace(finalUrl);
-    }
-
-    function handleCredentialResponse(response) {
-      try {
-        const base64Url = response.credential.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-
-        const payload = JSON.parse(jsonPayload);
-        if (payload && payload.email) {
-          const dest = getRedirectTarget();
-          showAlert("✓ Berhasil masuk dengan Google! Mengalihkan ke tujuan...", true);
-          processLoginSuccess(payload.email, payload.name || payload.given_name, payload.picture, 'google', dest);
-        }
-      } catch (err) {
-        console.error("Gagal membaca kredensial Google:", err);
-        showAlert("Gagal memproses akun Google: " + err.message);
-      }
-    }
-
-    function submitLogin(e) {
-      e.preventDefault();
-      const email = document.getElementById('login-email').value.trim();
-      const pass = document.getElementById('login-pass').value.trim();
-      if (!email || !pass) {
-        showAlert("Silakan masukkan email dan kata sandi.");
-        return;
-      }
-      const dest = getRedirectTarget();
-      processLoginSuccess(email, email.split("@")[0], "", "email", dest);
-    }
-
-    let storedEmail = '';
-    let storedName = '';
-
-    async function requestOtpCode() {
-      const name = document.getElementById('reg-name').value.trim();
-      const email = document.getElementById('reg-email').value.trim();
-      const btn = document.getElementById('btn-send-otp');
-
-      if (!name || !email) {
-        showAlert("Silakan lengkapi nama dan alamat email.");
-        return;
-      }
-
-      // 1. CEK JIKA SUDAH TERDAFTAR (DI SISI CLIENT)
-      try {
-        const db = GaeksAuth.getUsersDb();
-        const existing = db.find(u => u.email.toLowerCase() === email.toLowerCase());
-        if (existing) {
-          showAlert("⚠️ Akun dengan email <strong>" + email + "</strong> sudah terdaftar. Mengalihkan ke tab 'Masuk'...");
-          setTimeout(() => {
-            setAuthTab('login');
-            document.getElementById('login-email').value = email;
-            document.getElementById('login-pass').focus();
-          }, 1500);
-          return;
-        }
-      } catch(e) {}
-
-      btn.disabled = true;
-      btn.innerText = "⏳ Mengirim kode dari no-reply@gaeks.com...";
-      hideAlert();
-
-      try {
-        const res = await fetch('/api/auth_otp.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'send_otp', email: email, name: name })
-        });
-        const data = await res.json();
-
-        if (data.status === 'success') {
-          storedEmail = email;
-          storedName = name;
-          document.getElementById('target-email-badge').innerText = email;
-          document.getElementById('reg-step-request').classList.add('hidden');
-          document.getElementById('reg-step-verify').classList.remove('hidden');
-          showAlert("✓ Kode verifikasi 6 digit telah dikirimkan ke email Anda.", true);
-        } else if (data.status === 'already_registered') {
-          showAlert("⚠️ " + data.message);
-          setTimeout(() => {
-            setAuthTab('login');
-            document.getElementById('login-email').value = email;
-            document.getElementById('login-pass').focus();
-          }, 1500);
-        } else {
-          showAlert(data.message || "Gagal mengirimkan kode verifikasi.");
-        }
-      } catch (err) {
-        showAlert("Gagal menghubungi server: " + err.message);
-      } finally {
-        btn.disabled = false;
-        btn.innerText = "Kirim 6 Digit Kode Verifikasi ke Email →";
-      }
-    }
-
-    async function submitOtpVerification() {
-      const code = document.getElementById('reg-otp-code').value.trim();
-      const pass = document.getElementById('reg-password').value.trim();
-      const btn = document.getElementById('btn-submit-verify');
-
-      if (!code || code.length !== 6) {
-        showAlert("Masukkan 6 digit kode verifikasi yang Anda terima.");
-        return;
-      }
-      if (!pass || pass.length < 6) {
-        showAlert("Kata sandi minimal 6 karakter.");
-        return;
-      }
-
-      btn.disabled = true;
-      btn.innerText = "⏳ Memvalidasi kode verifikasi...";
-      hideAlert();
-
-      try {
-        const res = await fetch('/api/auth_otp.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'verify_otp', email: storedEmail, code: code, password: pass })
-        });
-        const data = await res.json();
-
-        if (data.status === 'success') {
-          const dest = getRedirectTarget();
-          showAlert("✓ Pendaftaran berhasil! Mengalihkan ke tujuan...", true);
-          processLoginSuccess(storedEmail, storedName, "", "email", dest);
-        } else {
-          showAlert(data.message || "Kode verifikasi salah.");
-        }
-      } catch (err) {
-        showAlert("Gagal verifikasi: " + err.message);
-      } finally {
-        btn.disabled = false;
-        btn.innerText = "Verifikasi Kode & Masuk Sekarang →";
-      }
-    }
-
-    function backToStep1() {
-      document.getElementById('reg-step-verify').classList.add('hidden');
-      document.getElementById('reg-step-request').classList.remove('hidden');
-      hideAlert();
-    }
+    window.handleGoogleCredential = async response=>{
+      if(!requireCaptcha())return;
+      try{await GaeksAuth.loginWithGoogle(response.credential,captchaToken);alertMessage('Google Sign-In berhasil. Membuka workspace…',true);go();}catch(error){alertMessage(error.message);resetCaptcha();}
+    };
+    window.addEventListener('load',()=>{
+      if(window.google){google.accounts.id.initialize({client_id:GaeksAuth.GOOGLE_CLIENT_ID,callback:handleGoogleCredential});google.accounts.id.renderButton(document.getElementById('google-button'),{theme:'outline',size:'large',shape:'pill',width:360,text:'continue_with'});}
+    });
+    window.addEventListener('DOMContentLoaded',async()=>{const user=await GaeksAuth.ready;if(user)go();if(new URLSearchParams(location.search).get('tab')==='register')setTab('register');});
   </script>
 </body>
 </html>

@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS users (
     role ENUM('user', 'admin') NOT NULL DEFAULT 'user',
     status ENUM('active', 'suspended', 'deleted') NOT NULL DEFAULT 'active',
     email_verified_at DATETIME(6) NULL,
+    password_hash VARCHAR(255) NULL,
     created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
     UNIQUE KEY uq_users_email_normalized (email_normalized),

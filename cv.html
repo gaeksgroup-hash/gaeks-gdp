@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
-  <script src="auth.js?v=20260914_09"></script>
+  <script src="auth.js?v=20260915_01"></script>
   
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -560,18 +560,6 @@
 
   <!-- SCRIPT LOGIKA UTAMA -->
   <script>
-    // SAFETY GAEKS AUTH PROXY
-    var GaeksAuth = window.GaeksAuth = window.GaeksAuth || {
-      getCurrentUser() {
-        try {
-          const raw = localStorage.getItem('gaeks_user_session_v3') || localStorage.getItem('gaeks_user_session_v2');
-          if (raw) return JSON.parse(raw);
-        } catch(e) {}
-        return null;
-      },
-      initGoogleAuth() {}
-    };
-
     let activeLayout = 'prestige';
     let currentLang = 'id';
     let pendingProTheme = null;
@@ -1177,40 +1165,41 @@
       };
     }
 
-    // LOAD CV LIST DENGAN DUKUNGAN GUEST DAN MIGRASI OTOMATIS
-    function loadCvList() {
-      const currentKey = getStorageKey();
-      const raw = localStorage.getItem(currentKey);
-      if (raw) {
-        try { cvList = JSON.parse(raw); } catch(e) { cvList = []; }
-      } else {
-        cvList = [];
-      }
+    async function cvApi(action, payload = null, query = '') {
+      return GaeksAuth.api('/api/cv.php?action=' + encodeURIComponent(action) + query, { method: payload ? 'POST' : 'GET', body: payload });
+    }
 
-      // Migrasi data dari tamu jika pengguna baru saja login
-      if ((!cvList || cvList.length === 0) && currentKey !== 'gaeks_cv_master_list_v17') {
-        const guestRaw = localStorage.getItem('gaeks_cv_master_list_v17');
-        if (guestRaw) {
-          try {
-            const guestList = JSON.parse(guestRaw);
-            if (Array.isArray(guestList) && guestList.length > 0) {
-              cvList = guestList;
-            }
-          } catch (e) {}
-        }
-      }
+    async function loadCvList() {
+      const user = await GaeksAuth.requireAuth(location.pathname.split('/').pop() + location.search);
+      if (!user) return;
+      const [active, trash] = await Promise.all([cvApi('list', null, '&tab=active'), cvApi('list', null, '&tab=trash')]);
+      cvList = [...active, ...trash];
+      window.cvList = cvList;
+      updateDashboardCounts();
+    }
 
-      if (!cvList || cvList.length === 0) {
-        cvList = [createBlankCvObject(currentLang === 'en' ? 'My First Resume' : 'CV Pertama Saya')];
-        saveCvList();
+    let serverSaveTimer = null;
+    async function persistCv(cv) {
+      if (!cv) return null;
+      const indicator = document.getElementById('save-indicator');
+      if (indicator) { indicator.textContent = 'Menyimpan ke server…'; indicator.className = 'text-blue-400 text-xs font-medium pl-1'; }
+      try {
+        const saved = await cvApi('save', { cv });
+        Object.assign(cv, saved);
+        if (indicator) { indicator.textContent = '✓ Tersimpan di server'; indicator.className = 'text-emerald-400 text-xs font-medium pl-1'; }
+        return saved;
+      } catch (error) {
+        if (indicator) { indicator.textContent = 'Gagal menyimpan — coba lagi'; indicator.className = 'text-rose-400 text-xs font-medium pl-1'; }
+        throw error;
       }
-      autoPurgeTrash();
     }
 
     function saveCvList() {
-      const currentKey = getStorageKey();
-      localStorage.setItem(currentKey, JSON.stringify(cvList));
       updateDashboardCounts();
+      const cv = cvList.find(item => item.id === currentCvId);
+      if (!cv) return;
+      clearTimeout(serverSaveTimer);
+      serverSaveTimer = setTimeout(() => persistCv(cv).catch(error => console.error('CV save failed:', error)), 900);
     }
 
     function autoPurgeTrash() {
@@ -1325,14 +1314,14 @@
       });
     }
 
-    function createNewBlankCV() {
+    async function createNewBlankCV() {
       try {
         const title = (currentLang === 'en' ? 'New Resume ' : 'CV Baru ') + (cvList.length + 1);
         const newCv = createBlankCvObject(title);
-        cvList.unshift(newCv);
-        saveCvList();
+        const saved = await cvApi('save', { cv: newCv });
+        cvList.unshift(saved);
         renderDashboardGrid();
-        openEditor(newCv.id);
+        openEditor(saved.id);
       } catch (err) {
         console.error("Gagal membuat CV:", err);
         alert("Gagal membuka editor: " + err.message);
@@ -1348,7 +1337,7 @@
       }
     }
 
-    function duplicateCV(id) {
+    async function duplicateCV(id) {
       const src = cvList.find(c => c.id === id);
       if (!src) return;
       const clone = JSON.parse(JSON.stringify(src));
@@ -1356,42 +1345,43 @@
       clone.title = src.title + (currentLang === 'en' ? " (Copy)" : " (Salinan)");
       clone.updatedAt = Date.now();
       clone.deletedAt = null;
-      cvList.unshift(clone);
-      saveCvList();
-      renderDashboardGrid();
+      delete clone.version;
+      try { const saved=await cvApi('save',{cv:clone});cvList.unshift(saved);updateDashboardCounts();renderDashboardGrid(); } catch(error) { alert('Gagal menduplikasi: '+error.message); }
     }
 
-    function moveToTrash(id) {
+    async function moveToTrash(id) {
       const t = cvList.find(c => c.id === id);
-      if (t) { t.deletedAt = Date.now(); saveCvList(); renderDashboardGrid(); }
+      if (t) { try { await cvApi('delete',{id});t.deletedAt=Date.now();updateDashboardCounts();renderDashboardGrid(); } catch(error) { alert('Gagal menghapus: '+error.message); } }
     }
 
-    function restoreFromTrash(id) {
+    async function restoreFromTrash(id) {
       const t = cvList.find(c => c.id === id);
-      if (t) { t.deletedAt = null; saveCvList(); renderDashboardGrid(); }
+      if (t) { try { await cvApi('restore',{id});t.deletedAt=null;updateDashboardCounts();renderDashboardGrid(); } catch(error) { alert('Gagal memulihkan: '+error.message); } }
     }
 
-    function deletePermanent(id) {
+    async function deletePermanent(id) {
       const confirmMsg = currentLang === 'en' ? "Are you sure you want to permanently delete this resume?" : "Hapus CV ini secara permanen?";
       if (!confirm(confirmMsg)) return;
-      cvList = cvList.filter(c => c.id !== id);
-      saveCvList();
-      renderDashboardGrid();
+      try { await cvApi('delete_permanent',{id});cvList=cvList.filter(c=>c.id!==id);window.cvList=cvList;updateDashboardCounts();renderDashboardGrid(); } catch(error) { alert('Gagal menghapus permanen: '+error.message); }
     }
 
+    function showDashboardView() {
+      const dashboard=document.getElementById('view-dashboard');const editor=document.getElementById('view-editor');
+      if(dashboard){dashboard.classList.remove('hidden');dashboard.style.removeProperty('display');}
+      if(editor){editor.classList.add('hidden');editor.style.setProperty('display','none','important');}
+      const btnDash=document.getElementById('nav-btn-dashboard');const btnEdit=document.getElementById('nav-btn-to-editor');const btnPrint=document.getElementById('nav-btn-print');
+      if(btnDash)btnDash.classList.add('hidden');if(btnEdit)btnEdit.classList.remove('hidden');if(btnPrint)btnPrint.classList.add('hidden');
+      renderDashboardGrid();updateDashboardCounts();history.replaceState({},'',location.pathname);
+    }
+    window.showDashboardView=showDashboardView;
+
     // 2. EDITOR VIEW
-    function openEditor(id) {
+    async function openEditor(id) {
       try {
         currentCvId = id;
         if (!Array.isArray(cvList)) cvList = [];
         let cv = cvList.find(c => c && c.id === id);
-        if (!cv) {
-          cv = createBlankCvObject("CV Baru");
-          cv.id = id;
-          cv.isDraft = true;
-          cvList.unshift(cv);
-          saveCvList();
-        }
+        if (!cv) { cv = await cvApi('get', null, '&id=' + encodeURIComponent(id)); cvList.unshift(cv); }
         if (typeof window !== 'undefined') window.currentCvId = currentCvId;
 
         const vDash = document.getElementById('view-dashboard');
@@ -1564,6 +1554,14 @@
         if (cv) {
           cv.data = data; cv.isDraft = true; cv.isDraft = true;
           cv.updatedAt = Date.now();
+          const snapshot = JSON.stringify(data);
+          if (historyStack[historyIndex] !== snapshot) {
+            historyStack = historyStack.slice(0, historyIndex + 1);
+            historyStack.push(snapshot);
+            if (historyStack.length > 50) historyStack.shift();
+            historyIndex = historyStack.length - 1;
+            updateUndoRedoButtons();
+          }
           saveCvList();
         }
         renderCV();
@@ -2338,18 +2336,16 @@
       }
     });
 
-                            window.onload = function() {
+                            window.onload = async function() {
       if (typeof currentLang === 'undefined') { window.currentLang = 'id'; }
-      setTimeout(() => { if (window.GaeksAuth && typeof GaeksAuth.initGoogleAuth === 'function') GaeksAuth.initGoogleAuth(); }, 500);
-      updateNavbarAuthStatus();
-      loadCvList();
-      
-      const urlParams = new URLSearchParams(window.location.search);
-      const targetId = urlParams.get('id');
-      if (targetId) {
-        window.openEditor(targetId);
-      } else showDashboardView();
-      setLanguage(window.currentLang || 'id');
+      try {
+        await loadCvList();
+        updateNavbarAuthStatus();
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetId = urlParams.get('id');
+        if (targetId) await window.openEditor(targetId); else showDashboardView();
+        setLanguage(window.currentLang || 'id');
+      } catch(error) { console.error(error); alert('Workspace CV tidak dapat dimuat: '+error.message); }
     };
 
 </script>

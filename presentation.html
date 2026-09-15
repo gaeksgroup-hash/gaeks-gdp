@@ -14,7 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/gitbrent/PptxGenJS/dist/pptxgen.bundle.js"></script>
-    <script src="auth.js?v=20260914_08"></script>
+    <script src="auth.js?v=20260915_01"></script>
     
                                 <script>
         window.tailwind = window.tailwind || {};
@@ -337,193 +337,6 @@
     </main>
 
     <script>
-                        // ISOLASI STORAGE PRESENTATION PER AKUN EMAIL
-        function getPresAccountScope() {
-            let uEmail = 'guest';
-            try {
-                const raw = localStorage.getItem('gaeks_user_session_v3') || localStorage.getItem('gaeks_user_session_v2') || localStorage.getItem('gaeks_user_session');
-                if (raw) { const u = JSON.parse(raw); if (u && u.email) uEmail = u.email.toLowerCase().trim(); }
-            } catch(e) {}
-            return 'user_' + uEmail.replace(/[^a-z0-9]/g, '_');
-        }
-
-        const GAEKS_PRES_LIST_KEY = () => 'gaeks_pres_vault_v25_' + getPresAccountScope();
-        const GAEKS_PRES_ITEM_KEY = (id) => "gaeks_pres_item_" + id + "_v2";
-
-        function getLocalMeetingsList() {
-            const raw = localStorage.getItem(GAEKS_PRES_LIST_KEY());
-            let list = raw ? JSON.parse(raw) : [];
-            const NOW = Date.now();
-            const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
-            let needsUpdate = false;
-            
-            const filtered = list.filter(m => {
-                if (m.status === 'trashed') {
-                    if (NOW - m.deletedAt > THREE_DAYS_MS) {
-                        localStorage.removeItem(GAEKS_PRES_ITEM_KEY(m.id));
-                        needsUpdate = true;
-                        return false;
-                    }
-                }
-                return true;
-            });
-
-            if (filtered.length === 0) {
-                const starter = getStarterGaeksPresentation();
-                filtered.push({ id: starter.id, name: starter.meetingName, date: starter.meetingDate, status: 'active' });
-                localStorage.setItem(GAEKS_PRES_ITEM_KEY(starter.id), JSON.stringify(starter));
-                needsUpdate = true;
-            }
-
-            if (needsUpdate) {
-                localStorage.setItem(GAEKS_PRES_LIST_KEY(), JSON.stringify(filtered));
-            }
-            return filtered;
-        }
-
-        function saveLocalMeeting(data) {
-            let list = getLocalMeetingsList();
-            if (!data.id) {
-                data.id = 'MTG_' + Date.now();
-                list.unshift({ id: data.id, name: data.meetingName, date: data.meetingDate, status: 'active' });
-            } else {
-                const idx = list.findIndex(m => m.id === data.id);
-                if (idx > -1) {
-                    list[idx].name = data.meetingName;
-                    list[idx].date = data.meetingDate;
-                } else {
-                    list.unshift({ id: data.id, name: data.meetingName, date: data.meetingDate, status: 'active' });
-                }
-            }
-            localStorage.setItem(GAEKS_PRES_LIST_KEY(), JSON.stringify(list));
-            localStorage.setItem(GAEKS_PRES_ITEM_KEY(data.id), JSON.stringify(data));
-            return { status: "success", data: data };
-        }
-
-        function getLocalMeetingDetails(id) {
-            const raw = localStorage.getItem(GAEKS_PRES_ITEM_KEY(id));
-            return raw ? JSON.parse(raw) : null;
-        }
-
-        function updateLocalMeetingStatus(id, newStatus) {
-            let list = getLocalMeetingsList();
-            const idx = list.findIndex(m => m.id === id);
-            if (idx > -1) {
-                if (newStatus === 'delete_permanent') {
-                    localStorage.removeItem(GAEKS_PRES_ITEM_KEY(id));
-                    list.splice(idx, 1);
-                } else {
-                    list[idx].status = newStatus;
-                    if (newStatus === 'trashed') list[idx].deletedAt = Date.now();
-                    else delete list[idx].deletedAt;
-                }
-                localStorage.setItem(GAEKS_PRES_LIST_KEY(), JSON.stringify(list));
-            }
-            return getLocalMeetingsList();
-        }
-
-        function getStarterGaeksPresentation() {
-            return {
-                id: 'MTG_STARTER_GAEKS',
-                meetingName: "GAEKS Digital Ecosystem - Pitch Deck Eksekutif",
-                meetingDate: new Date().toISOString().split('T')[0],
-                authorName: "Deny Triawan",
-                companyName: "GAEKS GROUP",
-                logoUrl: "",
-                slides: [
-                    {
-                        title: "Peluang & Fragmentasi Ekosistem Logistik",
-                        points: [
-                            { title: "Tingginya Biaya Operasional Ekspor-Impor", desc: "Ketidakteraturan komunikasi antar agensi kapal, trucking darat, dan pialang pabean memicu demurrage serta penalti waktu." },
-                            { title: "Kepatuhan Regulasi Bea Cukai yang Kompleks", desc: "Pemeriksaan PIB, PEB, Manifest, dan COO menuntut akurasi data tanpa celah kesalahan dokumentasi." }
-                        ],
-                        layout: "standard",
-                        momNote: "Fokus utama pada digitalisasi alur kepabeanan dan tracking peti kemas.",
-                        images: [{url:"",caption:""},{url:"",caption:""},{url:"",caption:""},{url:"",caption:""}],
-                        chartType: "bar", chartData: "", tableData: ""
-                    },
-                    {
-                        title: "Solusi Terintegrasi GAEKS Digital",
-                        points: [
-                            { title: "Freight Forwarding & Customs Clearance", desc: "Layanan logistik multimodal internasional dengan jaringan agen global terverifikasi." },
-                            { title: "ERP Forwarding Terpusat (erp.gaeks.com)", desc: "Platform cloud manajemen rantai pasok, billing terintegrasi, dan pemantauan gudang ISO 31000." },
-                            { title: "Otomasi Pemasaran & Media Digital", desc: "Portal SMM mandiri dan pembuatan materi visual berkualitas tinggi untuk pertumbuhan B2B." }
-                        ],
-                        layout: "standard",
-                        momNote: "Disepakati integrasi 3 pilar: Freight, ERP, dan Digital.",
-                        images: [{url:"",caption:""},{url:"",caption:""},{url:"",caption:""},{url:"",caption:""}],
-                        chartType: "bar", chartData: "", tableData: ""
-                    },
-                    {
-                        title: "Proyeksi Pertumbuhan & Target Volume",
-                        points: [
-                            { title: "Peningkatan Kapasitas Kargo Bulanan", desc: "Ekspansi rute laut dan udara menargetkan kenaikan TEUs sebesar 65% di Q4." }
-                        ],
-                        layout: "chart",
-                        momNote: "Target pertumbuhan didukung oleh automasi sistem ERP.",
-                        images: [{url:"",caption:""},{url:"",caption:""},{url:"",caption:""},{url:"",caption:""}],
-                        chartType: "bar",
-                        chartData: "Q1, 120\nQ2, 210\nQ3, 340\nQ4, 520",
-                        tableData: ""
-                    },
-                    {
-                        title: "Alokasi Anggaran & Rencana Tindak Lanjut",
-                        points: [
-                            { title: "Efisiensi Biaya Berkelanjutan", desc: "Matriks pembagian modal kerja untuk infrastruktur cloud dan penguatan jaringan keagenan pelabuhan." }
-                        ],
-                        layout: "table",
-                        momNote: "Alokasi anggaran disetujui pada rapat dewan.",
-                        images: [{url:"",caption:""},{url:"",caption:""},{url:"",caption:""},{url:"",caption:""}],
-                        chartType: "bar",
-                        chartData: "",
-                        tableData: "Kategori\tAlokasi (Juta)\tPersentase\tStatus\nInfrastruktur Cloud ERP\t150\t30%\tAktif\nEkspansi Jaringan Agen\t200\t40%\tBerjalan\nPemasaran Digital (SMM)\t75\t15%\tOptimal\nDana Darurat Operasional\t75\t15%\tTersimpan"
-                    }
-                ]
-            };
-        }
-
-        // ADAPTER GOOGLE SCRIPT RUN EMULATOR
-        var google = {
-            script: {
-                run: {
-                    withSuccessHandler(successFn) {
-                        return {
-                            withFailureHandler(failFn) {
-                                return {
-                                    getMeetingsList() {
-                                        try { setTimeout(() => successFn(getLocalMeetingsList()), 30); }
-                                        catch(e) { if (failFn) failFn(e); }
-                                    },
-                                    saveMeeting(data) {
-                                        try { setTimeout(() => successFn(saveLocalMeeting(data)), 30); }
-                                        catch(e) { if (failFn) failFn(e); }
-                                    },
-                                    getMeetingDetails(id) {
-                                        try { setTimeout(() => successFn(getLocalMeetingDetails(id)), 30); }
-                                        catch(e) { if (failFn) failFn(e); }
-                                    },
-                                    updateMeetingStatus(id, status) {
-                                        try { setTimeout(() => successFn(updateLocalMeetingStatus(id, status)), 30); }
-                                        catch(e) { if (failFn) failFn(e); }
-                                    },
-                                    uploadLocalImageToDrive(filename, mimeType, base64Data) {
-                                        try { setTimeout(() => successFn({ status: "success", url: base64Data }), 30); }
-                                        catch(e) { if (failFn) failFn(e); }
-                                    }
-                                };
-                            },
-                            getMeetingsList() { setTimeout(() => successFn(getLocalMeetingsList()), 30); },
-                            saveMeeting(data) { setTimeout(() => successFn(saveLocalMeeting(data)), 30); },
-                            getMeetingDetails(id) { setTimeout(() => successFn(getLocalMeetingDetails(id)), 30); },
-                            updateMeetingStatus(id, status) { setTimeout(() => successFn(updateLocalMeetingStatus(id, status)), 30); },
-                            uploadLocalImageToDrive(filename, mimeType, base64Data) { setTimeout(() => successFn({ status: "success", url: base64Data }), 30); }
-                        };
-                    }
-                }
-            }
-        };
-        window.google = google;
-
         window.exportJob = { active: false, paused: false, cancelled: false, id: 'exportToastMain', percent: 0, text: '' };
         window.imageBase64Cache = new Map();
 
@@ -533,6 +346,36 @@
         let currentTab = 'active';
         let activeChart = null; 
         const chartColors = ['#2563eb', '#0f766e', '#d4af37', '#e11d48', '#8b5cf6', '#0891b2', '#be123c', '#ea580c', '#475569'];
+
+        async function presentationApi(action, payload = null, query = '') {
+            return GaeksAuth.api('/api/presentation.php?action=' + encodeURIComponent(action) + query, { method: payload ? 'POST' : 'GET', body: payload });
+        }
+
+        let presentationSaveTimer = null;
+        const getLocalMeetingsList = function() { return meetingsList; };
+        const getLocalMeetingDetails = function(id) { return presentationApi('get', null, '&id=' + encodeURIComponent(id)); };
+        const saveLocalMeeting = function(data) {
+            clearTimeout(presentationSaveTimer);
+            presentationSaveTimer = setTimeout(async () => {
+                try { const saved = await presentationApi('save', { data }); Object.assign(data, saved); }
+                catch (error) { console.error('Presentation autosave failed:', error); }
+            }, 900);
+            return { status: 'pending', data };
+        };
+        const updateLocalMeetingStatus = function(id, status) { return presentationApi('status', { id, status }); };
+
+        function createServerRunner(successFn, failureFn) {
+            const run = async operation => { try { return await operation(); } catch (error) { if (failureFn) failureFn(error); else console.error(error); } };
+            return {
+                withFailureHandler(fn) { return createServerRunner(successFn, fn); },
+                getMeetingsList() { run(async()=>{const list=await presentationApi('list');meetingsList=list;successFn(list);}); },
+                saveMeeting(data) { run(async()=>{const saved=await presentationApi('save',{data});Object.assign(data,saved);successFn({status:'success',data:saved});}); },
+                getMeetingDetails(id) { run(async()=>successFn(await presentationApi('get',null,'&id='+encodeURIComponent(id)))); },
+                updateMeetingStatus(id,status) { run(async()=>{await presentationApi('status',{id,status});const list=await presentationApi('list');meetingsList=list;successFn(list);}); },
+                uploadLocalImageToDrive(filename,mimeType,base64Data) { successFn({status:'success',url:base64Data}); }
+            };
+        }
+        var google = window.google = { script: { run: { withSuccessHandler: fn => createServerRunner(fn, null) } } };
 
         const presView = document.getElementById('presentationView');
         const drawCanvas = document.getElementById('presenterCanvas');
@@ -679,7 +522,9 @@
         function showLoader(title, desc) { document.getElementById('loaderTitle').innerText = title; document.getElementById('loaderDesc').innerText = desc; document.getElementById('globalLoader').style.display = 'flex'; document.getElementById('globalLoader').classList.remove('hidden'); }
         function hideLoader() { document.getElementById('globalLoader').style.display = 'none'; }
 
-                document.addEventListener('DOMContentLoaded', () => {
+                document.addEventListener('DOMContentLoaded', async () => {
+            const user = await GaeksAuth.requireAuth('presentation.html' + location.search);
+            if (!user) return;
             const btnNew = document.getElementById('btnCreateNew');
             if (btnNew) {
                 btnNew.addEventListener('click', (e) => {
@@ -759,9 +604,8 @@
 
         function loadDashboard() {
             switchView("dashboard");
-            meetingsList = getLocalMeetingsList();
-            renderDashboardList(meetingsList, currentTab);
-            hideLoader();
+            showLoader("Memuat Workspace", "Mengambil presentasi dari server...");
+            window.google.script.run.withSuccessHandler(list => { meetingsList=list;renderDashboardList(meetingsList,currentTab);hideLoader(); }).withFailureHandler(error => { hideLoader();alert('Gagal memuat presentasi: '+error.message); }).getMeetingsList();
         }
 
         
@@ -1388,13 +1232,10 @@
         function prevSlide() { if(currentSlideIndex > 0) { currentSlideIndex--; renderSlideView(currentSlideIndex); } }
         
                                         function autoSaveAndReturn() {
-            try {
-                if (activeMeeting) {
-                    pullDataFromForm();
-                    saveLocalMeeting(activeMeeting);
-                }
-            } catch(e) { console.warn("Auto save on return:", e); }
-            loadDashboard();
+            if (!activeMeeting) { loadDashboard(); return; }
+            try { pullDataFromForm(); } catch(e) { console.warn("Auto save on return:", e); }
+            showLoader('Menyimpan Presentasi','Mengirim perubahan ke server...');
+            window.google.script.run.withSuccessHandler(()=>loadDashboard()).withFailureHandler(error=>{hideLoader();alert('Gagal menyimpan: '+error.message);}).saveMeeting(activeMeeting);
         }
         window.autoSaveAndReturn = autoSaveAndReturn;
 
@@ -1405,13 +1246,8 @@
             if (newName !== null && newName.trim() !== "") {
                 m.name = newName.trim();
                 m.meetingName = newName.trim();
-                const details = getLocalMeetingDetails(id);
-                if (details) {
-                    details.meetingName = newName.trim();
-                    try { localStorage.setItem(GAEKS_PRES_ITEM_KEY(id), JSON.stringify(details)); } catch(e){}
-                }
-                saveLocalMeeting(details || m);
-                loadDashboard();
+                showLoader('Mengubah Nama','Menyimpan perubahan...');
+                window.google.script.run.withSuccessHandler(details=>{details.meetingName=newName.trim();window.google.script.run.withSuccessHandler(()=>loadDashboard()).withFailureHandler(error=>{hideLoader();alert(error.message);}).saveMeeting(details);}).withFailureHandler(error=>{hideLoader();alert(error.message);}).getMeetingDetails(id);
             }
         }
         window.renameMeeting = renameMeeting;
@@ -1429,7 +1265,6 @@
 
             if (view === 'dashboard') { 
                 if (vDash) { vDash.classList.remove('hidden'); vDash.style.setProperty('display', 'block', 'important'); }
-                loadDashboard();
             } 
             else if (view === 'admin') { 
                 if (header) { header.classList.add('hidden'); header.style.setProperty('display', 'none', 'important'); }
