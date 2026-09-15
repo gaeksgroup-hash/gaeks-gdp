@@ -1,0 +1,34 @@
+# Runtime configuration and secrets
+.env
+.env.*
+!.env.example
+config/local.php
+config/*.local.php
+
+# Runtime data must stay outside the public artifact
+private-runtime/
+api/data/
+api/otp_store.json
+api/users_registry.json
+*.sqlite
+*.sqlite3
+*.log
+
+# Dependencies and build output
+vendor/
+node_modules/
+.cache/
+dist/
+
+# Local tooling and editors
+.idea/
+.vscode/
+*.tmp
+*.swp
+
+# Backups and generated archives
+.gdp_backups/
+.gdp_task*_backup_*/
+*.bak
+*.zip
+*.tar.gz
