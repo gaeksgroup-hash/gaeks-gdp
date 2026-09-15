@@ -130,8 +130,8 @@ checkout/document root.
 
 ## 6. Smoke test setelah cutover
 
-1. Buka `https://gdp.gaeks.com/api/health.php`; status harus sukses dan database
-   harus `connected`.
+1. Buka `https://gdp.gaeks.com/api/health.php`; respons harus `ok: true` dan nilai
+   `data.database` harus `ok`.
 2. Buka incognito, daftar dengan email test, selesaikan Turnstile dan OTP.
 3. Pastikan email OTP dan welcome masuk ke pengguna.
 4. Pastikan notifikasi pengguna baru masuk ke `gdp@gaeks.com`.
