@@ -1,1 +1,96 @@
-<!doctype html><html lang="id"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Katalog E-book | GAEKS</title><script src="https://cdn.tailwindcss.com"></script><body class="bg-slate-950 text-white"><main class="max-w-6xl mx-auto p-6 md:p-12"><a href="index.html" class="text-slate-400">← GAEKS Digital</a><p class="mt-10 text-indigo-300 font-bold tracking-widest text-xs">DIGITAL LIBRARY</p><h1 class="text-5xl font-black mt-3">E-book untuk bekerja lebih tajam.</h1><p class="text-slate-400 mt-4 max-w-2xl">Pilihan panduan digital profesional. Pembayaran aman akan tersedia setelah checkout Midtrans diaktifkan.</p><div id="books" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12"></div></main><script>fetch('/api/ebooks.php?action=catalog',{headers:{Accept:'application/json'}}).then(r=>r.json()).then(x=>{books.innerHTML=(x.data||[]).map(b=>`<article class="rounded-3xl bg-slate-900 border border-slate-800 overflow-hidden"><div class="h-44 bg-gradient-to-br from-indigo-600 to-fuchsia-700">${b.coverUrl?`<img class="w-full h-full object-cover" src="${b.coverUrl}">`:''}</div><div class="p-6"><h2 class="font-bold text-xl">${b.title}</h2><p class="text-slate-400 text-sm mt-3 line-clamp-3">${b.description}</p><div class="mt-6 flex justify-between items-center"><b>Rp${b.priceIdr.toLocaleString('id-ID')}</b><button disabled class="text-xs rounded-lg px-3 py-2 bg-slate-800 text-slate-400">Segera hadir</button></div></div></article>`).join('')||'<p class="text-slate-400">Belum ada e-book yang dipublikasikan.</p>'})</script></body></html>
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Jelajahi koleksi e-book profesional GAEKS Digital.">
+  <title>Katalog E-book | GAEKS Digital</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="auth.js?v=20260922-1" defer></script>
+  <style>
+    :root { font-family: "Plus Jakarta Sans", system-ui, sans-serif; color: #ecf3ff; background: #080f20; }
+    * { box-sizing: border-box; } body { margin: 0; min-width: 320px; } a { color: inherit; text-decoration: none; } button { font: inherit; }
+    .shell { width: min(1160px, calc(100% - 40px)); margin: auto; }
+    header { border-bottom: 1px solid #25314b; background: rgba(8, 15, 32, .86); }
+    .nav { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .brand { font-weight: 800; letter-spacing: -.04em; font-size: 18px; } .brand span { color: #96baff; }
+    .nav-links { display: flex; gap: 22px; align-items: center; font-size: 13px; font-weight: 700; } .nav-links a { color: #b8c6db; } .nav-links a:hover { color: #fff; } [hidden] { display: none !important; }
+    .hero { padding: 84px 0 66px; background: radial-gradient(ellipse at 80% 0, #283071 0, transparent 48%), radial-gradient(ellipse at 0 100%, #122a4e 0, transparent 45%); }
+    .eyebrow { text-transform: uppercase; color: #a4baff; font-size: 11px; letter-spacing: .22em; font-weight: 800; }
+    h1 { margin: 18px 0; max-width: 760px; font-size: clamp(38px, 6vw, 68px); line-height: 1.1; letter-spacing: -.06em; }
+    .intro { color: #b6c4d9; max-width: 680px; line-height: 1.8; }
+    .catalog { padding: 20px 0 90px; } .catalog-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 25px; }
+    .catalog-bar h2 { margin: 0; font-size: 21px; letter-spacing: -.03em; }
+    .refresh { cursor: pointer; border: 1px solid #34435f; color: #d6e5fc; background: #16243d; border-radius: 12px; padding: 10px 16px; } .refresh:hover { background: #24385b; }
+    .books { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+    .book { border: 1px solid #2b3956; border-radius: 22px; background: #131f36; overflow: hidden; box-shadow: 0 18px 50px rgba(0, 0, 0, .14); }
+    .cover { height: 240px; background: linear-gradient(135deg, #355bd3, #8062be 68%, #e396bd); display: grid; place-items: center; }
+    .cover img { display: block; width: 100%; height: 100%; object-fit: cover; } .cover span { font-weight: 800; font-size: 45px; letter-spacing: -.08em; opacity: .75; }
+    .book-body { padding: 24px; } .book h3 { margin: 0; font-size: 21px; line-height: 1.35; } .book p { color: #acbad2; font-size: 14px; line-height: 1.7; min-height: 72px; overflow-wrap: anywhere; }
+    .book-footer { border-top: 1px solid #2b3956; padding-top: 18px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .price { font-weight: 800; font-size: 17px; } .soon { border: 1px solid #46536f; background: #26334d; color: #b9c8dc; border-radius: 9px; padding: 9px 12px; font-size: 12px; font-weight: 700; }
+    .notice { grid-column: 1 / -1; border: 1px solid #2b3956; background: #131f36; border-radius: 18px; padding: 28px; color: #b9c8dc; }
+    .fine-print { color: #8193ad; font-size: 12px; line-height: 1.6; margin-top: 32px; }
+    @media (max-width: 850px) { .books { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 580px) { .shell { width: min(100% - 28px, 1160px); } .nav { min-height: 68px; } .nav-links { gap: 12px; } .hero { padding: 66px 0 48px; } .books { grid-template-columns: 1fr; } .cover { height: 210px; } }
+  </style>
+</head>
+<body>
+  <header><div class="shell nav"><a class="brand" href="index.html">GAEKS <span>Digital</span></a><nav class="nav-links" aria-label="Navigasi"><a href="index.html">Beranda</a><a id="admin-link" href="admin-ebooks.html" hidden>Kelola e-book</a><a href="profile.html">Akun</a></nav></div></header>
+  <main>
+    <section class="hero"><div class="shell"><span class="eyebrow">Digital library</span><h1>Ide baru dimulai dari bacaan yang tepat.</h1><p class="intro">Jelajahi e-book pilihan GAEKS Digital. Setiap judul yang diterbitkan admin tersedia di katalog ini; pembayaran dan akses unduh akan diaktifkan setelah integrasi checkout selesai.</p></div></section>
+    <section class="shell catalog" aria-labelledby="catalog-heading"><div class="catalog-bar"><h2 id="catalog-heading">Koleksi e-book</h2><button class="refresh" id="refresh" type="button">Perbarui katalog</button></div><div class="books" id="books" aria-live="polite"><div class="notice">Memuat katalog…</div></div><p class="fine-print">Harga yang ditampilkan belum merupakan transaksi. Saat ini checkout belum tersedia dan tidak ada pembayaran yang diproses.</p></section>
+  </main>
+  <script>
+    (function () {
+      'use strict';
+      const container = document.getElementById('books');
+      const money = new Intl.NumberFormat('id-ID');
+      let loading = false;
+      function notice(message) { container.replaceChildren(); const el = document.createElement('div'); el.className = 'notice'; el.textContent = message; container.append(el); }
+      function bookCard(book) {
+        const card = document.createElement('article'); card.className = 'book';
+        const cover = document.createElement('div'); cover.className = 'cover';
+        if (book.coverUrl) {
+          try {
+            const url = new URL(book.coverUrl, location.href);
+            if (url.origin === location.origin && url.pathname.endsWith('/api/ebooks.php')) {
+              const image = document.createElement('img'); image.src = url.href; image.alt = 'Sampul ' + String(book.title || 'e-book'); image.loading = 'lazy'; cover.append(image);
+            }
+          } catch (_) { /* Use a placeholder for invalid cover URLs. */ }
+        }
+        if (!cover.childElementCount) { const symbol = document.createElement('span'); symbol.textContent = 'G.'; symbol.setAttribute('aria-hidden', 'true'); cover.append(symbol); }
+        const body = document.createElement('div'); body.className = 'book-body';
+        const title = document.createElement('h3'); title.textContent = String(book.title || 'Tanpa judul');
+        const description = document.createElement('p'); description.textContent = String(book.description || '');
+        const footer = document.createElement('div'); footer.className = 'book-footer';
+        const price = document.createElement('span'); price.className = 'price'; price.textContent = 'Rp' + money.format(Number(book.priceIdr) || 0);
+        const soon = document.createElement('button'); soon.className = 'soon'; soon.type = 'button'; soon.disabled = true; soon.textContent = 'Segera hadir';
+        footer.append(price, soon); body.append(title, description, footer); card.append(cover, body);
+        return card;
+      }
+      async function loadBooks() {
+        if (loading) return;
+        loading = true;
+        document.getElementById('refresh').disabled = true;
+        try {
+          const response = await fetch('/api/ebooks.php?action=catalog&t=' + Date.now(), { credentials: 'same-origin', cache: 'no-store', headers: { Accept: 'application/json' } });
+          const result = await response.json();
+          if (!response.ok || !result.ok || !Array.isArray(result.data)) throw new Error('Katalog tidak dapat dimuat. Coba beberapa saat lagi.');
+          const books = result.data.filter(book => book.status === 'published');
+          if (!books.length) notice('Belum ada e-book yang diterbitkan. Silakan kembali lagi nanti.');
+          else container.replaceChildren(...books.map(bookCard));
+        } catch (error) { notice(error.message || 'Katalog tidak dapat dimuat.'); }
+        finally { loading = false; document.getElementById('refresh').disabled = false; }
+      }
+      document.getElementById('refresh').addEventListener('click', loadBooks);
+      document.addEventListener('visibilitychange', function () { if (!document.hidden) loadBooks(); });
+      window.addEventListener('pageshow', function (event) { if (event.persisted) loadBooks(); });
+      if (window.GaeksAuth && window.GaeksAuth.ready) window.GaeksAuth.ready.then(user => { document.getElementById('admin-link').hidden = !user || !user.isAdmin; });
+      loadBooks();
+    }());
+  </script>
+</body>
+</html>

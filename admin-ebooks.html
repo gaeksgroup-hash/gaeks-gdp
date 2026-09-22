@@ -1,1 +1,197 @@
-<!doctype html><html lang="id"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin E-book | GAEKS</title><script src="https://cdn.tailwindcss.com"></script><script src="auth.js"></script><body class="bg-slate-950 text-white"><main class="max-w-3xl mx-auto p-6 md:p-12"><h1 class="text-3xl font-black">Katalog E-book</h1><p class="text-slate-400 mt-2">Admin · upload file disimpan privat di server.</p><form id="form" class="mt-8 grid gap-4 bg-slate-900 p-6 rounded-2xl" enctype="multipart/form-data"><input name="title" required placeholder="Judul e-book" class="p-3 rounded bg-slate-800"><textarea name="description" required placeholder="Deskripsi" class="p-3 rounded bg-slate-800"></textarea><input name="priceIdr" required type="number" min="0" placeholder="Harga IDR" class="p-3 rounded bg-slate-800"><label>Cover <input name="cover" type="file" accept="image/*"></label><label>File e-book (PDF/EPUB) <input name="file" required type="file" accept=".pdf,.epub"></label><select name="status" class="p-3 rounded bg-slate-800"><option value="draft">Draft</option><option value="published">Publikasikan</option></select><button class="p-3 rounded bg-indigo-600 font-bold">Tambah e-book</button><p id="msg"></p></form></main><script>GaeksAuth.ready.then(u=>{if(!u?.isAdmin)location.replace('index.html')});form.onsubmit=async e=>{e.preventDefault();let f=new FormData(form);f.append('action','create');try{let r=await fetch('/api/ebooks.php?action=create',{method:'POST',credentials:'same-origin',headers:{'X-CSRF-Token':document.cookie.match(/(?:^|; )gaeks_csrf=([^;]+)/)?.[1]||''},body:f});let x=await r.json();if(!x.ok)throw Error(x.message);msg.textContent='E-book berhasil ditambahkan.';form.reset()}catch(e){msg.textContent=e.message}}</script></body></html>
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Kelola E-book | GAEKS GDP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="auth.js" defer></script>
+  <style>[hidden] { display: none !important; }</style>
+</head>
+<body class="min-h-screen bg-slate-950 text-white">
+  <main id="admin" class="mx-auto max-w-6xl px-5 py-8 md:px-8 md:py-12" hidden>
+    <header class="flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <a href="index.html" class="text-sm text-slate-400 transition hover:text-white">← Kembali ke GDP</a>
+        <p class="mt-8 text-xs font-bold uppercase tracking-[.24em] text-indigo-300">Admin · Digital Library</p>
+        <h1 class="mt-2 text-4xl font-black tracking-tight md:text-5xl">Kelola e-book</h1>
+        <p class="mt-3 max-w-2xl text-slate-400">Unggah produk digital dan atur tampilannya di katalog. File e-book hanya disimpan di area privat server.</p>
+      </div>
+      <a href="ebooks.html" target="_blank" rel="noopener" class="rounded-xl border border-indigo-400/40 px-4 py-3 text-sm font-semibold text-indigo-200 transition hover:bg-indigo-500/10">Lihat katalog publik ↗</a>
+    </header>
+
+    <div class="mt-10 grid gap-8 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)]">
+      <section class="h-fit rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-2xl shadow-black/20 md:p-7">
+        <h2 class="text-xl font-bold">Tambah e-book</h2>
+        <p class="mt-1 text-sm text-slate-400">Pilihan “Publikasikan” menampilkan produk di katalog segera setelah berhasil disimpan.</p>
+        <form id="create-form" class="mt-6 grid gap-4" enctype="multipart/form-data">
+          <label class="grid gap-2 text-sm font-medium" for="title">Judul
+            <input id="title" name="title" required maxlength="255" autocomplete="off" placeholder="Judul e-book" class="rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-indigo-400">
+          </label>
+          <label class="grid gap-2 text-sm font-medium" for="description">Deskripsi
+            <textarea id="description" name="description" required rows="4" maxlength="10000" placeholder="Ringkasan untuk pembaca" class="rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-indigo-400"></textarea>
+          </label>
+          <label class="grid gap-2 text-sm font-medium" for="price">Harga (rupiah)
+            <input id="price" name="priceIdr" required type="number" min="0" max="2147483647" step="1" inputmode="numeric" placeholder="33000" class="rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-indigo-400">
+          </label>
+          <label class="grid gap-2 text-sm font-medium" for="cover">Cover (opsional, JPG/PNG/WebP, maksimal 5 MB)
+            <input id="cover" name="cover" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" class="block w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-indigo-500/20 file:px-3 file:py-2 file:text-indigo-200">
+          </label>
+          <label class="grid gap-2 text-sm font-medium" for="file">File e-book (PDF/EPUB, maksimal 50 MB)
+            <input id="file" name="file" required type="file" accept=".pdf,.epub,application/pdf,application/epub+zip" class="block w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-indigo-500/20 file:px-3 file:py-2 file:text-indigo-200">
+          </label>
+          <label class="grid gap-2 text-sm font-medium" for="status">Status awal
+            <select id="status" name="status" class="rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-indigo-400">
+              <option value="published" selected>Publikasikan langsung</option>
+              <option value="draft">Simpan sebagai draft</option>
+            </select>
+          </label>
+          <button id="create-button" type="submit" class="mt-2 rounded-xl bg-indigo-600 px-5 py-3 font-bold transition hover:bg-indigo-500 disabled:cursor-wait disabled:opacity-60">Tambah e-book</button>
+          <p id="form-message" role="status" aria-live="polite" class="min-h-6 text-sm text-slate-300"></p>
+        </form>
+      </section>
+
+      <section class="min-w-0">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div><h2 class="text-2xl font-bold">Daftar e-book</h2><p id="list-count" class="mt-1 text-sm text-slate-400">Memuat daftar…</p></div>
+          <button id="refresh-button" type="button" class="rounded-xl border border-slate-700 px-4 py-2 text-sm font-semibold transition hover:border-indigo-400">Muat ulang</button>
+        </div>
+        <p id="list-message" role="status" aria-live="polite" class="mt-4 min-h-6 text-sm text-slate-400"></p>
+        <div id="book-list" class="mt-2 grid gap-4"></div>
+      </section>
+    </div>
+  </main>
+  <p id="checking" class="px-6 py-12 text-center text-slate-400">Memeriksa akses admin…</p>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const admin = document.getElementById('admin');
+      const checking = document.getElementById('checking');
+      const form = document.getElementById('create-form');
+      const formMessage = document.getElementById('form-message');
+      const list = document.getElementById('book-list');
+      const listCount = document.getElementById('list-count');
+      const listMessage = document.getElementById('list-message');
+
+      function csrfToken() {
+        const match = document.cookie.match(/(?:^|; )gaeks_csrf=([^;]*)/);
+        return match ? decodeURIComponent(match[1]) : '';
+      }
+
+      function makeText(tag, className, value) {
+        const node = document.createElement(tag);
+        node.className = className;
+        node.textContent = value;
+        return node;
+      }
+
+      function renderBooks(books) {
+        list.replaceChildren();
+        listCount.textContent = books.length + ' e-book tersimpan';
+        if (!books.length) {
+          list.append(makeText('p', 'rounded-2xl border border-dashed border-slate-700 p-8 text-slate-400', 'Belum ada e-book. Tambahkan yang pertama melalui formulir di samping.'));
+          return;
+        }
+        for (const book of books) {
+          const article = document.createElement('article');
+          article.className = 'rounded-2xl border border-slate-800 bg-slate-900/80 p-5';
+          const top = document.createElement('div');
+          top.className = 'flex flex-wrap items-start justify-between gap-3';
+          const details = document.createElement('div');
+          details.className = 'min-w-0 flex-1';
+          details.append(makeText('h3', 'break-words text-lg font-bold', book.title));
+          details.append(makeText('p', 'mt-1 text-sm text-slate-400', 'Rp' + Number(book.priceIdr).toLocaleString('id-ID') + ' · ' + String(book.createdAt || '').slice(0, 10)));
+          top.append(details);
+          const badge = makeText('span', 'rounded-full px-3 py-1 text-xs font-bold ' + (book.status === 'published' ? 'bg-emerald-500/15 text-emerald-300' : 'bg-slate-700 text-slate-200'), book.status === 'published' ? 'Tayang' : book.status === 'draft' ? 'Draft' : 'Arsip');
+          top.append(badge);
+          article.append(top);
+          article.append(makeText('p', 'mt-4 whitespace-pre-wrap break-words text-sm text-slate-300', book.description));
+
+          const controls = document.createElement('div');
+          controls.className = 'mt-5 flex flex-wrap items-center gap-3 border-t border-slate-800 pt-4';
+          const select = document.createElement('select');
+          select.className = 'rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm';
+          select.setAttribute('aria-label', 'Status untuk ' + book.title);
+          for (const [value, label] of [['draft', 'Draft'], ['published', 'Tayang'], ['archived', 'Arsip']]) {
+            const option = new Option(label, value);
+            select.add(option);
+          }
+          select.value = book.status;
+          const save = makeText('button', 'rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold transition hover:bg-indigo-500 disabled:opacity-50', 'Simpan status');
+          save.type = 'button';
+          save.disabled = true;
+          select.addEventListener('change', () => { save.disabled = select.value === book.status; });
+          save.addEventListener('click', async () => {
+            save.disabled = true;
+            listMessage.textContent = 'Menyimpan status…';
+            try {
+              await GaeksAuth.api('/api/ebooks.php?action=set_status', { method: 'POST', body: { id: book.id, status: select.value } });
+              listMessage.textContent = 'Status berhasil diperbarui. Katalog publik ikut berubah.';
+              await loadBooks();
+            } catch (error) {
+              listMessage.textContent = error.message;
+              save.disabled = false;
+            }
+          });
+          controls.append(select, save);
+          if (book.status === 'published') {
+            const link = makeText('a', 'text-sm font-semibold text-indigo-300 hover:text-indigo-200', 'Lihat di katalog ↗');
+            link.href = 'ebooks.html';
+            link.target = '_blank';
+            link.rel = 'noopener';
+            controls.append(link);
+          }
+          article.append(controls);
+          list.append(article);
+        }
+      }
+
+      async function loadBooks() {
+        try {
+          const books = await GaeksAuth.api('/api/ebooks.php?action=admin_list', { method: 'GET' });
+          renderBooks(Array.isArray(books) ? books : []);
+        } catch (error) {
+          listMessage.textContent = 'Daftar belum dapat dimuat: ' + error.message;
+        }
+      }
+
+      GaeksAuth.ready.then(user => {
+        if (!user) {
+          location.replace('/login.html?redirect=' + encodeURIComponent('admin-ebooks.html'));
+          return;
+        }
+        if (!user.isAdmin) {
+          checking.textContent = 'Halaman ini hanya tersedia untuk admin.';
+          return;
+        }
+        checking.hidden = true;
+        admin.hidden = false;
+        loadBooks();
+      });
+
+      document.getElementById('refresh-button').addEventListener('click', loadBooks);
+      form.addEventListener('submit', async event => {
+        event.preventDefault();
+        const button = document.getElementById('create-button');
+        button.disabled = true;
+        formMessage.textContent = 'Mengunggah dan menyimpan e-book…';
+        try {
+          const response = await fetch('/api/ebooks.php?action=create', {
+            method: 'POST', credentials: 'same-origin',
+            headers: { Accept: 'application/json', 'X-CSRF-Token': csrfToken() },
+            body: new FormData(form)
+          });
+          const payload = await response.json();
+          if (!response.ok || !payload.ok) throw new Error(payload.error?.message || payload.message || 'Gagal menambah e-book.');
+          formMessage.textContent = payload.data?.status === 'published' ? 'E-book berhasil diterbitkan dan langsung tampil di katalog.' : 'E-book berhasil disimpan sebagai draft.';
+          form.reset();
+          await loadBooks();
+        } catch (error) {
+          formMessage.textContent = error.message;
+        } finally {
+          button.disabled = false;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

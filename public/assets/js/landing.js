@@ -1,5 +1,6 @@
 (function () {
   "use strict";
+  var sessionChecked = false;
 
   function currentUser() {
     try {
@@ -29,14 +30,23 @@
   function updateAccountUI() {
     var user = currentUser();
     var loginLinks = document.querySelectorAll("[data-login-link]");
+    var profileLinks = document.querySelectorAll("[data-profile-link]");
     var pill = document.querySelector("[data-user-pill]");
     loginLinks.forEach(function (link) {
-      link.hidden = Boolean(user);
-      link.style.display = user ? "none" : "";
-      link.setAttribute("aria-hidden", user ? "true" : "false");
+      var showLogin = sessionChecked && !user;
+      link.hidden = !showLogin;
+      link.style.display = showLogin ? "" : "none";
+      link.setAttribute("aria-hidden", showLogin ? "false" : "true");
+    });
+    profileLinks.forEach(function (link) {
+      link.hidden = !user;
+      link.style.display = user ? "" : "none";
+      link.setAttribute("aria-hidden", user ? "false" : "true");
     });
     if (!pill) return;
     pill.classList.toggle("is-visible", Boolean(user));
+    pill.hidden = !user;
+    pill.setAttribute("aria-hidden", user ? "false" : "true");
     if (!user) return;
     var avatar = pill.querySelector("[data-user-avatar]");
     var name = pill.querySelector("[data-user-name]");
@@ -93,7 +103,18 @@
     setupProductActions();
     setupReveal();
     updateAccountUI();
+    if (window.GaeksAuth && window.GaeksAuth.ready) {
+      window.GaeksAuth.ready.then(function () { sessionChecked = true; updateAccountUI(); }, function () { sessionChecked = true; updateAccountUI(); });
+    } else {
+      sessionChecked = true;
+      updateAccountUI();
+    }
   });
-  window.addEventListener("pageshow", updateAccountUI);
+  window.addEventListener("pageshow", function (event) {
+    updateAccountUI();
+    if (event.persisted && window.GaeksAuth && typeof window.GaeksAuth.refreshSession === "function") {
+      window.GaeksAuth.refreshSession().then(updateAccountUI, updateAccountUI);
+    }
+  });
   window.addEventListener("gaeks-auth-change", updateAccountUI);
 }());
