@@ -1,0 +1,14 @@
+<?php
+declare(strict_types=1); require_once __DIR__.'/bootstrap.php'; $pdo=gaeks_db(); $action=(string)($_GET['action']??$_POST['action']??'catalog');
+function ebook_admin(array $u): void { if(($u['role']??'')!=='admin')gaeks_error('forbidden','Akses admin diperlukan.',403); }
+function ebook_row(array $r): array { return ['id'=>$r['id'],'title'=>$r['title'],'slug'=>$r['slug'],'description'=>$r['description'],'priceIdr'=>(int)$r['price_idr'],'coverUrl'=>$r['cover_path']?'/api/ebooks.php?action=cover&id='.rawurlencode($r['id']):null,'status'=>$r['status']]; }
+if($action==='catalog'){ $s=$pdo->query("SELECT * FROM ebooks WHERE status='published' ORDER BY created_at DESC");gaeks_ok(array_map('ebook_row',$s->fetchAll())); }
+if($action==='cover'){ $id=(string)($_GET['id']??'');$s=$pdo->prepare('SELECT cover_path FROM ebooks WHERE id=:id AND status=\'published\'');$s->execute([':id'=>$id]);$path=$s->fetchColumn();if(!$path||!is_file($path))gaeks_error('not_found','Cover tidak ditemukan.',404);header('Content-Type: '.(mime_content_type($path)?:'image/jpeg'));readfile($path);exit; }
+$user=gaeks_current_user(); ebook_admin($user);
+if($action==='admin_list'){ $s=$pdo->query('SELECT * FROM ebooks ORDER BY created_at DESC');gaeks_ok(array_map('ebook_row',$s->fetchAll())); }
+if($action==='create'){
+ gaeks_require_csrf($user);$title=trim((string)($_POST['title']??''));$description=trim((string)($_POST['description']??''));$price=(int)($_POST['priceIdr']??0);$status=(string)($_POST['status']??'draft');if($title===''||$description===''||$price<0||!in_array($status,['draft','published'],true))gaeks_error('invalid_input','Data e-book belum lengkap.',422);if(empty($_FILES['file']['tmp_name']))gaeks_error('file_required','File e-book wajib dipilih.',422);
+ $root=dirname(__DIR__,3).'/private-runtime/ebooks';if(!is_dir($root)&&!mkdir($root,0700,true))throw new RuntimeException('Storage e-book tidak tersedia.');$id=gaeks_uuid();$file=$root.'/'.$id.'-'.preg_replace('/[^A-Za-z0-9._-]/','_',$_FILES['file']['name']);if(!move_uploaded_file($_FILES['file']['tmp_name'],$file))gaeks_error('upload_failed','File e-book gagal diunggah.',500);$cover=null;if(!empty($_FILES['cover']['tmp_name'])){$cover=$root.'/'.$id.'-cover';move_uploaded_file($_FILES['cover']['tmp_name'],$cover);}
+ $slug=substr(trim(preg_replace('/[^a-z0-9]+/','-',strtolower($title)),'-'),0,160).'-'.substr(str_replace('-','',$id),0,8);$pdo->prepare('INSERT INTO ebooks(id,title,slug,description,price_idr,cover_path,file_path,status,created_by)VALUES(:id,:title,:slug,:description,:price,:cover,:file,:status,:creator)')->execute([':id'=>$id,':title'=>$title,':slug'=>$slug,':description'=>$description,':price'=>$price,':cover'=>$cover,':file'=>$file,':status'=>$status,':creator'=>$user['id']]);gaeks_audit($pdo,$user['id'],'ebook.created','ebook',$id);gaeks_ok(['id'=>$id],201,'E-book ditambahkan.');
+}
+gaeks_error('unknown_action','Aksi e-book tidak dikenal.',404);
