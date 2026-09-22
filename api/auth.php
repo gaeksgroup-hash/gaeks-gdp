@@ -41,6 +41,9 @@ if ($action === 'me') {
     $user=gaeks_current_user(false); if(!$user)gaeks_error('unauthenticated','Belum masuk.',401); gaeks_ok(['user'=>gaeks_user_payload($user)]);
 }
 
+if ($action === 'profile_update') { $user=gaeks_current_user(); gaeks_require_csrf($user); $name=auth_name((string)($input['name']??'')); $pdo->prepare('UPDATE users SET name=:name WHERE id=:id')->execute([':name'=>$name,':id'=>$user['id']]); $user['name']=$name; gaeks_ok(['user'=>gaeks_user_payload($user)],200,'Nama diperbarui.'); }
+if ($action === 'password_change') { $user=gaeks_current_user(); gaeks_require_csrf($user); $current=(string)($input['currentPassword']??'');$next=auth_password((string)($input['newPassword']??'')); if(empty($user['password_hash'])||!password_verify($current,(string)$user['password_hash']))gaeks_error('invalid_credentials','Kata sandi saat ini salah.',422); $pdo->prepare('UPDATE users SET password_hash=:password WHERE id=:id')->execute([':password'=>password_hash($next,PASSWORD_DEFAULT),':id'=>$user['id']]);$pdo->prepare('UPDATE sessions SET revoked_at=UTC_TIMESTAMP() WHERE user_id=:id AND id<>:session')->execute([':id'=>$user['id'],':session'=>$user['session_id']]);gaeks_ok(null,200,'Kata sandi diperbarui.'); }
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') gaeks_error('method_not_allowed','Gunakan metode POST.',405);
 
 if ($action === 'register_request' || $action === 'send_otp') {

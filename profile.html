@@ -58,6 +58,8 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <form id="profile-form" class="p-6 bg-slate-900/80 rounded-2xl border border-slate-800 space-y-3"><h3 class="text-sm font-bold text-blue-400">Profil</h3><label class="text-xs text-slate-400">Nama<input id="profile-name-input" required minlength="2" class="mt-1 w-full rounded-lg bg-slate-950 border border-slate-700 p-2 text-white"></label><button class="px-4 py-2 bg-blue-600 rounded-lg text-xs font-bold">Simpan nama</button><p id="profile-message" class="text-xs text-emerald-300"></p></form>
+      <form id="password-form" class="p-6 bg-slate-900/80 rounded-2xl border border-slate-800 space-y-3"><h3 class="text-sm font-bold text-amber-400">Ganti kata sandi</h3><input id="current-password" type="password" required placeholder="Kata sandi saat ini" class="w-full rounded-lg bg-slate-950 border border-slate-700 p-2 text-white"><input id="new-password" type="password" required minlength="8" placeholder="Kata sandi baru (min. 8 karakter)" class="w-full rounded-lg bg-slate-950 border border-slate-700 p-2 text-white"><button class="px-4 py-2 bg-amber-600 rounded-lg text-xs font-bold">Perbarui password</button></form>
       
       <div class="p-6 bg-slate-900/80 rounded-2xl border border-slate-800 space-y-4">
         <h3 class="text-sm font-bold uppercase tracking-wider text-blue-400">Status Langganan Anda</h3>
@@ -134,6 +136,7 @@
       }
 
       document.getElementById('prof-name').innerText = user.name || 'Pengguna GAEKS';
+      document.getElementById('profile-name-input').value = user.name || '';
       document.getElementById('prof-email').innerText = user.email || '-';
       document.getElementById('prof-avatar').src = user.avatar || ('https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(user.name || 'User'));
       document.getElementById('prof-provider').innerText = (user.provider || 'email') + ' authentication';
@@ -157,6 +160,8 @@
 
     window.addEventListener('DOMContentLoaded', renderProfile);
     window.addEventListener('pageshow', renderProfile);
+    document.getElementById('profile-form').addEventListener('submit',async e=>{e.preventDefault();try{const d=await GaeksAuth.api('/api/auth.php',{method:'POST',body:{action:'profile_update',name:document.getElementById('profile-name-input').value}});sessionStorage.setItem('gaeks_authenticated_user',JSON.stringify(d.user));document.getElementById('profile-message').textContent='Nama berhasil diperbarui.';renderProfile()}catch(e){document.getElementById('profile-message').textContent=e.message}});
+    document.getElementById('password-form').addEventListener('submit',async e=>{e.preventDefault();try{await GaeksAuth.api('/api/auth.php',{method:'POST',body:{action:'password_change',currentPassword:document.getElementById('current-password').value,newPassword:document.getElementById('new-password').value}});e.target.reset();alert('Password berhasil diperbarui.')}catch(e){alert(e.message)}});
   </script>
 </body>
 </html>

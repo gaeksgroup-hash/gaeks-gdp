@@ -194,6 +194,7 @@
                     <button onclick="runNativePDFExport()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2 rounded-lg font-bold text-sm shadow-md transition-all cursor-pointer flex items-center gap-2">📄 Download PDF</button>
                     
                     <button onclick="switchView('presentation')" class="bg-blue-500 hover:bg-blue-400 text-white px-5 py-2 rounded-lg font-bold text-sm shadow-md transition-colors cursor-pointer ml-2">📺 Play Presentation</button>
+                    <button onclick="shareCurrentPresentation()" class="bg-violet-600 hover:bg-violet-500 text-white px-5 py-2 rounded-lg font-bold text-sm shadow-md transition-colors cursor-pointer">🔗 Bagikan publik</button>
                     <button onclick="saveCurrentMeeting()" id="btnSave" class="bg-emerald-500 hover:bg-emerald-400 text-white px-8 py-2 rounded-lg font-bold text-sm shadow-md transition-colors cursor-pointer">💾 Simpan Progress</button>
                 </div>
             </div>
@@ -349,6 +350,11 @@
 
         async function presentationApi(action, payload = null, query = '') {
             return GaeksAuth.api('/api/presentation.php?action=' + encodeURIComponent(action) + query, { method: payload ? 'POST' : 'GET', body: payload });
+        }
+        async function shareCurrentPresentation() {
+            if (!activeMeeting || !activeMeeting.id) { alert('Simpan presentasi terlebih dahulu.'); return; }
+            try { const result = await presentationApi('share', { id: activeMeeting.id }); await navigator.clipboard.writeText(result.url); alert('Link view-only disalin. Pemirsa tidak dapat melihat MOM atau mengubah presentasi.'); }
+            catch (error) { alert(error.message || 'Link tidak dapat dibuat.'); }
         }
 
         let presentationSaveTimer = null;

@@ -2,13 +2,21 @@
 declare(strict_types=1);
 require_once __DIR__ . '/bootstrap.php';
 
-$pdo=gaeks_db();$user=gaeks_current_user();$uid=(string)$user['id'];$input=$_SERVER['REQUEST_METHOD']==='POST'?gaeks_input(8388608):[];$action=(string)($_GET['action']??$input['action']??'list');if($_SERVER['REQUEST_METHOD']==='POST')gaeks_require_csrf($user);
+$pdo=gaeks_db();$input=$_SERVER['REQUEST_METHOD']==='POST'?gaeks_input(8388608):[];$action=(string)($_GET['action']??$input['action']??'list');
+if($action==='public'){
+    $token=trim((string)($_GET['token']??'')); if(!preg_match('/^[a-f0-9]{48}$/',$token))gaeks_error('not_found','Link presentasi tidak ditemukan.',404);
+    $s=$pdo->prepare('SELECT p.* FROM presentation_shares ps JOIN presentations p ON p.id=ps.presentation_id WHERE ps.public_token=:token AND ps.revoked_at IS NULL AND p.deleted_at IS NULL LIMIT 1');$s->execute([':token'=>$token]);$r=$s->fetch();if(!$r)gaeks_error('not_found','Link presentasi tidak ditemukan.',404);
+    $data=pres_result($r,true);foreach($data['slides']??[] as &$slide){unset($slide['momNote']);}unset($slide);gaeks_ok(['presentation'=>$data,'viewOnly'=>true]);
+}
+$user=gaeks_current_user();$uid=(string)$user['id'];if($_SERVER['REQUEST_METHOD']==='POST')gaeks_require_csrf($user);
 function pres_id(string $id): string { if(!preg_match('/^[A-Za-z0-9_-]{1,36}$/',$id))gaeks_error('invalid_id','ID presentasi tidak valid.',422);return $id; }
 function pres_ms(?string $v): ?int { return $v?strtotime($v)*1000:null; }
 function pres_result(array $r,bool $detail=false): array { $data=$detail?(json_decode((string)$r['data_json'],true)?:[]):[];$data['id']=$r['id'];$data['meetingName']=$r['name'];$data['name']=$r['name'];$data['meetingDate']=$r['meeting_date'];$data['date']=$r['meeting_date'];$data['status']=$r['deleted_at']?'trashed':'active';$data['version']=(int)$r['version'];$data['updatedAt']=pres_ms($r['updated_at']);$data['deletedAt']=pres_ms($r['deleted_at']);return $data; }
 
 if($action==='list'){$s=$pdo->prepare('SELECT * FROM presentations WHERE user_id=:uid ORDER BY updated_at DESC');$s->execute([':uid'=>$uid]);gaeks_ok(array_map(static fn($r)=>pres_result($r,false),$s->fetchAll()));}
 if($action==='get'){$id=pres_id((string)($_GET['id']??$input['id']??''));$s=$pdo->prepare('SELECT * FROM presentations WHERE id=:id AND user_id=:uid LIMIT 1');$s->execute([':id'=>$id,':uid'=>$uid]);$r=$s->fetch();if(!$r)gaeks_error('not_found','Presentasi tidak ditemukan.',404);gaeks_ok(pres_result($r,true));}
+if($action==='share'){$id=pres_id((string)($input['id']??''));$s=$pdo->prepare('SELECT id FROM presentations WHERE id=:id AND user_id=:uid AND deleted_at IS NULL');$s->execute([':id'=>$id,':uid'=>$uid]);if(!$s->fetch())gaeks_error('not_found','Presentasi tidak ditemukan.',404);$token=bin2hex(random_bytes(24));$pdo->prepare('INSERT INTO presentation_shares (presentation_id,owner_user_id,public_token,revoked_at) VALUES (:id,:uid,:token,NULL) ON DUPLICATE KEY UPDATE public_token=VALUES(public_token),revoked_at=NULL')->execute([':id'=>$id,':uid'=>$uid,':token'=>$token]);gaeks_audit($pdo,$uid,'presentation.shared','presentation',$id);gaeks_ok(['url'=>APP_URL.'/presentation-view.html?token='.$token]);}
+if($action==='unshare'){$id=pres_id((string)($input['id']??''));$pdo->prepare('UPDATE presentation_shares SET revoked_at=UTC_TIMESTAMP() WHERE presentation_id=:id AND owner_user_id=:uid')->execute([':id'=>$id,':uid'=>$uid]);gaeks_ok(null,200,'Link publik dinonaktifkan.');}
 
 if($action==='save'){
     $pres=$input['data']??$input;$id=!empty($pres['id'])?pres_id((string)$pres['id']):gaeks_uuid();$name=trim((string)($pres['meetingName']??$pres['name']??'Presentasi Baru'));if($name==='')$name='Presentasi Baru';$name=substr($name,0,255);$date=(string)($pres['meetingDate']??$pres['date']??date('Y-m-d'));if(!preg_match('/^\d{4}-\d{2}-\d{2}$/',$date))$date=date('Y-m-d');$pres['id']=$id;$pres['meetingName']=$name;$pres['meetingDate']=$date;$json=json_encode($pres,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_INVALID_UTF8_SUBSTITUTE);
