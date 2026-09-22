@@ -6,7 +6,7 @@ $pdo=gaeks_db();$input=$_SERVER['REQUEST_METHOD']==='POST'?gaeks_input(8388608):
 if($action==='public'){
     $token=trim((string)($_GET['token']??'')); if(!preg_match('/^[a-f0-9]{48}$/',$token))gaeks_error('not_found','Link presentasi tidak ditemukan.',404);
     $s=$pdo->prepare('SELECT p.* FROM presentation_shares ps JOIN presentations p ON p.id=ps.presentation_id WHERE ps.public_token=:token AND ps.revoked_at IS NULL AND p.deleted_at IS NULL LIMIT 1');$s->execute([':token'=>$token]);$r=$s->fetch();if(!$r)gaeks_error('not_found','Link presentasi tidak ditemukan.',404);
-    $data=pres_result($r,true);foreach($data['slides']??[] as &$slide){unset($slide['momNote']);}unset($slide);gaeks_ok(['presentation'=>$data,'viewOnly'=>true]);
+    $viewer=gaeks_current_user(false);$isOwner=$viewer&&hash_equals((string)$r['user_id'],(string)$viewer['id']);$data=pres_result($r,true);if(!$isOwner)foreach($data['slides']??[] as &$slide){unset($slide['momNote']);}unset($slide);gaeks_ok(['presentation'=>$data,'viewOnly'=>!$isOwner,'isOwner'=>$isOwner]);
 }
 $user=gaeks_current_user();$uid=(string)$user['id'];if($_SERVER['REQUEST_METHOD']==='POST')gaeks_require_csrf($user);
 function pres_id(string $id): string { if(!preg_match('/^[A-Za-z0-9_-]{1,36}$/',$id))gaeks_error('invalid_id','ID presentasi tidak valid.',422);return $id; }

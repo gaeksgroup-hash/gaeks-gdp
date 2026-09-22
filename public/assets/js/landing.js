@@ -32,6 +32,8 @@
     var pill = document.querySelector("[data-user-pill]");
     loginLinks.forEach(function (link) {
       link.hidden = Boolean(user);
+      link.style.display = user ? "none" : "";
+      link.setAttribute("aria-hidden", user ? "true" : "false");
     });
     if (!pill) return;
     pill.classList.toggle("is-visible", Boolean(user));

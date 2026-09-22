@@ -353,7 +353,7 @@
         }
         async function shareCurrentPresentation() {
             if (!activeMeeting || !activeMeeting.id) { alert('Simpan presentasi terlebih dahulu.'); return; }
-            try { const result = await presentationApi('share', { id: activeMeeting.id }); await navigator.clipboard.writeText(result.url); alert('Link view-only disalin. Pemirsa tidak dapat melihat MOM atau mengubah presentasi.'); }
+            try { const result = await presentationApi('share', { id: activeMeeting.id }); try { await navigator.clipboard.writeText(result.url); } catch (_) {} prompt('Link publik view-only:', result.url); }
             catch (error) { alert(error.message || 'Link tidak dapat dibuat.'); }
         }
 
