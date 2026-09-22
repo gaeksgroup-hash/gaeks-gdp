@@ -56,8 +56,12 @@ Migration menggunakan `CREATE TABLE IF NOT EXISTS` dan kolom password memakai
 
 ## 3. Buat konfigurasi privat
 
-Buat file `.env` satu tingkat di atas document root. Jika document root adalah
-`.../public_html`, tempatkan file di direktori induknya, bukan di `public_html`.
+Buat file privat `gdp.env` di
+`/home/u922552590/domains/gaeks.com/gdp.env`, yaitu **di luar** `public_html`.
+Jangan menaruhnya di `/home/u922552590/domains/gaeks.com/public_html/.env`:
+direktori itu dapat dilayani oleh website induk `gaeks.com`. Loader juga mendukung
+`GAEKS_ENV_FILE` sebagai path absolut bila lokasi perlu diubah. File `.env` di
+document root GDP hanya fallback dan tidak direkomendasikan untuk production.
 Gunakan `.env.example` sebagai daftar variabel dan isi:
 
 ```dotenv

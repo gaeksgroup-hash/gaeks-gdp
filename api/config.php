@@ -3,7 +3,13 @@ declare(strict_types=1);
 
 function gaeks_load_env(): void
 {
-    $candidates = [dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . '.env', dirname(__DIR__) . DIRECTORY_SEPARATOR . '.env'];
+    $configuredPath = getenv('GAEKS_ENV_FILE');
+    $candidates = [];
+    if (is_string($configuredPath) && $configuredPath !== '') $candidates[] = $configuredPath;
+    // On Hostinger, the GDP document root is .../gaeks.com/public_html/gdp.
+    // Its immediate parent is public_html and may be served by gaeks.com.
+    $candidates[] = dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . 'gdp.env';
+    $candidates[] = dirname(__DIR__) . DIRECTORY_SEPARATOR . '.env';
     foreach ($candidates as $path) {
         if (!is_file($path) || !is_readable($path)) continue;
         foreach (file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [] as $line) {
